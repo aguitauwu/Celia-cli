@@ -130,8 +130,8 @@ Después de la instalación, necesitarás configurar las variables de entorno:
 
 ```bash
 # Clonar el repositorio
-git clone https://github.com/tu-usuario/opceanaicli.git
-cd opceanaicli
+git clone https://github.com/aguitauwu/npm-OpceanAI.git
+cd npm-OpceanAI
 
 # Hacer ejecutable
 chmod +x index.js
@@ -186,9 +186,9 @@ Este CLI es una herramienta no oficial para facilitar la instalación de bots de
 
 ## 📊 Stats
 
-![GitHub stars](https://img.shields.io/github/stars/tu-usuario/opceanaicli?style=social)
-![GitHub forks](https://img.shields.io/github/forks/tu-usuario/opceanaicli?style=social)
-![GitHub issues](https://img.shields.io/github/issues/tu-usuario/opceanaicli)
+![GitHub stars](https://img.shields.io/github/stars/aguitauwu/npm-OpceanAI?style=social)
+![GitHub forks](https://img.shields.io/github/forks/aguitauwu/npm-OpceanAI?style=social)
+![GitHub issues](https://img.shields.io/github/issues/aguitauwu/npm-OpceanAI)
 
 ---
 
