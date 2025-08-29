@@ -4,6 +4,7 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
+const os = require('os');
 
 // Console colors for better UX
 const colors = {
@@ -59,6 +60,49 @@ class DiscordBotInstaller {
    */
   log(message, color = 'reset') {
     console.log(`${colors[color]}${message}${colors.reset}`);
+  }
+
+  /**
+   * Cross-platform directory removal
+   */
+  removeDirectory(dirPath) {
+    if (!fs.existsSync(dirPath)) return;
+    
+    try {
+      // Use Node.js native recursive removal (Node 14.14+)
+      if (fs.rmSync) {
+        fs.rmSync(dirPath, { recursive: true, force: true });
+      } else {
+        // Fallback for older Node versions
+        this.removeDirectoryRecursive(dirPath);
+      }
+    } catch (error) {
+      // Fallback to platform-specific commands
+      const isWindows = os.platform() === 'win32';
+      const command = isWindows ? `rmdir /s /q "${dirPath}"` : `rm -rf "${dirPath}"`;
+      execSync(command);
+    }
+  }
+
+  /**
+   * Recursive directory removal fallback
+   */
+  removeDirectoryRecursive(dirPath) {
+    if (!fs.existsSync(dirPath)) return;
+    
+    const files = fs.readdirSync(dirPath);
+    files.forEach((file) => {
+      const filePath = path.join(dirPath, file);
+      const stat = fs.statSync(filePath);
+      
+      if (stat.isDirectory()) {
+        this.removeDirectoryRecursive(filePath);
+      } else {
+        fs.unlinkSync(filePath);
+      }
+    });
+    
+    fs.rmdirSync(dirPath);
   }
 
   /**
@@ -481,7 +525,7 @@ class DiscordBotInstaller {
         return;
       }
       try {
-        execSync(`rm -rf "${targetDir}"`);
+        this.removeDirectory(targetDir);
       } catch (error) {
         this.log(`❌ No se pudo eliminar: ${error.message}`, 'red');
         this.rl.close();

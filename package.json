@@ -16,5 +16,7 @@
   "engines": {
     "node": ">=14.0.0"
   },
+  "os": ["win32", "linux", "darwin"],
+  "cpu": ["x64", "ia32", "arm", "arm64"],
   "preferGlobal": true
 }
