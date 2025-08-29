@@ -172,8 +172,8 @@ class DiscordBotInstaller {
    */
   showBanner() {
     this.log('\n╔════════════════════════════════════════════╗', 'cyan');
-    this.log('║       🤖 Discord Bot Installer CLI        ║', 'cyan');
-    this.log('║         OpceanAI Open Source Bots         ║', 'cyan');
+    this.log('║              🤖 OpceanAI CLI               ║', 'cyan');
+    this.log('║         Open Source Discord Bots          ║', 'cyan');
     this.log('╚════════════════════════════════════════════╝\n', 'cyan');
   }
 
@@ -182,13 +182,13 @@ class DiscordBotInstaller {
    */
   showHelp() {
     this.log('📖 Comandos disponibles:', 'yellow');
-    this.log('  discord-bot install nebula      - Instalar Nebula Bot (interactivo)', 'reset');
-    this.log('  discord-bot install archan      - Instalar Archan Bot (interactivo)', 'reset');
-    this.log('  discord-bot quick-install nebula - Instalar Nebula Bot (rápido)', 'reset');
-    this.log('  discord-bot quick-install archan - Instalar Archan Bot (rápido)', 'reset');
-    this.log('  discord-bot list               - Ver bots disponibles', 'reset');
-    this.log('  discord-bot --help             - Mostrar ayuda', 'reset');
-    this.log('  discord-bot --version          - Mostrar versión\n', 'reset');
+    this.log('  opceanaicli install nebula      - Instalar Nebula Bot (interactivo)', 'reset');
+    this.log('  opceanaicli install archan      - Instalar Archan Bot (interactivo)', 'reset');
+    this.log('  opceanaicli quick-install nebula - Instalar Nebula Bot (rápido)', 'reset');
+    this.log('  opceanaicli quick-install archan - Instalar Archan Bot (rápido)', 'reset');
+    this.log('  opceanaicli list               - Ver bots disponibles', 'reset');
+    this.log('  opceanaicli --help             - Mostrar ayuda', 'reset');
+    this.log('  opceanaicli --version          - Mostrar versión\n', 'reset');
   }
 
   /**
@@ -201,7 +201,7 @@ class DiscordBotInstaller {
     Object.entries(BOTS).forEach(([key, bot]) => {
       this.log(`📋 ${bot.name}`, 'green');
       this.log(`   Descripción: ${bot.description}`, 'reset');
-      this.log(`   Comando: discord-bot install ${key}\n`, 'cyan');
+      this.log(`   Comando: opceanaicli install ${key}\n`, 'cyan');
     });
   }
 
@@ -410,7 +410,7 @@ class DiscordBotInstaller {
     
     if (!bot) {
       this.log(`❌ Bot "${botName}" no encontrado`, 'red');
-      this.log('Usa: discord-bot list', 'yellow');
+      this.log('Usa: opceanaicli list', 'yellow');
       this.rl.close();
       return;
     }
@@ -497,7 +497,7 @@ class DiscordBotInstaller {
     
     if (!bot) {
       this.log(`❌ Bot "${botName}" no encontrado`, 'red');
-      this.log('Usa: discord-bot list', 'yellow');
+      this.log('Usa: opceanaicli list', 'yellow');
       return;
     }
     
@@ -578,7 +578,7 @@ class DiscordBotInstaller {
       }
       
       if (args.includes('--version') || args.includes('-v')) {
-        this.log('Discord Bot Installer CLI v1.0.0', 'cyan');
+        this.log('OpceanAI CLI v1.0.1', 'cyan');
         this.rl.close();
         return;
       }
@@ -592,7 +592,7 @@ class DiscordBotInstaller {
       if (args.includes('install')) {
         const botName = args[args.indexOf('install') + 1];
         if (!botName) {
-          this.log('❌ Especifica un bot: discord-bot install nebula', 'red');
+          this.log('❌ Especifica un bot: opceanaicli install nebula', 'red');
           this.rl.close();
           return;
         }
@@ -603,7 +603,7 @@ class DiscordBotInstaller {
       if (args.includes('quick-install')) {
         const botName = args[args.indexOf('quick-install') + 1];
         if (!botName) {
-          this.log('❌ Especifica un bot: discord-bot quick-install nebula', 'red');
+          this.log('❌ Especifica un bot: opceanaicli quick-install nebula', 'red');
           this.rl.close();
           return;
         }
