@@ -1,0 +1,20 @@
+{
+  "name": "@guita/discord-bot-installer",
+  "version": "1.0.0",
+  "description": "CLI tool to install and configure open-source Discord bots from OpceanAI",
+  "main": "index.js",
+  "bin": {
+    "discord-bot": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "node index.js --version"
+  },
+  "keywords": ["discord", "bot", "installer", "cli", "opceanai", "nebula", "archan"],
+  "author": "guita",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "preferGlobal": true
+}
