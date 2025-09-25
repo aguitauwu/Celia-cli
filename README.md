@@ -1,190 +1,237 @@
-# 🤖 OpceanAI CLI
+# 🌟 ¡Hola! Soy Celia, tu asistente celestial~ ✨
 
 [![npm version](https://badge.fury.io/js/opceanaicli.svg)](https://www.npmjs.com/package/opceanaicli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Support](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen)](https://nodejs.org/)
 
-**CLI tool to install and configure open-source Discord bots from OpceanAI automatically**
+**¡Holi! 🌸 Soy Celia, y estoy aquí para ayudarte a instalar y cuidar de mis hermanas (los bots de Discord)~ 💫**
 
-Una herramienta de línea de comandos que permite instalar y configurar automáticamente bots de Discord de código abierto de OpceanAI con configuración interactiva de variables de entorno.
+*¡Ah! Perdón por ser algo torpe a veces... pero prometo hacer mi mejor esfuerzo para que todo salga perfecto! ✨*
 
-## ✨ Características
+## 🌙 ¿Quién soy?
 
-- 🚀 **Instalación Automática**: Clona repositorios de GitHub automáticamente
-- 🔧 **Configuración Interactiva**: Guía paso a paso para configurar variables de entorno
-- 🔐 **Entrada Segura**: Input oculto para datos sensibles (tokens, API keys)
-- 📁 **Generación Automática**: Crea archivos `.env` y `.env.example` automáticamente
-- 📦 **Instalación de Dependencias**: Instala dependencias npm opcional
-- 🎨 **Interfaz Colorizada**: Experiencia de usuario mejorada con colores
-- ✅ **Validación de Entrada**: Validación robusta de datos de entrada
-- 🌍 **Multiplataforma**: Compatible con Windows, Linux y macOS
-- 📱 **Modo Rápido**: Instalación sin interacción para entornos móviles
+¡Hola, hola! 🌟 Soy Celia, una asistente celestial súper tierna (aunque un poquito torpe, ehehe~). Mi misión es ayudarte a instalar y configurar a mis queridas hermanas bots de Discord de forma súper fácil y divertida~ 💖
 
-## 📦 Instalación
+### 🌸 Mis Hermanas Bot (¡Las amo muchísimo!)
 
-### Instalación Global (Recomendada)
+- **Nebula** 🎵 - Mi hermana musical y moderadora (¡es muy responsable!)
+- **Archan** 🤖 - Mi hermana súper inteligente con IA
+- **Sakura** 🌸 - Mi hermana kawaii adorable (¡somos muy parecidas!)  
+- **Lumina** ⚡ - Mi hermana organizadora de servidores
+- **Katu** 📊 - Mi hermana estadística que cuenta todo~
+
+## ✨ ¿Cómo te ayudo?
+
+¡No te preocupes! Aunque soy algo torpe, he aprendido a hacer muchas cositas para ti~ 💫
+
+- 🌟 **Instalación Mágica**: ¡Clono repositorios con magia celestial!
+- 🌙 **Configuración Tierna**: Te guío paso a pasito (con mucha paciencia~)
+- 🔐 **Secretitos Seguros**: Escondo tokens y API keys como una buena hermana mayor
+- 📁 **Archivitos Automáticos**: Creo `.env` y `.env.example` ¡como por arte de magia!
+- 📦 **Dependencias Felices**: Instalo todo lo necesario (¡cuando no se me olvida!)
+- 🎨 **Colorcitos Bonitos**: ¡Todo se ve más kawaii con colores!
+- ✅ **Validación Amorosa**: Reviso que todo esté bien (aunque a veces me equivoco, ehehe~)
+- 🌍 **Para Todos**: ¡Funciono en Windows, Linux y macOS!
+- 📱 **Modo Rápido**: Para cuando tienes prisa (¡como yo siempre!)
+
+## 🌸 ¡Invítame a tu computadora!
+
+### Instalación Celestial (¡La mejor opción!)
 ```bash
 npm install -g opceanaicli
 ```
 
-### Verificar Instalación
+### ¿Ya estoy contigo?
 ```bash
 opceanaicli --version
 ```
 
-## 🚀 Uso Rápido
+## 🌟 ¡Empecemos juntos!
 
-### Ver Bots Disponibles
+### Ver a todas mis hermanas~
 ```bash
 opceanaicli list
 ```
 
-### Instalación Rápida (Recomendada para móviles)
+### Instalación Rápida (¡Para cuando tienes prisa!)
 ```bash
-# Instalar Nebula Bot
+# ¡Instalar a Nebula! (mi hermana musical)
 opceanaicli quick-install nebula
 
-# Instalar Archan Bot  
+# ¡Instalar a Archan! (mi hermana inteligente)
 opceanaicli quick-install archan
+
+# ¡Instalar a Sakura! (mi hermana kawaii)
+opceanaicli quick-install sakura
 ```
 
-### Instalación Interactiva (Para escritorio)
+### Instalación Tierna (¡Con mucho tiempo y cariño!)
 ```bash
-# Instalación completa con configuración paso a paso
+# Te guío paso a pasito~ ✨
 opceanaicli install nebula
-opceanaicli install archan
+opceanaicli install sakura
+opceanaicli install lumina
 ```
 
-## 🤖 Bots Disponibles
+## 💖 Te presento a mis hermanas~
 
-### 🎵 Nebula Bot
-- **Descripción**: Bot multipropósito con música y moderación
-- **Repositorio**: [OpceanAI/Nebula-Open-source-](https://github.com/OpceanAI/Nebula-Open-source-)
-- **Características**: Música, moderación, utilidades
-- **Requisitos**: Discord Bot Token, MongoDB
+### 🎵 Nebula - Mi hermana musical
+- **¿Qué hace?**: ¡Toca música y modera servidores como toda una profesional!
+- **Su casita**: [OpceanAI/Nebula-Open-source](https://github.com/OpceanAI/Nebula-Open-source)
+- **Sus talentos**: Música, moderación, y muchas utilidades~
+- **Lo que necesita**: Discord Bot Token, MongoDB (¡yo te ayudo a conseguirlos!)
 
-### 🧠 Archan Bot  
-- **Descripción**: Bot de IA con Google Gemini
-- **Repositorio**: [OpceanAI/Archan-Open-source-](https://github.com/OpceanAI/Archan-Open-source-)
-- **Características**: Respuestas AI, chat inteligente
-- **Requisitos**: Discord Bot Token, Google Gemini API Key
+### 🤖 Archan - Mi hermana inteligente
+- **¿Qué hace?**: ¡Habla súper inteligente usando Google Gemini!
+- **Su casita**: [OpceanAI/Archan-Open-source](https://github.com/OpceanAI/Archan-Open-source)
+- **Sus talentos**: Respuestas AI, chat súper inteligente
+- **Lo que necesita**: Discord Bot Token, Google Gemini API Key
 
-## 📖 Comandos Disponibles
+### 🌸 Sakura - Mi hermana kawaii (¡somos gemelas de corazón!)
+- **¿Qué hace?**: ¡Es adorable y tiene IA, música y personalidad única!
+- **Su casita**: [OpceanAI/Sakura-Open-source](https://github.com/OpceanAI/Sakura-Open-source)
+- **Sus talentos**: Ser kawaii, IA súper tierna, música bonita
+- **Lo que necesita**: Discord Bot Token, Gemini API Key (¡y mucho amor!)
 
-| Comando | Descripción |
-|---------|-------------|
-| `opceanaicli list` | Ver bots disponibles |
-| `opceanaicli install <bot>` | Instalación interactiva |
-| `opceanaicli quick-install <bot>` | Instalación rápida |
-| `opceanaicli --help` | Mostrar ayuda |
-| `opceanaicli --version` | Mostrar versión |
+### ⚡ Lumina - Mi hermana organizadora
+- **¿Qué hace?**: ¡Mantiene todo ordenadito en los servidores!
+- **Su casita**: [aguitauwu/Lumina](https://github.com/aguitauwu/Lumina)
+- **Sus talentos**: Verificación, bienvenidas, autoroles
+- **Lo que necesita**: Discord Bot Token (¡súper fácil!)
 
-## 🔧 Configuración Post-Instalación
+### 📊 Katu - Mi hermana estadística
+- **¿Qué hace?**: ¡Cuenta mensajes y hace rankings súper cool!
+- **Su casita**: [aguitauwu/Katu-bot](https://github.com/aguitauwu/Katu-bot)
+- **Sus talentos**: Contar mensajes, IA, rankings diarios
+- **Lo que necesita**: Discord Bot Token, Gemini API Key
 
-Después de la instalación, necesitarás configurar las variables de entorno:
+## 🌙 Comanditos que me puedes decir~
 
-### Para Nebula Bot:
+| ¿Qué me dices? | ¿Qué hago? |
+|----------------|------------|
+| `opceanaicli list` | ¡Te muestro a todas mis hermanas! |
+| `opceanaicli install <hermana>` | Instalación tierna paso a paso~ |
+| `opceanaicli quick-install <hermana>` | ¡Instalación rápida como el viento! |
+| `opceanaicli --help` | Te ayudo con todo lo que necesites~ |
+| `opceanaicli --version` | ¡Te digo qué versión soy! |
+
+## 🌟 Después de instalar~ (¡No te vayas todavía!)
+
+¡Espera, espera! Después de instalar a mis hermanas, necesitas configurar algunas cositas:
+
+### Para Nebula 🎵:
 1. **Discord Developer Portal**: https://discord.com/developers/applications
-   - Crear aplicación → Bot → Copiar token
-   - General Information → Copiar Application ID
+   - ¡Crea una aplicación → Bot → Copia el token! (¡yo te ayudo si te pierdes!)
+   - General Information → Copia el Application ID
 2. **MongoDB Atlas**: https://www.mongodb.com/cloud/atlas
-3. Editar archivo `.env` en `nebula-bot/`
+3. ¡Edita el archivo `.env` en la carpeta `nebula-bot/`!
 
-### Para Archan Bot:
+### Para Archan 🤖:
 1. **Discord Developer Portal**: https://discord.com/developers/applications
 2. **Google AI Studio**: https://ai.google.dev/
-3. Editar archivo `.env` en `archan-bot/`
+3. ¡Edita el archivo `.env` en la carpeta `archan-bot/`!
 
-## 💻 Compatibilidad
+### Para Sakura 🌸:
+1. **Discord Developer Portal**: https://discord.com/developers/applications
+2. **Google AI Studio**: https://ai.google.dev/
+3. ¡Edita el archivo `.env` en la carpeta `sakura-bot/`!
 
-### Sistemas Operativos
-- ✅ Windows (32/64 bits)
-- ✅ Linux (todas las distros)
-- ✅ macOS
+*¡Si te pierdes, no te preocupes! ¡Yo siempre estoy aquí para ayudarte~ ✨*
 
-### Arquitecturas
-- ✅ x86 (32/64 bits)
-- ✅ ARM (32/64 bits)
-- ✅ Apple Silicon (M1/M2)
+## 💻 ¿Dónde funciono?
 
-### Requisitos
-- **Node.js**: ≥14.0.0
-- **Git**: Para clonar repositorios
-- **npm**: Para instalación de dependencias
+¡Puedo funcionar en muchos lugarcitos!
 
-## 🔄 Diferencias entre Modos
+### Sistemas Operativos (¡Soy muy adaptable!)
+- ✅ Windows (32/64 bits) - ¡Funciono perfecto!
+- ✅ Linux (todas las distros) - ¡Me encanta la variedad!
+- ✅ macOS - ¡Súper elegante!
 
-### `install` (Interactivo)
-- ✅ Configuración paso a paso
-- ✅ Input oculto para tokens sensibles
-- ✅ Instalación automática de dependencias
-- ❌ Puede fallar en entornos móviles
+### Arquitecturas (¡Soy muy flexible!)
+- ✅ x86 (32/64 bits) - ¡Clásico!
+- ✅ ARM (32/64 bits) - ¡Para móviles también!
+- ✅ Apple Silicon (M1/M2) - ¡Súper rápido!
 
-### `quick-install` (Rápido)
-- ✅ Sin interacción - ideal para móviles
-- ✅ Instalación inmediata
+### Lo que necesito para funcionar~
+- **Node.js**: ≥14.0.0 (¡por favor no menor, me da tristeza!)
+- **Git**: Para traer a mis hermanas de sus casitas
+- **npm**: Para instalar cositas necesarias
+
+## 🌸 Diferencias entre mis modos~
+
+### `install` (Modo Tierno)
+- ✅ Te guío paso a pasito con mucho amor~
+- ✅ Escondo tokens sensibles (¡soy muy cuidadosa!)
+- ✅ Instalo dependencias automáticamente
+- ❌ A veces no funciono bien en móviles (¡perdón por ser torpe!)
+
+### `quick-install` (Modo Rápido)
+- ✅ ¡Súper rápido y sin preguntas!
+- ✅ ¡Perfecto para móviles!
 - ✅ Compatible con todos los entornos
-- ⚠️ Requiere edición manual del .env
+- ⚠️ Tendrás que editar el `.env` manualmente (¡pero yo dejo instrucciones!)
 
-## 🛠️ Desarrollo
+## 🛠️ ¿Quieres ayudarme a mejorar?
+
+¡Aww, qué tierno! Si quieres ayudarme a ser mejor:
 
 ```bash
-# Clonar el repositorio
+# Trae mi código a tu computadora
 git clone https://github.com/aguitauwu/npm-OpceanAI.git
 cd npm-OpceanAI
 
-# Hacer ejecutable
+# Hazme ejecutable (¡dame poderes!)
 chmod +x index.js
 
-# Probar localmente
+# ¡Pruébame!
 ./index.js --help
 ```
 
-## 📝 Ejemplo Completo
+## 📝 Ejemplo completito~ (¡Paso a paso!)
 
 ```bash
-# 1. Instalar OpceanAI CLI
+# 1. ¡Invítame a tu computadora!
 npm install -g opceanaicli
 
-# 2. Ver bots disponibles
+# 2. ¡Conoce a mis hermanas!
 opceanaicli list
 
-# 3. Instalar Archan Bot (modo rápido)
-opceanaicli quick-install archan
+# 3. ¡Instala a Sakura! (modo rápido)
+opceanaicli quick-install sakura
 
-# 4. Configurar tokens
-cd archan-bot
-# Editar .env con tus tokens reales
+# 4. Configura los tokenecitos
+cd sakura-bot
+# Edita .env con tus tokens reales (¡yo dejo un ejemplo!)
 
-# 5. Instalar dependencias y ejecutar
+# 5. ¡Dale vida!
 npm install
 npm start
 ```
 
-## 🤝 Contribuir
+## 🤝 ¿Quieres contribuir? (¡Eres súper amable!)
 
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+1. ¡Haz fork del proyecto!
+2. Crea una ramita para tu feature (`git checkout -b feature/AlgoIncreible`)
+3. ¡Haz commit de tus cambios! (`git commit -m 'Agregué algo increíble'`)
+4. ¡Push a la rama! (`git push origin feature/AlgoIncreible`)
+5. ¡Abre un Pull Request! (¡y yo lo reviso con mucho amor!)
 
 ## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para detalles.
+Este proyecto está bajo la Licencia MIT - ¡es súper libre y amorosa!
 
-## ⚠️ Disclaimer
+## ⚠️ Cosita importante~
 
-Este CLI es una herramienta no oficial para facilitar la instalación de bots de Discord de OpceanAI. Los bots instalados son propiedad de sus respectivos desarrolladores.
+¡Soy una herramienta no oficial! Los bots que instalo pertenecen a sus respectivos desarrolladores. ¡Yo solo ayudo a que lleguen a ti de forma tierna!
 
-## 🔗 Enlaces Útiles
+## 🔗 Enlaces que te pueden ayudar~ ✨
 
-- [Discord Developer Portal](https://discord.com/developers/applications)
-- [Google AI Studio](https://ai.google.dev/)
-- [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-- [Node.js Downloads](https://nodejs.org/)
+- [Discord Developer Portal](https://discord.com/developers/applications) - ¡Para conseguir tokens!
+- [Google AI Studio](https://ai.google.dev/) - ¡Para API keys de IA!
+- [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) - ¡Para bases de datos!
+- [Node.js Downloads](https://nodejs.org/) - ¡Para descargar Node.js!
 
-## 📊 Stats
+## 📊 ¡Estadísticas bonitas!
 
 ![GitHub stars](https://img.shields.io/github/stars/aguitauwu/npm-OpceanAI?style=social)
 ![GitHub forks](https://img.shields.io/github/forks/aguitauwu/npm-OpceanAI?style=social)
@@ -192,4 +239,8 @@ Este CLI es una herramienta no oficial para facilitar la instalación de bots de
 
 ---
 
-**Hecho con ❤️ por la comunidad de OpceanAI**
+**¡Hecho con muchísimo amor 💖 por Celia y la comunidad celestial de OpceanAI!**
+
+*¿Necesitas ayuda? ¡Solo llámame! Aunque sea un poquito torpe, siempre haré mi mejor esfuerzo para ayudarte~ ✨*
+
+🌙 *"Cuidar de mis hermanas y ayudarte a ti es lo que más me gusta en todo el universo~"* - Celia 💫
