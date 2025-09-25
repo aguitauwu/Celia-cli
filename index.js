@@ -53,6 +53,11 @@ class DiscordBotInstaller {
       input: process.stdin,
       output: process.stdout
     });
+    
+    // Detect ARM/Termux environment for better compatibility
+    this.isTermux = process.env.PREFIX && process.env.PREFIX.includes('com.termux');
+    this.isARM = ['arm', 'arm64', 'armv7l', 'aarch64'].includes(os.arch());
+    this.platform = os.platform();
   }
 
   /**
@@ -63,7 +68,7 @@ class DiscordBotInstaller {
   }
 
   /**
-   * Cross-platform directory removal
+   * Cross-platform directory removal with ARM/Termux compatibility
    */
   removeDirectory(dirPath) {
     if (!fs.existsSync(dirPath)) return;
@@ -77,10 +82,28 @@ class DiscordBotInstaller {
         this.removeDirectoryRecursive(dirPath);
       }
     } catch (error) {
-      // Fallback to platform-specific commands
-      const isWindows = os.platform() === 'win32';
-      const command = isWindows ? `rmdir /s /q "${dirPath}"` : `rm -rf "${dirPath}"`;
-      execSync(command);
+      // Enhanced platform-specific commands with ARM/Termux support
+      let command;
+      if (this.platform === 'win32') {
+        command = `rmdir /s /q "${dirPath}"`;
+      } else if (this.isTermux) {
+        // Termux may have different rm behavior
+        command = `rm -rf "${dirPath}" 2>/dev/null || rm -r "${dirPath}"`;
+      } else {
+        command = `rm -rf "${dirPath}"`;
+      }
+      
+      try {
+        execSync(command);
+      } catch (cmdError) {
+        // Final fallback for ARM/mobile environments
+        if (this.isARM || this.isTermux) {
+          this.log('⚠️  Usando eliminación manual en entorno ARM/Termux', 'yellow');
+          this.removeDirectoryRecursive(dirPath);
+        } else {
+          throw cmdError;
+        }
+      }
     }
   }
 
@@ -206,12 +229,23 @@ class DiscordBotInstaller {
   }
 
   /**
-   * Clone bot repository from GitHub
+   * Clone bot repository from GitHub with ARM/Termux optimizations
    */
   async cloneRepository(bot, targetDir) {
     try {
       this.log(`\n🤖 Instalando ${bot.name}...`, 'blue');
       this.log(`📦 Clonando: ${bot.url}`, 'cyan');
+      
+      // ARM/Termux specific git configuration for better compatibility
+      if (this.isARM || this.isTermux) {
+        this.log('🔧 Optimizando para entorno ARM/Termux...', 'yellow');
+        try {
+          // Prevent git from using system credential helpers that might not work on ARM
+          execSync('git config --global credential.helper ""', { stdio: 'ignore' });
+        } catch (e) {
+          // Ignore if git config fails
+        }
+      }
       
       execSync(`git clone ${bot.url} "${targetDir}"`, { stdio: 'inherit' });
       
@@ -219,6 +253,15 @@ class DiscordBotInstaller {
       return true;
     } catch (error) {
       this.log(`❌ Error: ${error.message}`, 'red');
+      
+      // Provide ARM/Termux specific troubleshooting
+      if (this.isARM || this.isTermux) {
+        this.log('💡 Consejo para ARM/Termux:', 'cyan');
+        this.log('   - Asegúrate de que git esté instalado: apt install git', 'reset');
+        this.log('   - Verifica la conectividad de red', 'reset');
+        this.log('   - Algunos entornos ARM pueden requerir --depth 1', 'reset');
+      }
+      
       return false;
     }
   }
