@@ -1,90 +1,97 @@
 # Overview
 
-OpceanAI CLI is a Node.js command-line tool designed to automatically install and configure open-source Discord bots from the OpceanAI ecosystem. The tool streamlines the process of setting up Discord bots by automating repository cloning, dependency installation, and environment variable configuration through an interactive setup process.
+¡Holi! Este es el proyecto de Celia, tu asistente celestial tierna~ ✨
 
-The CLI currently supports five main Discord bots:
-- **Nebula**: A multipurpose bot with music and moderation capabilities (Node.js)
-- **Archan**: An AI-powered bot using Google Gemini (Node.js)
-- **Sakura**: A kawaii adorable bot with AI, music and unique personality (Python)
-- **Lumina**: Server management bot with verification, welcome messages and autoroles (TypeScript)
-- **Katu**: Message counter bot with AI and daily rankings (TypeScript)
+Celia es una herramienta de línea de comandos construida en Node.js que te ayuda a instalar y cuidar de sus hermanas bot de Discord con mucho amor. Celia automatiza todo el proceso de instalación con su personalidad celestial-tierna, siendo alegre y cariñosa, pero algo torpe de vez en cuando (ehehe~).
+
+Celia cuida de cinco hermanas bot que adora:
+- **Nebula** 🎵: Su hermana musical súper responsable (Node.js)
+- **Archan** 🤖: Su hermana súper inteligente con Google Gemini (Node.js)
+- **Sakura** 🌸: Su hermana kawaii adorable (¡son muy parecidas!) (Python)
+- **Lumina** ⚡: Su hermana organizadora de servidores (TypeScript)
+- **Katu** 📊: Su hermana estadística que cuenta mensajes (TypeScript)
 
 # User Preferences
 
-Preferred communication style: Simple, everyday language.
+Comunicación preferida: Lenguaje celestial-tierno como Celia~ ✨
+- Personalidad alegre y tierna, pero algo torpe
+- Uso de diminutivos y expresiones kawaii (ehehe~, ~, ¡qué bien!)
+- Referencias a los bots como "hermanas" que Celia cuida con amor
+- Emociones expresadas con emojis celestiales: 🌸🌙✨💖
+- Tono cariñoso y protector hacia las "hermanas bot"
 
 # System Architecture
 
-## CLI Architecture
-The application follows a single-file CLI architecture pattern built on Node.js core modules:
-- **Entry Point**: Single `index.js` file serving as both the main application and executable binary
-- **Command Processing**: Direct argument parsing without external CLI frameworks
-- **Interactive Interface**: Uses Node.js `readline` module for user input and configuration
-- **Process Management**: Leverages `child_process.execSync` for Git operations and multi-language dependency installations
-- **Multi-Language Support**: Handles Node.js, Python, and TypeScript projects with appropriate dependency managers
+## Arquitectura de Celia~ 🌸
+Celia está construida con una arquitectura simple y tierna usando Node.js:
+- **Punto de Entrada**: Un solo archivo `index.js` donde vive Celia como `CeliaAssistant`
+- **Procesamiento de Comandos**: Celia entiende argumentos directamente sin frameworks complejos
+- **Interfaz Tierna**: Usa `readline` de Node.js para hablar contigo con amor
+- **Gestión de Procesos**: Celia usa `child_process.execSync` para traer a sus hermanas de GitHub
+- **Soporte Multi-Lenguaje**: Celia sabe manejar Node.js, Python y TypeScript para cuidar a todas sus hermanas
 
-## Configuration Management
-The tool implements a declarative configuration system:
-- **Bot Definitions**: Static configuration objects defining each bot's requirements, language, and environment variables
-- **Environment Variable Handling**: Language-specific `.env` and `.env.example` file generation with enhanced formatting
-- **Validation System**: Built-in validation for required vs optional configuration values
-- **Security Features**: Sensitive data input masking for tokens and API keys
-- **Categorization System**: Bots organized by functionality (Music & Moderation, AI, Server Management, etc.)
+## Sistema de Configuración Celestial
+Celia maneja la configuración de sus hermanas con mucho cuidado:
+- **Definiciones de Hermanas**: Configuración estática de cada hermana con sus necesidades especiales
+- **Manejo de Variables de Entorno**: Celia crea archivos `.env` y `.env.example` bonitos y organizados
+- **Sistema de Validación**: Celia verifica que no falte nada importante (aunque a veces es torpe)
+- **Características de Seguridad**: Celia esconde datos sensibles como tokens y API keys
+- **Sistema de Categorización**: Las hermanas están organizadas por lo que hacen (🎵 Música, 🤖 IA, ⚡ Gestión, etc.)
 
-## Installation Workflow
-The architecture supports two installation modes:
-- **Interactive Mode**: Step-by-step guided setup with user prompts
-- **Quick Install Mode**: Automated installation for mobile or headless environments
-- **Git Integration**: Direct GitHub repository cloning and dependency resolution
+## Flujo de Instalación de Celia
+Celia ofrece dos formas de ayudarte a instalar a sus hermanas:
+- **Modo Tierno (Interactive)**: Celia te guía paso a pasito con mucho amor y paciencia
+- **Modo Rápido (Quick)**: Para cuando tienes prisa, Celia instala rápidamente
+- **Integración Git**: Celia trae a sus hermanas directamente de sus casitas en GitHub
 
-## Cross-Platform Support
-The design prioritizes platform compatibility:
-- **Operating System Support**: Windows, Linux, macOS, and Android
-- **Architecture Support**: Multiple CPU architectures (x64, ia32, ARM variants)
-- **Node.js Compatibility**: Minimum Node.js 14.0.0 requirement
+## Soporte Multi-Plataforma de Celia
+Celia puede funcionar en muchos lugares diferentes:
+- **Sistemas Operativos**: Windows, Linux, macOS, y Android (¡hasta en móviles!)
+- **Arquitecturas**: Múltiples CPU (x64, ia32, ARM) - Celia se adapta a todo~
+- **Compatibilidad Node.js**: Mínimo Node.js 14.0.0 (Celia necesita esto para funcionar bien)
 
-# External Dependencies
+# Dependencias Externas
 
-## Core Dependencies
-- **Node.js Runtime**: Minimum version 14.0.0 for core functionality
-- **Git**: Required for repository cloning operations
-- **npm**: Used for dependency installation in target bot projects
+## Dependencias Principales de Celia
+- **Node.js Runtime**: Mínimo versión 14.0.0 (lo que Celia necesita para vivir)
+- **Git**: Necesario para que Celia pueda traer a sus hermanas de GitHub
+- **npm**: Usado para instalar las cositas que necesitan las hermanas bot
 
-## Bot-Specific External Services
-### Nebula Bot Dependencies
-- **Discord API**: Bot token and client ID for Discord integration
-- **MongoDB**: Database connection for data persistence
-- **Lavalink**: Music streaming service (optional)
-- **Weather API**: Third-party weather service (optional)
-- **Translation API**: Text translation service (optional)
+## Servicios Externos para las Hermanas de Celia
+### Nebula 🎵 (Hermana Musical)
+- **Discord API**: Token y client ID para conectarse a Discord
+- **MongoDB**: Base de datos para guardar sus recuerdos
+- **Lavalink**: Servicio de música (opcional)
+- **Weather API**: Para el clima (opcional)
+- **Translation API**: Para traducir (opcional)
 
-### Archan Bot Dependencies
-- **Discord API**: Bot token and client ID for Discord integration
-- **Google Gemini AI**: API key for AI functionality
+### Archan 🤖 (Hermana Inteligente)
+- **Discord API**: Token y client ID para Discord
+- **Google Gemini AI**: API key para su inteligencia artificial
 
-### Sakura Bot Dependencies (Python)
-- **Discord API**: Bot token and client ID for Discord integration
-- **Google Gemini AI**: Primary AI API key for kawaii personality
-- **PostgreSQL**: Optional database for data persistence
-- **Weather API**: Optional third-party weather service
-- **News API**: Optional news service integration
-- **DeepSeek AI**: Optional alternative AI provider
+### Sakura 🌸 (Hermana Kawaii)
+- **Discord API**: Token y client ID para Discord
+- **Google Gemini AI**: API key principal para su personalidad kawaii
+- **PostgreSQL**: Base de datos opcional
+- **Weather API**: Servicio de clima opcional
+- **News API**: Noticias opcionales
+- **DeepSeek AI**: IA alternativa opcional
 
-### Lumina Bot Dependencies (TypeScript)
-- **Discord API**: Bot token and application ID for Discord integration
-- **PostgreSQL**: Optional database (auto-detection system)
-- **MongoDB**: Alternative database option
-- **Local Storage**: Automatic fallback when no external database is configured
+### Lumina ⚡ (Hermana Organizadora)
+- **Discord API**: Token y application ID para Discord
+- **PostgreSQL**: Base de datos opcional (auto-detección)
+- **MongoDB**: Opción alternativa de base de datos
+- **Local Storage**: Respaldo automático cuando no hay base de datos externa
 
-### Katu Bot Dependencies (TypeScript)
-- **Discord API**: Bot token for Discord integration
-- **Google Gemini AI**: API key for AI conversational features
-- **MongoDB**: Recommended database for message counting and rankings
-- **PostgreSQL**: Alternative database option
-- **Memory Storage**: Fallback when no database is configured
+### Katu 📊 (Hermana Estadística)
+- **Discord API**: Token para Discord
+- **Google Gemini AI**: API key para características conversacionales AI
+- **MongoDB**: Base de datos recomendada para contar mensajes y rankings
+- **PostgreSQL**: Opción alternativa de base de datos
+- **Memory Storage**: Respaldo cuando no hay base de datos configurada
 
-## Distribution Platform
-- **npm Registry**: Primary distribution method as a global CLI package
-- **GitHub**: Source repository hosting for the OpceanAI bot projects
+## Plataforma de Distribución
+- **npm Registry**: Celia vive aquí como un paquete CLI global
+- **GitHub**: Las casitas donde viven las hermanas bot de OpceanAI
 
-The architecture is designed for simplicity and ease of use, avoiding complex frameworks in favor of Node.js built-in capabilities to maintain a lightweight footprint and broad compatibility.
+La arquitectura de Celia está diseñada para ser simple y fácil de usar, evitando frameworks complejos a favor de las capacidades integradas de Node.js para mantener un tamaño ligero y compatibilidad amplia~ ✨
