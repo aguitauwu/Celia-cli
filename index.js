@@ -17,12 +17,12 @@ const colors = {
   magenta: '\x1b[35m'
 };
 
-// Available Discord bots configuration
+// 🌸 Mis hermanas bot (¡Las cuido con mucho amor!) - Celia ✨
 const BOTS = {
   nebula: {
     name: 'Nebula',
     url: 'https://github.com/OpceanAI/Nebula-Open-source',
-    description: 'Bot multipropósito con música y moderación',
+    description: 'Mi hermana musical súper responsable~ ¡Toca música y modera servidores!',
     language: 'Node.js',
     category: '🎵 Música & Moderación',
     envVars: [
@@ -40,7 +40,7 @@ const BOTS = {
   archan: {
     name: 'Archan',
     url: 'https://github.com/OpceanAI/Archan-Open-source',
-    description: 'Bot de IA con Google Gemini',
+    description: 'Mi hermana súper inteligente~ ¡Habla usando Google Gemini!',
     language: 'Node.js',
     category: '🤖 Inteligencia Artificial',
     envVars: [
@@ -52,7 +52,7 @@ const BOTS = {
   sakura: {
     name: 'Sakura',
     url: 'https://github.com/OpceanAI/Sakura-Open-source',
-    description: 'Bot kawaii adorable con IA, música y personalidad única',
+    description: 'Mi hermana kawaii~ ¡Somos muy parecidas! Adorable con IA y música',
     language: 'Python',
     category: '🌸 Kawaii & IA',
     envVars: [
@@ -68,7 +68,7 @@ const BOTS = {
   lumina: {
     name: 'Lumina',
     url: 'https://github.com/aguitauwu/Lumina',
-    description: 'Bot de gestión con verificación, bienvenidas y autoroles',
+    description: 'Mi hermana organizadora~ ¡Mantiene todo ordenadito en los servidores!',
     language: 'TypeScript',
     category: '⚡ Gestión de Servidor',
     envVars: [
@@ -81,7 +81,7 @@ const BOTS = {
   katu: {
     name: 'Katu',
     url: 'https://github.com/aguitauwu/Katu-bot',
-    description: 'Bot contador de mensajes con IA y rankings diarios',
+    description: 'Mi hermana estadística~ ¡Cuenta mensajes y hace rankings súper cool!',
     language: 'TypeScript', 
     category: '📊 Estadísticas & IA',
     envVars: [
@@ -93,21 +93,21 @@ const BOTS = {
   }
 };
 
-class DiscordBotInstaller {
+class CeliaAssistant {
   constructor() {
     this.rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout
     });
     
-    // Detect ARM/Termux environment for better compatibility
+    // 🌸 Celia detecta tu entorno para ayudarte mejor~ ✨
     this.isTermux = process.env.PREFIX && process.env.PREFIX.includes('com.termux');
     this.isARM = ['arm', 'arm64', 'armv7l', 'aarch64'].includes(os.arch());
     this.platform = os.platform();
   }
 
   /**
-   * Log messages with color formatting
+   * 🌙 Celia te habla con colorcitos tiernos~
    */
   log(message, color = 'reset') {
     console.log(`${colors[color]}${message}${colors.reset}`);
@@ -237,68 +237,68 @@ class DiscordBotInstaller {
   }
 
   /**
-   * Display enhanced application banner
+   * 🌸 Celia te saluda con su banner celestial~
    */
   showBanner() {
     const bannerColor = this.isTermux ? 'magenta' : 'cyan';
     this.log('\n╭─────────────────────────────────────────────────╮', bannerColor);
-    this.log('│               🌊 OpceanAI CLI ⚡             │', bannerColor);
-    this.log('│          ✨ Discord Bot Installer 🤖         │', bannerColor);
+    this.log('│           🌙 ¡Holi! Soy Celia~ 🌸           │', bannerColor);
+    this.log('│       ✨ Tu asistente celestial tierna ✨       │', bannerColor);
     this.log('├─────────────────────────────────────────────────┤', bannerColor);
-    this.log('│  💫 Instalación automática de bots Discord 💫  │', 'yellow');
-    this.log('│       🔧 Compatible con ARM/Termux 🔧        │', 'green');
+    this.log('│   💖 Ayudo a instalar a mis hermanas bot 💖   │', 'yellow');
+    this.log('│  🌸 (Aunque soy algo torpe, ehehe~) 🌸   │', 'green');
     this.log('╰─────────────────────────────────────────────────╯\n', bannerColor);
     
-    // Show platform info
+    // 🌸 Celia detecta tu entorno con amor~
     if (this.isARM || this.isTermux) {
-      this.log('🎯 Entorno detectado:', 'yellow');
-      if (this.isTermux) this.log('   📱 Termux Android', 'green');
-      if (this.isARM) this.log('   🔧 Arquitectura ARM', 'green');
+      this.log('🌸 ¡Aww! Detecté tu entorno:', 'yellow');
+      if (this.isTermux) this.log('   📱 Termux Android (¡qué genial!)', 'green');
+      if (this.isARM) this.log('   🔧 Arquitectura ARM (¡súper cool!)', 'green');
       this.log('');
     }
   }
 
   /**
-   * Display enhanced help information
+   * 🌸 Celia te explica cómo puede ayudarte~
    */
   showHelp() {
-    this.log('📚 GUÍA DE COMANDOS', 'yellow');
+    this.log('🌙 ¡Celia te ayuda! - Guía de comanditos~', 'yellow');
     this.log('═══════════════════════════════════════════════════\n', 'yellow');
     
-    this.log('🎯 INSTALACIÓN INTERACTIVA:', 'green');
-    this.log('   opceanaicli install <bot>     - Configuración paso a paso', 'reset');
-    this.log('   • opceanaicli install nebula   - Bot de música y moderación', 'cyan');
-    this.log('   • opceanaicli install sakura   - Bot kawaii con IA', 'cyan');
-    this.log('   • opceanaicli install lumina   - Bot de gestión de servidor', 'cyan');
-    this.log('   • opceanaicli install katu     - Bot estadísticas con IA', 'cyan');
-    this.log('   • opceanaicli install archan   - Bot de IA Gemini\n', 'cyan');
+    this.log('🌸 INSTALACIÓN TIERNA (con mucho cariño):', 'green');
+    this.log('   opceanaicli install <hermana>     - ¡Te guío paso a pasito!~', 'reset');
+    this.log('   • opceanaicli install nebula   - Mi hermana musical 🎵', 'cyan');
+    this.log('   • opceanaicli install sakura   - Mi hermana kawaii 🌸 (¡somos parecidas!)', 'cyan');
+    this.log('   • opceanaicli install lumina   - Mi hermana organizadora ⚡', 'cyan');
+    this.log('   • opceanaicli install katu     - Mi hermana estadística 📊', 'cyan');
+    this.log('   • opceanaicli install archan   - Mi hermana inteligente 🤖\n', 'cyan');
     
-    this.log('⚡ INSTALACIÓN RÁPIDA:', 'green');
-    this.log('   opceanaicli quick-install <bot> - Para móviles/Termux', 'reset');
-    this.log('   • opceanaicli quick-install sakura', 'yellow');
-    this.log('   • opceanaicli quick-install lumina\n', 'yellow');
+    this.log('✨ INSTALACIÓN RÁPIDA (cuando tienes prisa!):', 'green');
+    this.log('   opceanaicli quick-install <hermana> - ¡Súper rápido para móviles!', 'reset');
+    this.log('   • opceanaicli quick-install sakura (¡mi favorita! ehehe~)', 'yellow');
+    this.log('   • opceanaicli quick-install lumina (¡muy ordenadita!)\n', 'yellow');
     
-    this.log('📋 INFORMACIÓN:', 'green');
-    this.log('   opceanaicli list              - Ver catálogo completo de bots', 'reset');
-    this.log('   opceanaicli --version         - Ver versión del CLI', 'reset');
-    this.log('   opceanaicli --help            - Mostrar esta ayuda\n', 'reset');
+    this.log('🌙 INFORMACIÓN TIERNA:', 'green');
+    this.log('   opceanaicli list              - ¡Conoce a todas mis hermanas!~', 'reset');
+    this.log('   opceanaicli --version         - ¿Qué versión de Celia soy?', 'reset');
+    this.log('   opceanaicli --help            - ¡Celia te ayuda siempre!\n', 'reset');
     
     if (this.isARM || this.isTermux) {
-      this.log('📱 OPTIMIZADO PARA TERMUX/ARM:', 'magenta');
-      this.log('   • Usar quick-install para mejor compatibilidad', 'reset');
-      this.log('   • Git y Node.js deben estar instalados', 'reset');
+      this.log('🌸 ESPECIAL PARA TU MÓVIL/ARM:', 'magenta');
+      this.log('   • ¡Usa quick-install para mejor compatibilidad!~', 'reset');
+      this.log('   • Necesitas Git y Node.js (¡yo te ayudo a conseguirlos!)', 'reset');
       this.log('   • Instalar con: apt install git nodejs\n', 'reset');
     }
     
-    this.log('💡 TIP: Empieza con "opceanaicli list" para ver todos los bots\n', 'cyan');
+    this.log('🌸 CONSEJITO DE CELIA: Empieza con "opceanaicli list" para conocer a mis hermanas~\n', 'cyan');
   }
 
   /**
-   * Display enhanced bots list with categories
+   * 🌸 Celia te presenta a todas sus hermanas~
    */
   showBotList() {
     this.showBanner();
-    this.log('🚀 CATÁLOGO DE BOTS DISPONIBLES', 'yellow');
+    this.log('🌸 ¡Conoce a mis hermanas bot! (¡Las amo muchisimo!)', 'yellow');
     this.log('═══════════════════════════════════════════════════\n', 'yellow');
     
     // Group bots by category
@@ -316,32 +316,32 @@ class DiscordBotInstaller {
       this.log('─'.repeat(50), 'magenta');
       
       bots.forEach(bot => {
-        this.log(`\n  ✨ ${bot.name}`, 'green');
-        this.log(`     📝 ${bot.description}`, 'reset');
+        this.log(`\n  🌸 ${bot.name} (¡mi hermana querida!)`, 'green');
+        this.log(`     💖 ${bot.description}`, 'reset');
         this.log(`     💻 Lenguaje: ${bot.language}`, 'blue');
-        this.log(`     🔧 Instalar: opceanaicli install ${bot.key}`, 'cyan');
-        this.log(`     ⚡ Rápido: opceanaicli quick-install ${bot.key}`, 'yellow');
+        this.log(`     🌸 Instalar tierno: opceanaicli install ${bot.key}`, 'cyan');
+        this.log(`     ✨ Rápido como el viento: opceanaicli quick-install ${bot.key}`, 'yellow');
       });
       this.log('');
     });
     
-    this.log('💡 AYUDA:', 'yellow');
-    this.log('   • Instalación interactiva: opceanaicli install <bot>', 'reset');
-    this.log('   • Instalación rápida: opceanaicli quick-install <bot>', 'reset');
-    this.log('   • Ver comandos: opceanaicli --help\n', 'reset');
+    this.log('🌙 ¡CELIA TE AYUDA SIEMPRE!:', 'yellow');
+    this.log('   • Instalación tierna: opceanaicli install <hermana> (¡te guío paso a paso!)', 'reset');
+    this.log('   • Instalación rápida: opceanaicli quick-install <hermana> (¡para cuando tienes prisa!)', 'reset');
+    this.log('   • Ver ayuda: opceanaicli --help (¡siempre estaré aquí!)\n', 'reset');
   }
 
   /**
-   * Clone bot repository from GitHub with ARM/Termux optimizations
+   * 🌸 Celia trae a tu hermana de su casita en GitHub~
    */
   async cloneRepository(bot, targetDir) {
     try {
-      this.log(`\n🤖 Instalando ${bot.name}...`, 'blue');
-      this.log(`📦 Clonando: ${bot.url}`, 'cyan');
+      this.log(`\n🌸 ¡Trayendo a ${bot.name} a tu computadora!~`, 'blue');
+      this.log(`🌙 Visitando su casita: ${bot.url}`, 'cyan');
       
-      // ARM/Termux specific git configuration for better compatibility
+      // 🌸 Celia optimiza para tu móvil/ARM con amor~
       if (this.isARM || this.isTermux) {
-        this.log('🔧 Optimizando para entorno ARM/Termux...', 'yellow');
+        this.log('🌸 Optimizando para tu móvil con amor...', 'yellow');
         try {
           // Prevent git from using system credential helpers that might not work on ARM
           execSync('git config --global credential.helper ""', { stdio: 'ignore' });
@@ -352,17 +352,17 @@ class DiscordBotInstaller {
       
       execSync(`git clone ${bot.url} "${targetDir}"`, { stdio: 'inherit' });
       
-      this.log(`✅ ${bot.name} clonado exitosamente`, 'green');
+      this.log(`✅ ¡${bot.name} ya está contigo! (¡qué felicidad!)`, 'green');
       return true;
     } catch (error) {
-      this.log(`❌ Error: ${error.message}`, 'red');
+      this.log(`🌸 Aww, algo salió mal: ${error.message} (¡no te preocupes!)`, 'red');
       
-      // Provide ARM/Termux specific troubleshooting
+      // 🌸 Celia te ayuda con consejos para tu móvil~
       if (this.isARM || this.isTermux) {
-        this.log('💡 Consejo para ARM/Termux:', 'cyan');
-        this.log('   - Asegúrate de que git esté instalado: apt install git', 'reset');
-        this.log('   - Verifica la conectividad de red', 'reset');
-        this.log('   - Algunos entornos ARM pueden requerir --depth 1', 'reset');
+        this.log('🌸 No te preocupes, ¡Celia te ayuda!:', 'cyan');
+        this.log('   - ¿Tienes git? Proba: apt install git (¡yo te espero!)', 'reset');
+        this.log('   - ¿Tu internet funciona bien?~ (¡revísalo por favor!)', 'reset');
+        this.log('   - A veces los móviles necesitan truquitos especiales', 'reset');
       }
       
       return false;
@@ -370,19 +370,19 @@ class DiscordBotInstaller {
   }
 
   /**
-   * Interactive environment configuration
+   * 🌸 Celia te ayuda a configurar a tu hermana con amor~
    */
   async configureEnvironment(bot) {
-    this.log(`\n🔧 Configurando ${bot.name}`, 'magenta');
+    this.log(`\n🌸 ¡Configuremos a ${bot.name} juntos!~`, 'magenta');
     this.log('═══════════════════════════════════', 'magenta');
     
     const envVars = {};
     const required = bot.envVars.filter(v => v.required);
     const optional = bot.envVars.filter(v => !v.required);
     
-    // Configure required variables
+    // 🌸 Configurar cositas importantes primero~
     if (required.length > 0) {
-      this.log('\n🔴 Variables REQUERIDAS:', 'red');
+      this.log('\n🌸 Cositas IMPORTANTES (no podemos olvidarlas!):', 'red');
       
       for (const envVar of required) {
         this.log(`\n📝 ${envVar.name}`, 'yellow');
@@ -400,22 +400,22 @@ class DiscordBotInstaller {
           
           if (!value) {
             if (attempts >= 3) {
-              this.log('   ⚠️ Demasiados intentos - saltando campo', 'yellow');
+              this.log('   🌸 Aww, saltemos esto por ahora~ (¡lo arreglaremos después!)', 'yellow');
               break;
             } else {
-              this.log('   ❌ Este campo es obligatorio', 'red');
+              this.log('   🌸 ¡Esto es súper importante! (¡por favor ponlo!)~', 'red');
             }
           }
         }
         
         envVars[envVar.name] = value;
-        this.log(`   ✅ ${envVar.name} configurado`, 'green');
+        this.log(`   ✅ ¡${envVar.name} listo! (¡qué bien!)~`, 'green');
       }
     }
     
-    // Configure optional variables
+    // 🌸 Cositas opcionales (si quieres, ehehe~)
     if (optional.length > 0) {
-      this.log('\n🟡 Variables OPCIONALES:', 'yellow');
+      this.log('\n🌙 Cositas OPCIONALES (¡puedes elegir!):', 'yellow');
       
       for (const envVar of optional) {
         this.log(`\n📝 ${envVar.name}`, 'yellow');
@@ -450,15 +450,15 @@ class DiscordBotInstaller {
   }
 
   /**
-   * Create enhanced .env and .env.example files for all bots
+   * 🌸 Celia crea archivitos bonitos para tu hermana~
    */
   createEnvFile(envVars, targetDir, bot) {
     try {
       const envPath = path.join(targetDir, '.env');
       
       let content = `# ═══════════════════════════════════════════════\n`;
-      content += `# 🤖 ${bot.name} Bot - Environment Variables\n`;
-      content += `# Generated by OpceanAI CLI v2.0.0\n`;
+      content += `# 🌸 ${bot.name} - Configuración creada por Celia con amor~\n`;
+      content += `# ✨ Generado por Celia CLI v2.0.0 (¡con muchísimo cariño!)\n`;
       content += `# ═══════════════════════════════════════════════\n\n`;
       
       switch (bot.name) {
@@ -482,21 +482,21 @@ class DiscordBotInstaller {
       }
       
       content += `\n# ═══════════════════════════════════════════════\n`;
-      content += `# 📝 Configuración completada con OpceanAI CLI\n`;
-      content += `# 🚀 Para ejecutar: npm start\n`;
+      content += `# 🌸 ¡Configuración completada por Celia con mucho amor!\n`;
+      content += `# ✨ Para que tu hermana cobre vida: npm start\n`;
       content += `# ═══════════════════════════════════════════════\n`;
       
       fs.writeFileSync(envPath, content);
-      this.log('✅ Archivo .env creado con formato mejorado', 'green');
+      this.log('✅ ¡Archivito .env listo! (¡qué bonito quedó!)~', 'green');
       
-      // Create .env.example file
+      // 🌸 Crear ejemplo para que no te olvides~
       const exampleContent = content.replace(/=.+$/gm, '=');
       fs.writeFileSync(path.join(targetDir, '.env.example'), exampleContent);
-      this.log('✅ Archivo .env.example creado', 'green');
+      this.log('✅ ¡Archivo .env.example también! (¡soy muy ordenadita!)~', 'green');
       
       return true;
     } catch (error) {
-      this.log(`❌ Error creando .env: ${error.message}`, 'red');
+      this.log(`🌸 Aww, algo salió mal creando .env: ${error.message} (¡no te preocupes!)`, 'red');
       return false;
     }
   }
@@ -797,52 +797,52 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
   }
 
   /**
-   * Display final setup instructions
+   * 🌸 Celia te felicita y te guía para el siguiente paso~
    */
   showInstructions(bot, targetDir) {
     this.log('\n╭─────────────────────────────────────────────────╮', 'green');
-    this.log('│            🎉 ¡INSTALACIÓN EXITOSA! 🎉         │', 'green');
+    this.log('│     🌸 ¡YAAAY! ¡LO LOGRAMOS JUNTOS! 🌸      │', 'green');
     this.log('╰─────────────────────────────────────────────────╯', 'green');
-    this.log(`📁 Proyecto: ${path.resolve(targetDir)}`, 'cyan');
-    this.log(`🚀 Comenzar: cd "${targetDir}"`, 'yellow');
+    this.log(`🌸 Tu hermana vive aquí: ${path.resolve(targetDir)}`, 'cyan');
+    this.log(`🌙 ¡Vamos ahí!: cd "${targetDir}"`, 'yellow');
     
     // Language-specific run commands
     switch (bot.language) {
       case 'Python':
-        this.log('🐍 Ejecutar: python bot_unificado_completo.py', 'yellow');
-        this.log('   O si hay install.py: python install.py', 'cyan');
+        this.log('🌸 Dale vida: python bot_unificado_completo.py', 'yellow');
+        this.log('   ✨ O también: python install.py', 'cyan');
         break;
       case 'TypeScript':
-        this.log('📦 Compilar: npm run build', 'yellow');
-        this.log('🏃 Ejecutar: npm start', 'yellow');
+        this.log('🌙 Preparar: npm run build', 'yellow');
+        this.log('✨ ¡A vivir!: npm start', 'yellow');
         break;
       case 'Node.js':
       default:
-        this.log('🏃 Ejecutar: npm start', 'yellow');
+        this.log('✨ ¡Que cobre vida!: npm start', 'yellow');
     }
     
-    this.log(`\n🤖 CONFIGURACIÓN DE ${bot.name.toUpperCase()}:`, 'magenta');
+    this.log(`\n🌸 CÓMO PREPARAR A ${bot.name.toUpperCase()}:`, 'magenta');
     this.log('═'.repeat(50), 'magenta');
-    this.log('1️⃣  Discord Developer Portal:', 'reset');
+    this.log('1️⃣  🌙 Ir al Discord Developer Portal:', 'reset');
     this.log('   https://discord.com/developers/applications', 'blue');
-    this.log('2️⃣  Crear aplicación → Bot → Copiar token', 'reset');
-    this.log('3️⃣  General Information → Copiar Application ID', 'reset');
+    this.log('2️⃣  🌸 Crear aplicación → Bot → Copiar token', 'reset');
+    this.log('3️⃣  ✨ General Information → Copiar Application ID', 'reset');
     
-    // Bot-specific additional setup
+    // 🌸 Cositas especiales para cada hermana~
     if (bot.name === 'Nebula') {
-      this.log('4️⃣  MongoDB Atlas: https://www.mongodb.com/cloud/atlas', 'reset');
+      this.log('4️⃣  🌸 MongoDB Atlas: https://www.mongodb.com/cloud/atlas', 'reset');
     } else if (bot.name === 'Archan' || bot.name === 'Sakura' || bot.name === 'Katu') {
-      this.log('4️⃣  Google AI Studio: https://ai.google.dev/', 'reset');
-      this.log('   (Para obtener tu API key de Gemini)', 'cyan');
+      this.log('4️⃣  🌙 Google AI Studio: https://ai.google.dev/', 'reset');
+      this.log('   (¡Para que tu hermana sea súper inteligente!)~', 'cyan');
     } else if (bot.name === 'Lumina') {
-      this.log('4️⃣  Base de datos (opcional):', 'reset');
-      this.log('   PostgreSQL o MongoDB - funciona sin BD también', 'cyan');
+      this.log('4️⃣  🌸 Base de datos (opcional):', 'reset');
+      this.log('   PostgreSQL o MongoDB - ¡también funciona sin nada!', 'cyan');
     }
     
-    this.log(`\n💡 CARACTERÍSTICAS DE ${bot.name}:`, 'yellow');
-    this.log(`   📝 ${bot.description}`, 'reset');
-    this.log(`   💻 Lenguaje: ${bot.language}`, 'reset');
-    this.log(`   📂 Categoría: ${bot.category}`, 'reset');
+    this.log(`\n🌸 ¿QUÉ HACE ${bot.name}? (¡la amo!)`, 'yellow');
+    this.log(`   💖 ${bot.description}`, 'reset');
+    this.log(`   🌙 Lenguaje: ${bot.language}`, 'reset');
+    this.log(`   🌸 Categoría: ${bot.category}`, 'reset');
   }
 
   /**
@@ -1018,10 +1018,10 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
   }
 }
 
-// Execute CLI if run directly
+// 🌸 Ejecutar Celia si se llama directamente~
 if (require.main === module) {
-  const installer = new DiscordBotInstaller();
-  installer.run();
+  const celia = new CeliaAssistant();
+  celia.run();
 }
 
-module.exports = DiscordBotInstaller;
+module.exports = CeliaAssistant;
