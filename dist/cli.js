@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 'use strict';
 
 var __defProp = Object.defineProperty;
@@ -79,7 +80,7 @@ var require_constants = __commonJS({
 var require_themes = __commonJS({
   "src/config/themes.js"(exports, module) {
     init_cjs_shims();
-    var THEMES2 = {
+    var THEMES = {
       celestial: {
         primary: "\x1B[38;5;147m",
         // Light purple
@@ -151,7 +152,7 @@ var require_themes = __commonJS({
       }
     };
     module.exports = {
-      THEMES: THEMES2,
+      THEMES,
       DEFAULT_THEME: "celestial"
     };
   }
@@ -161,7 +162,7 @@ var require_themes = __commonJS({
 var require_bots = __commonJS({
   "src/config/bots.js"(exports, module) {
     init_cjs_shims();
-    var BOTS2 = {
+    var BOTS = {
       nebula: {
         name: "Nebula",
         url: "https://github.com/OpceanAI/Nebula-Open-source",
@@ -236,7 +237,7 @@ var require_bots = __commonJS({
       }
     };
     module.exports = {
-      BOTS: BOTS2
+      BOTS
     };
   }
 });
@@ -245,7 +246,7 @@ var require_bots = __commonJS({
 var require_logger = __commonJS({
   "src/utils/logger.js"(exports, module) {
     init_cjs_shims();
-    var { THEMES: THEMES2, DEFAULT_THEME } = require_themes();
+    var { THEMES, DEFAULT_THEME } = require_themes();
     var _Logger = class _Logger {
       constructor(theme = DEFAULT_THEME) {
         this.theme = theme;
@@ -254,7 +255,7 @@ var require_logger = __commonJS({
        * Set current theme
        */
       setTheme(theme) {
-        if (THEMES2[theme]) {
+        if (THEMES[theme]) {
           this.theme = theme;
         }
       }
@@ -262,7 +263,7 @@ var require_logger = __commonJS({
        * Get current theme colors
        */
       getTheme() {
-        return THEMES2[this.theme];
+        return THEMES[this.theme];
       }
       /**
        * 🌙 Celia's beautiful theming system~
@@ -417,8 +418,8 @@ var require_logger = __commonJS({
       }
     };
     __name(_Logger, "Logger");
-    var Logger2 = _Logger;
-    module.exports = Logger2;
+    var Logger = _Logger;
+    module.exports = Logger;
   }
 });
 
@@ -636,8 +637,8 @@ var require_system = __commonJS({
       }
     };
     __name(_SystemDetector, "SystemDetector");
-    var SystemDetector2 = _SystemDetector;
-    module.exports = SystemDetector2;
+    var SystemDetector = _SystemDetector;
+    module.exports = SystemDetector;
   }
 });
 
@@ -813,8 +814,8 @@ var require_security = __commonJS({
       }
     };
     __name(_SecurityUtils, "SecurityUtils");
-    var SecurityUtils2 = _SecurityUtils;
-    module.exports = SecurityUtils2;
+    var SecurityUtils = _SecurityUtils;
+    module.exports = SecurityUtils;
   }
 });
 
@@ -923,8 +924,8 @@ var require_prompt = __commonJS({
       }
     };
     __name(_PromptUtils, "PromptUtils");
-    var PromptUtils2 = _PromptUtils;
-    module.exports = PromptUtils2;
+    var PromptUtils = _PromptUtils;
+    module.exports = PromptUtils;
   }
 });
 
@@ -1006,8 +1007,8 @@ var require_router = __commonJS({
       }
     };
     __name(_CommandRouter, "CommandRouter");
-    var CommandRouter2 = _CommandRouter;
-    module.exports = CommandRouter2;
+    var CommandRouter = _CommandRouter;
+    module.exports = CommandRouter;
   }
 });
 
@@ -1015,7 +1016,7 @@ var require_router = __commonJS({
 var require_list = __commonJS({
   "src/cli/commands/list.js"(exports, module) {
     init_cjs_shims();
-    var { BOTS: BOTS2 } = require_bots();
+    var { BOTS } = require_bots();
     var _ListCommand = class _ListCommand {
       constructor(logger) {
         this.logger = logger;
@@ -1025,7 +1026,7 @@ var require_list = __commonJS({
         this.logger.gradientLog("\u{1F338} \xA1Mis Hermanas Bot! \u{1F338}", ["primary", "secondary", "accent"]);
         console.log("");
         const categories = {};
-        Object.entries(BOTS2).forEach(([key, bot]) => {
+        Object.entries(BOTS).forEach(([key, bot]) => {
           if (!categories[bot.category]) {
             categories[bot.category] = [];
           }
@@ -1151,7 +1152,7 @@ var require_help = __commonJS({
 var require_theme = __commonJS({
   "src/cli/commands/theme.js"(exports, module) {
     init_cjs_shims();
-    var { THEMES: THEMES2 } = require_themes();
+    var { THEMES } = require_themes();
     var _ThemeCommand = class _ThemeCommand {
       constructor(logger) {
         this.logger = logger;
@@ -1162,8 +1163,8 @@ var require_theme = __commonJS({
           this.showAvailableThemes();
           return;
         }
-        if (!THEMES2[themeName]) {
-          this.logger.log(`\u{1F338} Tema "${themeName}" no existe~ Temas disponibles: ${Object.keys(THEMES2).join(", ")}`, "error");
+        if (!THEMES[themeName]) {
+          this.logger.log(`\u{1F338} Tema "${themeName}" no existe~ Temas disponibles: ${Object.keys(THEMES).join(", ")}`, "error");
           return;
         }
         await this.logger.showLoading(`\u{1F3A8} Cambiando a tema ${themeName}`, 1500);
@@ -1180,7 +1181,7 @@ var require_theme = __commonJS({
         this.showBanner();
         this.logger.log("\u{1F3A8} Temas disponibles:", "primary");
         console.log("");
-        Object.keys(THEMES2).forEach((theme) => {
+        Object.keys(THEMES).forEach((theme) => {
           const isActive = theme === this.logger.theme;
           const indicator = isActive ? "\u25CF " : "\u25CB ";
           this.logger.log(`${indicator}${theme}`, isActive ? "accent" : "dim");
@@ -1266,24 +1267,24 @@ var require_status = __commonJS({
 var require_celia = __commonJS({
   "src/cli/celia.js"(exports, module) {
     init_cjs_shims();
-    var { VERSION: VERSION2, NODE_MIN_VERSION: NODE_MIN_VERSION2 } = require_constants();
-    var { THEMES: THEMES2 } = require_themes();
-    var { BOTS: BOTS2 } = require_bots();
-    var Logger2 = require_logger();
-    var SystemDetector2 = require_system();
-    var SecurityUtils2 = require_security();
-    var PromptUtils2 = require_prompt();
-    var CommandRouter2 = require_router();
+    var { VERSION, NODE_MIN_VERSION } = require_constants();
+    var { THEMES } = require_themes();
+    var { BOTS } = require_bots();
+    var Logger = require_logger();
+    var SystemDetector = require_system();
+    var SecurityUtils = require_security();
+    var PromptUtils = require_prompt();
+    var CommandRouter = require_router();
     var ListCommand = require_list();
     var HelpCommand = require_help();
     var ThemeCommand = require_theme();
     var StatusCommand = require_status();
     var _CeliaAssistant = class _CeliaAssistant {
       constructor() {
-        this.logger = new Logger2();
-        this.system = new SystemDetector2();
-        this.prompt = new PromptUtils2();
-        this.router = new CommandRouter2();
+        this.logger = new Logger();
+        this.system = new SystemDetector();
+        this.prompt = new PromptUtils();
+        this.router = new CommandRouter();
         this.interactive = false;
         this.initializeCommands();
       }
@@ -1291,15 +1292,15 @@ var require_celia = __commonJS({
        * 🛡️ Verificar prerrequisitos críticos
        */
       static checkCriticalPrerequisites() {
-        if (!SecurityUtils2.validateNodeVersion(NODE_MIN_VERSION2)) {
-          throw new Error(`Versi\xF3n de Node.js muy antigua. Se requiere >= ${NODE_MIN_VERSION2}. Versi\xF3n actual: ${process.version}`);
+        if (!SecurityUtils.validateNodeVersion(NODE_MIN_VERSION)) {
+          throw new Error(`Versi\xF3n de Node.js muy antigua. Se requiere >= ${NODE_MIN_VERSION}. Versi\xF3n actual: ${process.version}`);
         }
       }
       /**
        * 🛡️ Mostrar estado de prerrequisitos
        */
       showPrerequisiteStatus() {
-        const missing = SecurityUtils2.checkPrerequisites();
+        const missing = SecurityUtils.checkPrerequisites();
         if (missing.length > 0) {
           this.logger.log("\n\u26A0\uFE0F  Prerrequisitos faltantes:", "warning");
           missing.forEach((cmd) => {
@@ -1393,7 +1394,7 @@ var require_celia = __commonJS({
        */
       showVersion() {
         this.showBanner();
-        this.logger.gradientLog(`Celia v${VERSION2} \u{1F496}`, ["primary", "secondary"]);
+        this.logger.gradientLog(`Celia v${VERSION} \u{1F496}`, ["primary", "secondary"]);
         console.log("");
         this.logger.log("Tu asistente celestial tierna~", "dim");
         this.showPrerequisiteStatus();
@@ -1479,282 +1480,44 @@ var require_celia = __commonJS({
       }
     };
     __name(_CeliaAssistant, "CeliaAssistant");
-    var CeliaAssistant2 = _CeliaAssistant;
-    module.exports = CeliaAssistant2;
+    var CeliaAssistant = _CeliaAssistant;
+    module.exports = CeliaAssistant;
   }
 });
 
-// src/utils/fs.js
-var require_fs = __commonJS({
-  "src/utils/fs.js"(exports, module) {
+// src/bin/cli.ts
+var require_cli = __commonJS({
+  "src/bin/cli.ts"(exports, module) {
     init_cjs_shims();
-    var fs = __require("fs");
-    var path = __require("path");
-    var _FileSystemUtils = class _FileSystemUtils {
-      /**
-       * Cross-platform directory removal with ARM/Termux compatibility
-       */
-      static removeDirectory(dirPath, system = null) {
-        if (!fs.existsSync(dirPath)) return;
-        try {
-          if (fs.rmSync) {
-            fs.rmSync(dirPath, { recursive: true, force: true });
-          } else {
-            _FileSystemUtils.removeDirectoryRecursive(dirPath);
-          }
-        } catch (error) {
-          if (system) {
-            _FileSystemUtils.removeDirectoryWithSystem(dirPath, system);
-          } else {
-            throw error;
-          }
-        }
+    var CeliaAssistant = require_celia();
+    async function main() {
+      try {
+        CeliaAssistant.checkCriticalPrerequisites();
+        const celia = new CeliaAssistant();
+        await celia.run();
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Unknown error";
+        console.error("\u{1F338} Fatal error:", message);
+        process.exit(1);
       }
-      /**
-       * Recursive directory removal fallback
-       */
-      static removeDirectoryRecursive(dirPath) {
-        if (!fs.existsSync(dirPath)) return;
-        const files = fs.readdirSync(dirPath);
-        files.forEach((file) => {
-          const filePath = path.join(dirPath, file);
-          const stat = fs.statSync(filePath);
-          if (stat.isDirectory()) {
-            _FileSystemUtils.removeDirectoryRecursive(filePath);
-          } else {
-            fs.unlinkSync(filePath);
-          }
-        });
-        fs.rmdirSync(dirPath);
-      }
-      /**
-       * System-specific directory removal
-       */
-      static removeDirectoryWithSystem(dirPath, system) {
-        const SecurityUtils2 = require_security();
-        try {
-          if (system.platform.isWindows) {
-            SecurityUtils2.execSafe("rmdir", ["/s", "/q", dirPath]);
-          } else if (system.isTermux) {
-            try {
-              SecurityUtils2.execSafe("rm", ["-rf", dirPath]);
-            } catch (termuxError) {
-              SecurityUtils2.execSafe("rm", ["-r", dirPath]);
-            }
-          } else {
-            SecurityUtils2.execSafe("rm", ["-rf", dirPath]);
-          }
-        } catch (cmdError) {
-          if (system.isARM || system.isTermux || system.isEmbedded) {
-            console.log("\u26A0\uFE0F  Usando eliminaci\xF3n manual en entorno embebido/m\xF3vil");
-            _FileSystemUtils.removeDirectoryRecursive(dirPath);
-          } else {
-            throw cmdError;
-          }
-        }
-      }
-      /**
-       * Create directory with error handling
-       */
-      static ensureDirectory(dirPath) {
-        try {
-          if (!fs.existsSync(dirPath)) {
-            fs.mkdirSync(dirPath, { recursive: true });
-          }
-          return true;
-        } catch (error) {
-          return false;
-        }
-      }
-      /**
-       * Copy file with error handling
-       */
-      static copyFile(src, dest) {
-        try {
-          fs.copyFileSync(src, dest);
-          return true;
-        } catch (error) {
-          return false;
-        }
-      }
-      /**
-       * Read file safely
-       */
-      static readFile(filePath, encoding = "utf8") {
-        try {
-          return fs.readFileSync(filePath, encoding);
-        } catch (error) {
-          return null;
-        }
-      }
-      /**
-       * Write file safely
-       */
-      static writeFile(filePath, content, encoding = "utf8") {
-        try {
-          fs.writeFileSync(filePath, content, encoding);
-          return true;
-        } catch (error) {
-          return false;
-        }
-      }
-      /**
-       * Check if file exists and is readable
-       */
-      static isReadable(filePath) {
-        try {
-          fs.accessSync(filePath, fs.constants.R_OK);
-          return true;
-        } catch (error) {
-          return false;
-        }
-      }
-      /**
-       * Check if file exists and is writable
-       */
-      static isWritable(filePath) {
-        try {
-          fs.accessSync(filePath, fs.constants.W_OK);
-          return true;
-        } catch (error) {
-          return false;
-        }
-      }
-      /**
-       * Get file stats safely
-       */
-      static getStats(filePath) {
-        try {
-          return fs.statSync(filePath);
-        } catch (error) {
-          return null;
-        }
-      }
-    };
-    __name(_FileSystemUtils, "FileSystemUtils");
-    var FileSystemUtils2 = _FileSystemUtils;
-    module.exports = FileSystemUtils2;
+    }
+    __name(main, "main");
+    process.on("SIGINT", () => {
+      console.log("\n\u{1F338} \xA1Hasta luego! \xA1Que tengas un d\xEDa celestial!~");
+      process.exit(0);
+    });
+    process.on("SIGTERM", () => {
+      console.log("\n\u{1F338} \xA1Hasta luego! \xA1Que tengas un d\xEDa celestial!~");
+      process.exit(0);
+    });
+    if (__require.main === module) {
+      main();
+    }
+    module.exports = main;
   }
 });
+var cli = require_cli();
 
-// package.json
-var require_package = __commonJS({
-  "package.json"(exports, module) {
-    module.exports = {
-      name: "opceanaicli",
-      version: "2.0.0",
-      description: "\xA1Holi! Soy Celia, tu asistente celestial tierna que te ayuda a instalar y cuidar de mis hermanas bot de Discord~ \u2728",
-      main: "dist/index.js",
-      bin: {
-        opceanaicli: "./dist/cli.js",
-        celia: "./dist/cli.js"
-      },
-      scripts: {
-        start: "node dist/cli.js",
-        dev: "tsup --watch",
-        build: "tsup",
-        "build:check": "tsc --noEmit",
-        clean: "rm -rf dist",
-        prepublishOnly: "npm run clean && npm run build",
-        test: "node test/security.test.js && node test/logger.test.js && node test/system.test.js && node test/fs.test.js",
-        "test:security": "node test/security.test.js",
-        "test:logger": "node test/logger.test.js",
-        "test:system": "node test/system.test.js",
-        "test:fs": "node test/fs.test.js",
-        "test:all": "npm test",
-        "test:build": "npm run build && node dist/cli.js --version",
-        version: "node dist/cli.js --version",
-        help: "node dist/cli.js --help",
-        lint: "tsc --noEmit",
-        typecheck: "tsc --noEmit"
-      },
-      keywords: [
-        "discord",
-        "bot",
-        "installer",
-        "cli",
-        "opceanai",
-        "nebula",
-        "archan",
-        "sakura",
-        "lumina",
-        "katu",
-        "termux",
-        "arm",
-        "typescript",
-        "modular"
-      ],
-      author: {
-        name: "guita",
-        email: "guita@example.com",
-        url: "https://github.com/aguitauwu"
-      },
-      license: "MIT",
-      engines: {
-        node: ">=14.0.0"
-      },
-      os: [
-        "win32",
-        "linux",
-        "darwin",
-        "android"
-      ],
-      cpu: [
-        "x64",
-        "ia32",
-        "arm",
-        "arm64",
-        "armv7l",
-        "aarch64"
-      ],
-      preferGlobal: true,
-      files: [
-        "dist/",
-        "README.md",
-        "LICENSE"
-      ],
-      repository: {
-        type: "git",
-        url: "https://github.com/aguitauwu/npm-OpceanAI.git"
-      },
-      bugs: {
-        url: "https://github.com/aguitauwu/npm-OpceanAI/issues"
-      },
-      homepage: "https://github.com/aguitauwu/npm-OpceanAI#readme",
-      dependencies: {
-        "@types/node": "^24.5.2",
-        tsup: "^8.5.0",
-        typescript: "^5.9.2"
-      }
-    };
-  }
-});
-
-// src/index.ts
-init_cjs_shims();
-var CeliaAssistant = require_celia();
-var SecurityUtils = require_security();
-var Logger = require_logger();
-var SystemDetector = require_system();
-var CommandRouter = require_router();
-var { THEMES } = require_themes();
-var { BOTS } = require_bots();
-var { VERSION, NODE_MIN_VERSION } = require_constants();
-var FileSystemUtils = require_fs();
-var PromptUtils = require_prompt();
-var version = require_package().version;
-
-exports.BOTS = BOTS;
-exports.CeliaAssistant = CeliaAssistant;
-exports.CommandRouter = CommandRouter;
-exports.FileSystemUtils = FileSystemUtils;
-exports.Logger = Logger;
-exports.NODE_MIN_VERSION = NODE_MIN_VERSION;
-exports.PromptUtils = PromptUtils;
-exports.SecurityUtils = SecurityUtils;
-exports.SystemDetector = SystemDetector;
-exports.THEMES = THEMES;
-exports.VERSION = VERSION;
-exports.version = version;
-//# sourceMappingURL=index.js.map
-//# sourceMappingURL=index.js.map
+module.exports = cli;
+//# sourceMappingURL=cli.js.map
+//# sourceMappingURL=cli.js.map

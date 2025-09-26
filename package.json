@@ -2,13 +2,13 @@
   "name": "opceanaicli",
   "version": "2.0.0",
   "description": "¡Holi! Soy Celia, tu asistente celestial tierna que te ayuda a instalar y cuidar de mis hermanas bot de Discord~ ✨",
-  "main": "src/cli/celia.js",
+  "main": "dist/index.js",
   "bin": {
-    "opceanaicli": "./src/bin/cli.ts",
-    "celia": "./src/bin/cli.ts"
+    "opceanaicli": "./dist/cli.js",
+    "celia": "./dist/cli.js"
   },
   "scripts": {
-    "start": "node src/bin/cli.js",
+    "start": "node dist/cli.js",
     "dev": "tsup --watch",
     "build": "tsup",
     "build:check": "tsc --noEmit",
@@ -21,8 +21,8 @@
     "test:fs": "node test/fs.test.js",
     "test:all": "npm test",
     "test:build": "npm run build && node dist/cli.js --version",
-    "version": "node src/bin/cli.js --version",
-    "help": "node src/bin/cli.js --help",
+    "version": "node dist/cli.js --version",
+    "help": "node dist/cli.js --help",
     "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit"
   },
@@ -67,7 +67,7 @@
   ],
   "preferGlobal": true,
   "files": [
-    "src/",
+    "dist/",
     "README.md",
     "LICENSE"
   ],
@@ -79,7 +79,7 @@
     "url": "https://github.com/aguitauwu/npm-OpceanAI/issues"
   },
   "homepage": "https://github.com/aguitauwu/npm-OpceanAI#readme",
-  "dependencies": {
+  "devDependencies": {
     "@types/node": "^24.5.2",
     "tsup": "^8.5.0",
     "typescript": "^5.9.2"

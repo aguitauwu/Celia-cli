@@ -1,43 +1,41 @@
 /**
- * 🌸 Command interface definition for Celia CLI
+ * 🌸 Command Type Definitions for Celia CLI
  */
 
+/**
+ * Command arguments interface
+ */
 export interface ICommandArgs {
   [key: string]: string | number | boolean | undefined;
 }
 
+/**
+ * Base command interface  
+ */
 export interface ICommand {
-  /**
-   * Execute the command with given arguments
-   */
-  execute(args: string[]): Promise<void> | void;
-  
-  /**
-   * Optional: Get command description for help
-   */
-  getDescription?(): string;
-  
-  /**
-   * Optional: Get command usage information
-   */
-  getUsage?(): string;
-  
-  /**
-   * Optional: Get command aliases
-   */
-  getAliases?(): string[];
+  name: string;
+  config: ICommandDefinition;
 }
 
+/**
+ * Command definition interface
+ */
 export interface ICommandDefinition {
-  aliases: string[];
-  description: string;
-  usage: string;
-  action: (args: string[]) => Promise<void> | void;
+  aliases?: string[];
+  description?: string;
+  usage?: string;
+  action: (args?: string[]) => Promise<void> | void;
 }
 
+/**
+ * Command router interface
+ */
 export interface ICommandRouter {
-  register(name: string, definition: ICommandDefinition): void;
-  execute(command: string, args: string[]): Promise<void>;
+  commands: Map<string, ICommandDefinition>;
+  register(name: string, config: ICommandDefinition): void;
+  getCommand(name: string): ICommand | null;
+  execute(commandName: string, args?: string[]): Promise<void>;
   getCommands(): Map<string, ICommandDefinition>;
-  hasCommand(command: string): boolean;
+  getSuggestions(input: string): string[];
+  hasCommand(name: string): boolean;
 }
