@@ -126,6 +126,114 @@ const BOTS = {
       { name: 'MONGODB_URI', description: 'MongoDB Connection URI (recomendado)', required: false, sensitive: true },
       { name: 'DATABASE_URL', description: 'PostgreSQL Database URL (alternativo)', required: false, sensitive: true }
     ]
+  },
+  aurora: {
+    name: 'Aurora',
+    url: 'https://github.com/OpceanAI/Aurora-Bot',
+    description: 'Mi hermana artística~ ¡Genera imágenes preciosas con IA y hace arte digital!',
+    language: 'Python',
+    category: '🎨 Arte Digital & IA',
+    envVars: [
+      { name: 'BOT_TOKEN', description: 'Discord Bot Token', required: true, sensitive: true },
+      { name: 'CLIENT_ID', description: 'Discord Client ID', required: true, sensitive: false },
+      { name: 'OPENAI_API_KEY', description: 'OpenAI API Key para DALL-E', required: true, sensitive: true },
+      { name: 'STABILITY_API_KEY', description: 'Stability AI API Key', required: false, sensitive: true },
+      { name: 'MIDJOURNEY_TOKEN', description: 'MidJourney Bot Token', required: false, sensitive: true },
+      { name: 'CLOUDINARY_URL', description: 'Cloudinary Storage URL', required: false, sensitive: true }
+    ]
+  },
+  cosmos: {
+    name: 'Cosmos',
+    url: 'https://github.com/OpceanAI/Cosmos-Bot',
+    description: 'Mi hermana espacial~ ¡Administra múltiples servidores como el universo!',
+    language: 'Go',
+    category: '🌌 Multi-Servidor & Administración',
+    envVars: [
+      { name: 'MAIN_BOT_TOKEN', description: 'Token Principal del Bot', required: true, sensitive: true },
+      { name: 'CLUSTER_ID', description: 'ID del Cluster de Servidores', required: true, sensitive: false },
+      { name: 'REDIS_URL', description: 'Redis Database URL', required: true, sensitive: true },
+      { name: 'POSTGRESQL_MAIN', description: 'PostgreSQL Principal URL', required: true, sensitive: true },
+      { name: 'WEBHOOK_SECRET', description: 'Webhook Secret Key', required: false, sensitive: true },
+      { name: 'ADMIN_GUILD_ID', description: 'ID del Servidor de Administración', required: false, sensitive: false }
+    ]
+  },
+  stella: {
+    name: 'Stella',
+    url: 'https://github.com/OpceanAI/Stella-Education-Bot',
+    description: 'Mi hermana educativa~ ¡Enseña idiomas y hace exámenes interactivos!',
+    language: 'Python',
+    category: '📚 Educación & Aprendizaje',
+    envVars: [
+      { name: 'BOT_TOKEN', description: 'Discord Bot Token', required: true, sensitive: true },
+      { name: 'CLIENT_ID', description: 'Discord Client ID', required: true, sensitive: false },
+      { name: 'OPENAI_API_KEY', description: 'OpenAI API Key', required: true, sensitive: true },
+      { name: 'MONGODB_EDUCATION', description: 'MongoDB para datos educativos', required: true, sensitive: true },
+      { name: 'DEEPL_API_KEY', description: 'DeepL Translation API', required: false, sensitive: true },
+      { name: 'QUIZ_API_KEY', description: 'Quiz Database API Key', required: false, sensitive: true }
+    ]
+  },
+  nova: {
+    name: 'Nova',
+    url: 'https://github.com/OpceanAI/Nova-Gaming-Bot',
+    description: 'Mi hermana gamer~ ¡Organiza torneos y conecta con APIs de videojuegos!',
+    language: 'TypeScript',
+    category: '🎮 Gaming & Entretenimiento',
+    envVars: [
+      { name: 'DISCORD_TOKEN', description: 'Discord Bot Token', required: true, sensitive: true },
+      { name: 'CLIENT_ID', description: 'Discord Application ID', required: true, sensitive: false },
+      { name: 'STEAM_API_KEY', description: 'Steam Web API Key', required: false, sensitive: true },
+      { name: 'RIOT_API_KEY', description: 'Riot Games API Key', required: false, sensitive: true },
+      { name: 'TWITCH_CLIENT_ID', description: 'Twitch Client ID', required: false, sensitive: true },
+      { name: 'TWITCH_CLIENT_SECRET', description: 'Twitch Client Secret', required: false, sensitive: true },
+      { name: 'DATABASE_GAMING', description: 'Gaming Database URL', required: true, sensitive: true }
+    ]
+  },
+  vega: {
+    name: 'Vega',
+    url: 'https://github.com/OpceanAI/Vega-Economy-Bot',
+    description: 'Mi hermana financiera~ ¡Maneja economía virtual y criptomonedas!',
+    language: 'Rust',
+    category: '💰 Economía & Finanzas',
+    envVars: [
+      { name: 'BOT_TOKEN', description: 'Discord Bot Token', required: true, sensitive: true },
+      { name: 'APPLICATION_ID', description: 'Discord Application ID', required: true, sensitive: false },
+      { name: 'DATABASE_ECONOMY', description: 'Economy Database URL', required: true, sensitive: true },
+      { name: 'COINAPI_KEY', description: 'CoinAPI Key para precios crypto', required: false, sensitive: true },
+      { name: 'PAYPAL_CLIENT_ID', description: 'PayPal Client ID', required: false, sensitive: true },
+      { name: 'STRIPE_SECRET_KEY', description: 'Stripe Secret Key', required: false, sensitive: true },
+      { name: 'REDIS_CACHE', description: 'Redis Cache URL', required: false, sensitive: true }
+    ]
+  },
+  lyra: {
+    name: 'Lyra',
+    url: 'https://github.com/OpceanAI/Lyra-Voice-Bot',
+    description: 'Mi hermana vocal~ ¡Clona voces y hace síntesis de voz súper realista!',
+    language: 'Python',
+    category: '🎤 Síntesis de Voz & Audio',
+    envVars: [
+      { name: 'BOT_TOKEN', description: 'Discord Bot Token', required: true, sensitive: true },
+      { name: 'CLIENT_ID', description: 'Discord Client ID', required: true, sensitive: false },
+      { name: 'ELEVENLABS_API_KEY', description: 'ElevenLabs API Key', required: true, sensitive: true },
+      { name: 'AZURE_SPEECH_KEY', description: 'Azure Speech Services Key', required: false, sensitive: true },
+      { name: 'GOOGLE_SPEECH_KEY', description: 'Google Cloud Speech API', required: false, sensitive: true },
+      { name: 'VOICE_MODELS_PATH', description: 'Ruta a modelos de voz locales', required: false, sensitive: false }
+    ]
+  },
+  iris: {
+    name: 'Iris',
+    url: 'https://github.com/OpceanAI/Iris-Security-Bot',
+    description: 'Mi hermana protectora~ ¡Seguridad avanzada y detección de amenazas!',
+    language: 'Go',
+    category: '🛡️ Seguridad & Protección',
+    envVars: [
+      { name: 'BOT_TOKEN', description: 'Discord Bot Token', required: true, sensitive: true },
+      { name: 'CLIENT_ID', description: 'Discord Client ID', required: true, sensitive: false },
+      { name: 'SECURITY_DATABASE', description: 'Security Database URL', required: true, sensitive: true },
+      { name: 'VIRUSTOTAL_API_KEY', description: 'VirusTotal API Key', required: false, sensitive: true },
+      { name: 'SHODAN_API_KEY', description: 'Shodan API Key', required: false, sensitive: true },
+      { name: 'WEBHOOK_ALERTS', description: 'Webhook para alertas de seguridad', required: false, sensitive: true },
+      { name: 'THREAT_INTEL_API', description: 'Threat Intelligence API', required: false, sensitive: true }
+    ]
   }
 };
 
@@ -193,6 +301,177 @@ class CeliaAssistant {
     clearInterval(interval);
     process.stdout.write(`\r${theme.success}${message} ✓${theme.reset}\n`);
   }
+
+  /**
+   * ✨ Particle animation effect~
+   */
+  async showParticles(duration = 3000) {
+    const theme = THEMES[this.theme];
+    const particles = ['✨', '⭐', '💫', '🌟', '✦', '✧', '⋆', '★'];
+    const colors = ['primary', 'secondary', 'accent', 'success'];
+    
+    const width = process.stdout.columns || 80;
+    const height = 8;
+    
+    let particlePositions = [];
+    for (let i = 0; i < 15; i++) {
+      particlePositions.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        char: particles[Math.floor(Math.random() * particles.length)],
+        color: colors[Math.floor(Math.random() * colors.length)],
+        dx: (Math.random() - 0.5) * 2,
+        dy: (Math.random() - 0.5) * 0.5
+      });
+    }
+    
+    const startTime = Date.now();
+    const animate = () => {
+      if (Date.now() - startTime >= duration) return;
+      
+      // Clear area
+      console.log('\n'.repeat(height));
+      process.stdout.write(`\x1b[${height}A`);
+      
+      // Update and draw particles
+      const screen = Array(height).fill(null).map(() => ' '.repeat(width));
+      
+      particlePositions.forEach(particle => {
+        particle.x += particle.dx;
+        particle.y += particle.dy;
+        
+        // Bounce off edges
+        if (particle.x <= 0 || particle.x >= width - 1) particle.dx *= -1;
+        if (particle.y <= 0 || particle.y >= height - 1) particle.dy *= -1;
+        
+        const x = Math.floor(Math.max(0, Math.min(width - 1, particle.x)));
+        const y = Math.floor(Math.max(0, Math.min(height - 1, particle.y)));
+        
+        if (y < screen.length && x < screen[y].length) {
+          const line = screen[y].split('');
+          line[x] = `${theme[particle.color]}${particle.char}${theme.reset}`;
+          screen[y] = line.join('');
+        }
+      });
+      
+      screen.forEach(line => console.log(line));
+      process.stdout.write(`\x1b[${height}A`);
+      
+      setTimeout(animate, 100);
+    };
+    
+    animate();
+    await new Promise(resolve => setTimeout(resolve, duration));
+    process.stdout.write(`\x1b[${height}B`);
+  }
+
+  /**
+   * 📊 Beautiful progress bar~
+   */
+  async showProgressBar(message, duration = 3000, steps = 20) {
+    const theme = THEMES[this.theme];
+    
+    process.stdout.write(`${theme.info}${message}\n`);
+    
+    for (let i = 0; i <= steps; i++) {
+      const percent = Math.floor((i / steps) * 100);
+      const filled = Math.floor((i / steps) * 30);
+      const empty = 30 - filled;
+      
+      const bar = `${'█'.repeat(filled)}${'░'.repeat(empty)}`;
+      const colors = ['error', 'warning', 'info', 'success'];
+      const colorIndex = Math.floor((percent / 100) * (colors.length - 1));
+      
+      process.stdout.write(
+        `\r${theme.dim}[${theme[colors[colorIndex]]}${bar}${theme.dim}] ${percent}%${theme.reset}`
+      );
+      
+      await new Promise(resolve => setTimeout(resolve, duration / steps));
+    }
+    
+    process.stdout.write(`\n${theme.success}✨ ¡Completado!${theme.reset}\n`);
+  }
+
+  /**
+   * 🌊 Wave animation effect~
+   */
+  async waveText(text, style = 'primary', cycles = 2) {
+    const theme = THEMES[this.theme];
+    const chars = text.split('');
+    
+    for (let cycle = 0; cycle < cycles; cycle++) {
+      for (let wave = 0; wave < chars.length + 10; wave++) {
+        process.stdout.write('\r');
+        
+        chars.forEach((char, index) => {
+          const distance = Math.abs(index - wave);
+          if (distance < 3) {
+            const intensity = 3 - distance;
+            const colors = ['dim', style, 'bright'];
+            const color = colors[intensity - 1] || 'dim';
+            process.stdout.write(`${theme[color]}${char}${theme.reset}`);
+          } else {
+            process.stdout.write(`${theme.dim}${char}${theme.reset}`);
+          }
+        });
+        
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+    }
+    
+    process.stdout.write('\n');
+  }
+
+  /**
+   * 💥 Pulse animation effect~
+   */
+  async pulseText(text, style = 'accent', pulses = 3) {
+    const theme = THEMES[this.theme];
+    
+    for (let i = 0; i < pulses; i++) {
+      // Expand
+      const expandFrames = ['', ' ', '  ', '   '];
+      for (const frame of expandFrames) {
+        process.stdout.write(`\r${frame}${theme[style]}${text}${frame}${theme.reset}`);
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      
+      // Contract
+      for (let j = expandFrames.length - 1; j >= 0; j--) {
+        const frame = expandFrames[j];
+        process.stdout.write(`\r${frame}${theme[style]}${text}${frame}${theme.reset}`);
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+    }
+    
+    process.stdout.write('\n');
+  }
+
+  /**
+   * 🎭 Matrix-style text effect~
+   */
+  async matrixText(text, style = 'success') {
+    const theme = THEMES[this.theme];
+    const chars = '01アカサタナハマヤラワンヴー';
+    const finalText = text.split('');
+    const currentText = new Array(finalText.length).fill(' ');
+    
+    // Reveal each character with matrix effect
+    for (let pos = 0; pos < finalText.length; pos++) {
+      for (let frame = 0; frame < 10; frame++) {
+        if (frame < 8) {
+          currentText[pos] = chars[Math.floor(Math.random() * chars.length)];
+        } else {
+          currentText[pos] = finalText[pos];
+        }
+        
+        process.stdout.write(`\r${theme[style]}${currentText.join('')}${theme.reset}`);
+        await new Promise(resolve => setTimeout(resolve, 30));
+      }
+    }
+    
+    process.stdout.write('\n');
+  }
   
   /**
    * 🌈 Rainbow gradient effect~
@@ -250,6 +529,302 @@ class CeliaAssistant {
     const randomSparkles = sparkles.sort(() => Math.random() - 0.5).slice(0, 3).join('');
     
     console.log(`${theme[style]}${randomSparkles} ${message} ${randomSparkles}${theme.reset}`);
+  }
+
+  /**
+   * 🎨 Beautiful ASCII art generator~
+   */
+  showASCIIArt(type = 'celia') {
+    const theme = THEMES[this.theme];
+    const art = {
+      celia: [
+        '    ✨ 🌸 C E L I A 🌸 ✨',
+        '  💖✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨💖',
+        ' 🌸  Tu asistente celestial  🌸',
+        '  💖✨✨✨✨✨✨✨✨✨✨✨✨✨✨✨💖'
+      ],
+      welcome: [
+        '┌──────────────────────────────────────┐',
+        '│       🌸 B I E N V E N I D O 🌸      │',
+        '│                                    │',
+        '│    ¡Hola! Soy Celia, tu asistente    │',
+        '│       celestial favorita~ 💖        │',
+        '└──────────────────────────────────────┘'
+      ],
+      success: [
+        '    🎉 ¡É X I T O! 🎉',
+        '  ✨✨✨✨✨✨✨✨✨✨✨✨✨✨',
+        '   ¡Todo salió perfecto!~',
+        '  ✨✨✨✨✨✨✨✨✨✨✨✨✨✨'
+      ],
+      loading: [
+        '    🔄 C A R G A N D O . . .',
+        '  ■□□□□□□□□□□□□□',
+        '    ¡Espera un momento!~',
+        '  ━━━━━━━━━━━━━━'
+      ],
+      heart: [
+        '    💖 HECHO CON AMOR 💖',
+        '       ♥   ♥   ♥   ♥',
+        '     Por OpceanAI Team',
+        '       ♥   ♥   ♥   ♥'
+      ]
+    };
+    
+    if (art[type]) {
+      art[type].forEach((line, index) => {
+        const style = ['primary', 'secondary', 'accent'][index % 3];
+        this.log(line, style);
+      });
+    }
+    console.log('');
+  }
+
+  /**
+   * 🎵 Sound effect simulation~
+   */
+  async playSoundEffect(effect = 'success') {
+    const effects = {
+      success: ['🔔', '♫', '✨', '🎉'],
+      error: ['❌', '🚨', '⚠️', '😵'],
+      notification: ['🔔', '📨', '✨', '💌'],
+      magic: ['✨', '🪄', '🌟', '💫']
+    };
+    
+    const soundIcons = effects[effect] || effects.success;
+    const theme = THEMES[this.theme];
+    
+    for (let i = 0; i < soundIcons.length; i++) {
+      process.stdout.write(`\r${theme.accent}${soundIcons[i]} `);
+      await new Promise(resolve => setTimeout(resolve, 200));
+    }
+    
+    process.stdout.write('\r   \n');
+  }
+
+  /**
+   * 🤖 Advanced command autocomplete~
+   */
+  getCommandSuggestions(partial) {
+    const allCommands = ['help', 'theme', 'sisters', 'install', 'quick', 'status', 'tips', 'about', 'clear', 'version', 'exit'];
+    const botNames = Object.keys(BOTS);
+    const themes = Object.keys(THEMES);
+    
+    // If it starts with /, suggest slash commands
+    if (partial.startsWith('/')) {
+      const cmd = partial.slice(1).toLowerCase();
+      return allCommands
+        .filter(command => command.startsWith(cmd))
+        .map(command => `/${command}`);
+    }
+    
+    // Suggest regular commands
+    const words = partial.toLowerCase().split(' ');
+    const firstWord = words[0];
+    
+    if (words.length === 1) {
+      // Suggest main commands
+      return [...allCommands, ...Object.keys(BOTS)]
+        .filter(command => command.startsWith(firstWord))
+        .slice(0, 5);
+    }
+    
+    // Context-aware suggestions
+    if (firstWord === 'install' || firstWord === 'quick') {
+      return botNames.filter(bot => bot.startsWith(words[1] || ''));
+    }
+    
+    if (firstWord === 'theme') {
+      return themes.filter(theme => theme.startsWith(words[1] || ''));
+    }
+    
+    return [];
+  }
+
+  /**
+   * 📊 System performance monitor~
+   */
+  async showSystemPerformance() {
+    const theme = THEMES[this.theme];
+    console.log('');
+    this.gradientLog('📊 Monitor de Rendimiento del Sistema', ['primary', 'accent']);
+    console.log('');
+    
+    // Memory usage
+    const memUsage = process.memoryUsage();
+    const memInfo = [
+      `💾 Memoria RSS: ${(memUsage.rss / 1024 / 1024).toFixed(2)} MB`,
+      `🧠 Heap usado: ${(memUsage.heapUsed / 1024 / 1024).toFixed(2)} MB`,
+      `📈 Heap total: ${(memUsage.heapTotal / 1024 / 1024).toFixed(2)} MB`,
+      `⚡ Externa: ${(memUsage.external / 1024 / 1024).toFixed(2)} MB`
+    ];
+    
+    this.createBox(memInfo, 'info', 1);
+    console.log('');
+    
+    // CPU and system info
+    const cpuInfo = [
+      `🖥️  Plataforma: ${this.platform}`,
+      `⚙️  Arquitectura: ${os.arch()}`,
+      `🔢 CPUs disponibles: ${os.cpus().length}`,
+      `⏰ Tiempo activo: ${(process.uptime() / 60).toFixed(1)} minutos`,
+      `🏠 Directorio: ${process.cwd()}`,
+      `🌸 Node.js: ${process.version}`
+    ];
+    
+    this.createBox(cpuInfo, 'success', 1);
+    console.log('');
+    
+    // Show animated progress for system check
+    await this.showProgressBar('🔍 Analizando rendimiento del sistema', 2000);
+    
+    this.sparkleLog('¡Sistema funcionando perfectamente!~', 'accent');
+    console.log('');
+  }
+
+  /**
+   * 📈 Bot installation accounting and statistics~
+   */
+  getBotStatistics() {
+    const stats = {
+      totalBots: Object.keys(BOTS).length,
+      categories: {},
+      languages: {},
+      complexityLevels: {
+        beginner: 0,
+        intermediate: 0,
+        advanced: 0
+      }
+    };
+    
+    Object.values(BOTS).forEach(bot => {
+      // Count by category
+      stats.categories[bot.category] = (stats.categories[bot.category] || 0) + 1;
+      
+      // Count by language
+      stats.languages[bot.language] = (stats.languages[bot.language] || 0) + 1;
+      
+      // Determine complexity based on required envVars
+      const requiredVars = bot.envVars.filter(v => v.required).length;
+      if (requiredVars <= 3) {
+        stats.complexityLevels.beginner++;
+      } else if (requiredVars <= 5) {
+        stats.complexityLevels.intermediate++;
+      } else {
+        stats.complexityLevels.advanced++;
+      }
+    });
+    
+    return stats;
+  }
+
+  /**
+   * 📊 Show comprehensive bot ecosystem statistics~
+   */
+  async showBotEcosystemStats() {
+    console.log('');
+    this.gradientLog('📊 Estadísticas del Ecosistema de Bots', ['primary', 'secondary', 'accent']);
+    console.log('');
+    
+    const stats = this.getBotStatistics();
+    
+    // Show total count with animation
+    await this.waveText(`¡${stats.totalBots} hermanas bot disponibles!`, 'primary');
+    console.log('');
+    
+    // Categories breakdown
+    this.log('🏷️  Por Categorías:', 'accent');
+    Object.entries(stats.categories).forEach(([category, count]) => {
+      const percentage = ((count / stats.totalBots) * 100).toFixed(1);
+      this.log(`   ${category}: ${count} bots (${percentage}%)`, 'info');
+    });
+    console.log('');
+    
+    // Languages breakdown
+    this.log('💻 Por Lenguajes:', 'accent');
+    Object.entries(stats.languages).forEach(([lang, count]) => {
+      const percentage = ((count / stats.totalBots) * 100).toFixed(1);
+      this.log(`   ${lang}: ${count} bots (${percentage}%)`, 'success');
+    });
+    console.log('');
+    
+    // Complexity levels
+    this.log('🎯 Por Nivel de Complejidad:', 'accent');
+    this.log(`   👶 Principiante: ${stats.complexityLevels.beginner} bots`, 'success');
+    this.log(`   🎓 Intermedio: ${stats.complexityLevels.intermediate} bots`, 'warning');
+    this.log(`   🚀 Avanzado: ${stats.complexityLevels.advanced} bots`, 'error');
+    
+    console.log('');
+    await this.pulseText('¡Un ecosistema completo y diverso!~', 'accent');
+    console.log('');
+  }
+
+  /**
+   * 🔧 Enhanced system diagnostic with recommendations~
+   */
+  async runSystemDiagnostic() {
+    console.log('');
+    this.gradientLog('🔧 Diagnóstico Completo del Sistema', ['primary', 'accent']);
+    console.log('');
+    
+    await this.showLoading('🔍 Analizando sistema', 1500);
+    
+    const diagnostics = [];
+    const recommendations = [];
+    
+    // Check Node.js version
+    const nodeVersion = process.version.replace('v', '');
+    const nodeMajor = parseInt(nodeVersion.split('.')[0]);
+    
+    if (nodeMajor >= 18) {
+      diagnostics.push('✅ Node.js versión compatible');
+    } else {
+      diagnostics.push('⚠️  Node.js versión antigua detectada');
+      recommendations.push('Actualizar Node.js a v18+ para mejor rendimiento');
+    }
+    
+    // Check memory
+    const memUsage = process.memoryUsage();
+    const memMB = memUsage.heapUsed / 1024 / 1024;
+    
+    if (memMB < 100) {
+      diagnostics.push('✅ Uso de memoria eficiente');
+    } else {
+      diagnostics.push('⚠️  Alto uso de memoria detectado');
+      recommendations.push('Considerar reiniciar Celia periódicamente');
+    }
+    
+    // Check platform compatibility
+    if (this.isTermux) {
+      diagnostics.push('📱 Modo Termux detectado');
+      recommendations.push('Usar comandos "quick" para mejor compatibilidad móvil');
+    }
+    
+    if (this.isARM) {
+      diagnostics.push('🔧 Arquitectura ARM detectada');
+      recommendations.push('Instalar dependencias puede tomar más tiempo');
+    }
+    
+    // Show diagnostics
+    this.createBox([
+      '🔍 Resultados del Diagnóstico:',
+      '',
+      ...diagnostics
+    ], 'info', 1);
+    
+    if (recommendations.length > 0) {
+      console.log('');
+      this.createBox([
+        '💡 Recomendaciones:',
+        '',
+        ...recommendations
+      ], 'warning', 1);
+    }
+    
+    console.log('');
+    await this.playSoundEffect('success');
+    this.sparkleLog('¡Diagnóstico completado!~', 'success');
+    console.log('');
   }
 
   /**
@@ -339,6 +914,27 @@ class CeliaAssistant {
       description: '💖 Información sobre Celia',
       usage: 'celia about',
       action: async () => await this.showAbout()
+    });
+    
+    this.commands.set('performance', {
+      aliases: ['perf', 'monitor', 'rendimiento'],
+      description: '📊 Monitor de rendimiento del sistema',
+      usage: 'celia performance',
+      action: async () => await this.showSystemPerformance()
+    });
+    
+    this.commands.set('stats', {
+      aliases: ['statistics', 'estadisticas'],
+      description: '📊 Estadísticas del ecosistema de bots',
+      usage: 'celia stats',
+      action: async () => await this.showBotEcosystemStats()
+    });
+    
+    this.commands.set('diagnostic', {
+      aliases: ['diag', 'diagnostico', 'check'],
+      description: '🔧 Diagnóstico completo del sistema',
+      usage: 'celia diagnostic',
+      action: async () => await this.runSystemDiagnostic()
     });
   }
 
@@ -930,6 +1526,27 @@ class CeliaAssistant {
         case 'Katu':
           content += this.generateKatuTemplate();
           break;
+        case 'Aurora':
+          content += this.generateAuroraTemplate();
+          break;
+        case 'Cosmos':
+          content += this.generateCosmosTemplate();
+          break;
+        case 'Stella':
+          content += this.generateStellaTemplate();
+          break;
+        case 'Nova':
+          content += this.generateNovaTemplate();
+          break;
+        case 'Vega':
+          content += this.generateVegaTemplate();
+          break;
+        case 'Lyra':
+          content += this.generateLyraTemplate();
+          break;
+        case 'Iris':
+          content += this.generateIrisTemplate();
+          break;
         default:
           content += this.generateGenericTemplate(bot);
       }
@@ -1022,6 +1639,119 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
 # MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/katu
 # DATABASE_URL=postgresql://user:pass@host:5432/katu
 # Si no configuras base de datos, Katu usará memoria interna`;
+  }
+
+  generateAuroraTemplate() {
+    return `# 🎨 CONFIGURACIÓN PRINCIPAL (REQUERIDO)
+BOT_TOKEN=tu_token_de_discord_aqui
+CLIENT_ID=tu_client_id_de_discord_aqui
+
+# 🤖 INTELIGENCIA ARTIFICIAL PARA ARTE (REQUERIDO)
+OPENAI_API_KEY=tu_api_key_de_openai_dall_e_aqui
+
+# 🎨 APIS DE GENERACIÓN DE IMÁGENES (Opcional)
+# STABILITY_API_KEY=tu_stability_ai_api_key
+# MIDJOURNEY_TOKEN=tu_midjourney_bot_token
+
+# ☁️ ALMACENAMIENTO DE IMÁGENES (Opcional)
+# CLOUDINARY_URL=cloudinary://api_key:api_secret@cloud_name`;
+  }
+
+  generateCosmosTemplate() {
+    return `# 🌌 CONFIGURACIÓN PRINCIPAL (REQUERIDO)
+MAIN_BOT_TOKEN=tu_token_principal_del_bot_aqui
+CLUSTER_ID=tu_cluster_id_aqui
+
+# 🗄️ BASE DE DATOS PRINCIPAL (REQUERIDO)
+REDIS_URL=redis://localhost:6379
+POSTGRESQL_MAIN=postgresql://user:pass@host:5432/cosmos
+
+# 🔧 CONFIGURACIÓN DE CLUSTER (Opcional)
+# WEBHOOK_SECRET=tu_webhook_secret_key
+# ADMIN_GUILD_ID=id_del_servidor_de_administracion`;
+  }
+
+  generateStellaTemplate() {
+    return `# 📚 CONFIGURACIÓN PRINCIPAL (REQUERIDO)
+BOT_TOKEN=tu_token_de_discord_aqui
+CLIENT_ID=tu_client_id_de_discord_aqui
+
+# 🧠 INTELIGENCIA ARTIFICIAL EDUCATIVA (REQUERIDO)
+OPENAI_API_KEY=tu_api_key_de_openai_aqui
+
+# 🗄️ BASE DE DATOS EDUCATIVA (REQUERIDO)
+MONGODB_EDUCATION=mongodb+srv://user:pass@cluster.mongodb.net/education
+
+# 🌐 APIS DE TRADUCCIÓN Y QUIZZES (Opcional)
+# DEEPL_API_KEY=tu_deepl_api_key
+# QUIZ_API_KEY=tu_quiz_database_api_key`;
+  }
+
+  generateNovaTemplate() {
+    return `# 🎮 CONFIGURACIÓN PRINCIPAL (REQUERIDO)
+DISCORD_TOKEN=tu_token_de_discord_aqui
+CLIENT_ID=tu_application_id_de_discord_aqui
+
+# 🗄️ BASE DE DATOS GAMING (REQUERIDO)
+DATABASE_GAMING=postgresql://user:pass@host:5432/nova_gaming
+
+# 🎮 APIS DE VIDEOJUEGOS (Opcional)
+# STEAM_API_KEY=tu_steam_web_api_key
+# RIOT_API_KEY=tu_riot_games_api_key
+
+# 📺 INTEGRACIÓN TWITCH (Opcional)
+# TWITCH_CLIENT_ID=tu_twitch_client_id
+# TWITCH_CLIENT_SECRET=tu_twitch_client_secret`;
+  }
+
+  generateVegaTemplate() {
+    return `# 💰 CONFIGURACIÓN PRINCIPAL (REQUERIDO)
+BOT_TOKEN=tu_token_de_discord_aqui
+APPLICATION_ID=tu_application_id_de_discord_aqui
+
+# 🗄️ BASE DE DATOS ECONÓMICA (REQUERIDO)
+DATABASE_ECONOMY=postgresql://user:pass@host:5432/vega_economy
+
+# 💸 APIS FINANCIERAS (Opcional)
+# COINAPI_KEY=tu_coinapi_key_para_precios_crypto
+# PAYPAL_CLIENT_ID=tu_paypal_client_id
+# STRIPE_SECRET_KEY=tu_stripe_secret_key
+
+# ⚡ CACHE (Opcional)
+# REDIS_CACHE=redis://localhost:6379/1`;
+  }
+
+  generateLyraTemplate() {
+    return `# 🎤 CONFIGURACIÓN PRINCIPAL (REQUERIDO)
+BOT_TOKEN=tu_token_de_discord_aqui
+CLIENT_ID=tu_client_id_de_discord_aqui
+
+# 🗣️ SÍNTESIS DE VOZ (REQUERIDO)
+ELEVENLABS_API_KEY=tu_elevenlabs_api_key_aqui
+
+# 🎵 SERVICIOS DE VOZ ADICIONALES (Opcional)
+# AZURE_SPEECH_KEY=tu_azure_speech_services_key
+# GOOGLE_SPEECH_KEY=tu_google_cloud_speech_api_key
+
+# 📁 MODELOS LOCALES (Opcional)
+# VOICE_MODELS_PATH=/path/to/local/voice/models`;
+  }
+
+  generateIrisTemplate() {
+    return `# 🛡️ CONFIGURACIÓN PRINCIPAL (REQUERIDO)
+BOT_TOKEN=tu_token_de_discord_aqui
+CLIENT_ID=tu_client_id_de_discord_aqui
+
+# 🗄️ BASE DE DATOS DE SEGURIDAD (REQUERIDO)
+SECURITY_DATABASE=postgresql://user:pass@host:5432/iris_security
+
+# 🔍 APIS DE SEGURIDAD (Opcional)
+# VIRUSTOTAL_API_KEY=tu_virustotal_api_key
+# SHODAN_API_KEY=tu_shodan_api_key
+
+# 🚨 ALERTAS Y WEBHOOKS (Opcional)
+# WEBHOOK_ALERTS=https://discord.com/api/webhooks/tu_webhook
+# THREAT_INTEL_API=tu_threat_intelligence_api_key`;
   }
   
   generateGenericTemplate(bot) {
@@ -1399,11 +2129,16 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
     this.gradientLog('💬 Modo Interactivo Activado', ['primary', 'accent']);
     console.log('');
     
-    // Show welcome tips with animation
+    // Show enhanced welcome with ASCII art
+    this.showASCIIArt('welcome');
+    await this.playSoundEffect('magic');
+    
+    // Show welcome tips with enhanced animation
     const welcomeMessages = [
       '¡Ahora puedes hablar conmigo! 💖',
       'Usa comandos como "sisters", "install", "theme"...',
       'O comandos slash como "/help", "/tips", "/about"',
+      '💡 ¡Presiona Tab para autocompletar comandos!',
       'Para salir, escribe "/exit" o presiona Ctrl+C'
     ];
     
@@ -1429,6 +2164,14 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
         if (!input.trim()) {
           this.showRandomTip();
           continue;
+        }
+        
+        // Show command suggestions for partial input
+        if (input.length > 1 && input.length < 4 && !input.includes(' ')) {
+          const suggestions = this.getCommandSuggestions(input);
+          if (suggestions.length > 0 && suggestions.length < 5) {
+            this.log(`💡 Sugerencias: ${suggestions.join(', ')}`, 'dim');
+          }
         }
         
         // Handle slash commands like Gemini CLI
@@ -1550,6 +2293,20 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
       case 'version':
       case 'v':
         this.showVersion();
+        break;
+      case 'performance':
+      case 'perf':
+      case 'monitor':
+        await this.showSystemPerformance();
+        break;
+      case 'stats':
+      case 'statistics':
+        await this.showBotEcosystemStats();
+        break;
+      case 'diagnostic':
+      case 'diag':
+      case 'check':
+        await this.runSystemDiagnostic();
         break;
       case 'exit':
       case 'quit':
