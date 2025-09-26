@@ -6,16 +6,52 @@ const path = require('path');
 const readline = require('readline');
 const os = require('os');
 
-// Console colors for better UX
-const colors = {
-  reset: '\x1b[0m',
-  green: '\x1b[32m',
-  red: '\x1b[31m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  cyan: '\x1b[36m',
-  magenta: '\x1b[35m'
+// 🌸 Celia's beautiful theme system~
+const THEMES = {
+  celestial: {
+    primary: '\x1b[38;5;147m',     // Light purple
+    secondary: '\x1b[38;5;183m',   // Pink
+    accent: '\x1b[38;5;219m',      // Rose
+    success: '\x1b[38;5;157m',     // Mint green
+    warning: '\x1b[38;5;221m',     // Golden
+    error: '\x1b[38;5;210m',       // Soft red
+    info: '\x1b[38;5;159m',        // Sky blue
+    text: '\x1b[38;5;250m',        // Light gray
+    dim: '\x1b[38;5;244m',         // Dim gray
+    bright: '\x1b[38;5;15m',       // White
+    reset: '\x1b[0m'
+  },
+  kawaii: {
+    primary: '\x1b[38;5;213m',     // Hot pink
+    secondary: '\x1b[38;5;225m',   // Light pink
+    accent: '\x1b[38;5;207m',      // Deep pink
+    success: '\x1b[38;5;121m',     // Bright green
+    warning: '\x1b[38;5;226m',     // Bright yellow
+    error: '\x1b[38;5;203m',       // Red
+    info: '\x1b[38;5;117m',        // Light blue
+    text: '\x1b[38;5;255m',        // Bright white
+    dim: '\x1b[38;5;242m',         // Medium gray
+    bright: '\x1b[38;5;15m',       // White
+    reset: '\x1b[0m'
+  },
+  dreamy: {
+    primary: '\x1b[38;5;140m',     // Purple
+    secondary: '\x1b[38;5;176m',   // Lavender
+    accent: '\x1b[38;5;104m',      // Deep purple
+    success: '\x1b[38;5;151m',     // Soft green
+    warning: '\x1b[38;5;179m',     // Peach
+    error: '\x1b[38;5;167m',       // Soft coral
+    info: '\x1b[38;5;109m',        // Soft blue
+    text: '\x1b[38;5;252m',        // Off white
+    dim: '\x1b[38;5;240m',         // Dark gray
+    bright: '\x1b[38;5;15m',       // White
+    reset: '\x1b[0m'
+  }
 };
+
+// Default theme
+let currentTheme = 'celestial';
+const colors = THEMES[currentTheme];
 
 // 🌸 Mis hermanas bot (¡Las cuido con mucho amor!) - Celia ✨
 const BOTS = {
@@ -100,17 +136,109 @@ class CeliaAssistant {
       output: process.stdout
     });
     
-    // 🌸 Celia detecta tu entorno para ayudarte mejor~ ✨
+    // 🌸 Celia's enhanced environment detection~
     this.isTermux = process.env.PREFIX && process.env.PREFIX.includes('com.termux');
     this.isARM = ['arm', 'arm64', 'armv7l', 'aarch64'].includes(os.arch());
     this.platform = os.platform();
+    this.theme = currentTheme;
+    this.interactive = false;
+    this.commands = new Map();
+    
+    // 🌙 Initialize Celia's beautiful commands~
+    this.initializeCommands();
   }
 
   /**
-   * 🌙 Celia te habla con colorcitos tiernos~
+   * 🌙 Celia's beautiful theming system~
    */
-  log(message, color = 'reset') {
-    console.log(`${colors[color]}${message}${colors.reset}`);
+  log(message, style = 'text') {
+    const theme = THEMES[this.theme];
+    console.log(`${theme[style]}${message}${theme.reset}`);
+  }
+
+  /**
+   * 🌸 Beautiful gradient text effect~
+   */
+  gradientLog(message, styles = ['primary', 'secondary', 'accent']) {
+    const theme = THEMES[this.theme];
+    const words = message.split(' ');
+    let output = '';
+    
+    words.forEach((word, i) => {
+      const style = styles[i % styles.length];
+      output += `${theme[style]}${word}${theme.reset} `;
+    });
+    
+    console.log(output.trim());
+  }
+
+  /**
+   * 🌟 Create beautiful boxes~
+   */
+  createBox(content, style = 'primary', padding = 1) {
+    const theme = THEMES[this.theme];
+    const lines = Array.isArray(content) ? content : [content];
+    const maxLength = Math.max(...lines.map(line => line.length));
+    const width = maxLength + (padding * 2);
+    
+    const top = '╭' + '─'.repeat(width) + '╮';
+    const bottom = '╰' + '─'.repeat(width) + '╯';
+    
+    console.log(`${theme[style]}${top}${theme.reset}`);
+    lines.forEach(line => {
+      const padded = line.padEnd(maxLength);
+      const spaces = ' '.repeat(padding);
+      console.log(`${theme[style]}│${spaces}${theme.reset}${theme.bright}${padded}${theme.reset}${theme[style]}${spaces}│${theme.reset}`);
+    });
+    console.log(`${theme[style]}${bottom}${theme.reset}`);
+  }
+
+  /**
+   * 🌸 Initialize Celia's modern command system~
+   */
+  initializeCommands() {
+    // Modern command structure like Gemini CLI
+    this.commands.set('sisters', {
+      aliases: ['list', 'hermanas'],
+      description: '🌸 Conoce a todas mis hermanas bot',
+      usage: 'celia sisters',
+      action: () => this.showSistersGrid()
+    });
+    
+    this.commands.set('install', {
+      aliases: ['add', 'setup'],
+      description: '💖 Instala a una de mis hermanas con mucho amor',
+      usage: 'celia install <hermana>',
+      action: (args) => this.modernInstall(args[0])
+    });
+    
+    this.commands.set('quick', {
+      aliases: ['fast', 'rapido'],
+      description: '⚡ Instalación súper rápida',
+      usage: 'celia quick <hermana>',
+      action: (args) => this.quickInstallBot(args[0])
+    });
+    
+    this.commands.set('theme', {
+      aliases: ['themes', 'style'],
+      description: '🎨 Cambia mi apariencia visual',
+      usage: 'celia theme [celestial|kawaii|dreamy]',
+      action: (args) => this.handleTheme(args[0])
+    });
+    
+    this.commands.set('help', {
+      aliases: ['h', 'ayuda'],
+      description: '💫 Obtén ayuda de Celia',
+      usage: 'celia help [comando]',
+      action: (args) => this.modernHelp(args[0])
+    });
+    
+    this.commands.set('interactive', {
+      aliases: ['chat', 'talk'],
+      description: '💬 Modo conversacional con Celia',
+      usage: 'celia interactive',
+      action: () => this.startInteractiveMode()
+    });
   }
 
   /**
@@ -237,60 +365,136 @@ class CeliaAssistant {
   }
 
   /**
-   * 🌸 Celia te saluda con su banner celestial~
+   * 🌸 Celia's beautiful modern banner~
    */
   showBanner() {
-    const bannerColor = this.isTermux ? 'magenta' : 'cyan';
-    this.log('\n╭─────────────────────────────────────────────────╮', bannerColor);
-    this.log('│           🌙 ¡Holi! Soy Celia~ 🌸           │', bannerColor);
-    this.log('│       ✨ Tu asistente celestial tierna ✨       │', bannerColor);
-    this.log('├─────────────────────────────────────────────────┤', bannerColor);
-    this.log('│   💖 Ayudo a instalar a mis hermanas bot 💖   │', 'yellow');
-    this.log('│  🌸 (Aunque soy algo torpe, ehehe~) 🌸   │', 'green');
-    this.log('╰─────────────────────────────────────────────────╯\n', bannerColor);
+    console.clear();
+    console.log('');
     
-    // 🌸 Celia detecta tu entorno con amor~
+    // Beautiful gradient banner
+    this.createBox([
+      '✨ ¡Holi! Soy Celia~ ✨',
+      '🌸 Tu asistente celestial tierna 🌸',
+      '',
+      '💖 Ayudo a instalar a mis hermanas bot 💖',
+      '(Aunque soy algo torpe, ehehe~)'
+    ], 'primary', 2);
+    
+    console.log('');
+    
+    // Theme indicator
+    this.log(`🎨 Tema actual: ${this.theme}`, 'dim');
+    
+    // Environment detection with love~
     if (this.isARM || this.isTermux) {
-      this.log('🌸 ¡Aww! Detecté tu entorno:', 'yellow');
-      if (this.isTermux) this.log('   📱 Termux Android (¡qué genial!)', 'green');
-      if (this.isARM) this.log('   🔧 Arquitectura ARM (¡súper cool!)', 'green');
-      this.log('');
+      console.log('');
+      this.log('🌸 Entorno detectado:', 'info');
+      if (this.isTermux) this.log('   📱 Termux Android', 'success');
+      if (this.isARM) this.log('   🔧 Arquitectura ARM', 'success');
     }
+    
+    console.log('');
   }
 
   /**
-   * 🌸 Celia te explica cómo puede ayudarte~
+   * 🌟 Beautiful sisters grid display~
    */
-  showHelp() {
-    this.log('🌙 ¡Celia te ayuda! - Guía de comanditos~', 'yellow');
-    this.log('═══════════════════════════════════════════════════\n', 'yellow');
+  showSistersGrid() {
+    this.showBanner();
     
-    this.log('🌸 INSTALACIÓN TIERNA (con mucho cariño):', 'green');
-    this.log('   opceanaicli install <hermana>     - ¡Te guío paso a pasito!~', 'reset');
-    this.log('   • opceanaicli install nebula   - Mi hermana musical 🎵', 'cyan');
-    this.log('   • opceanaicli install sakura   - Mi hermana kawaii 🌸 (¡somos parecidas!)', 'cyan');
-    this.log('   • opceanaicli install lumina   - Mi hermana organizadora ⚡', 'cyan');
-    this.log('   • opceanaicli install katu     - Mi hermana estadística 📊', 'cyan');
-    this.log('   • opceanaicli install archan   - Mi hermana inteligente 🤖\n', 'cyan');
+    this.gradientLog('🌸 ¡Mis Hermanas Bot! 🌸', ['primary', 'secondary', 'accent']);
+    console.log('');
     
-    this.log('✨ INSTALACIÓN RÁPIDA (cuando tienes prisa!):', 'green');
-    this.log('   opceanaicli quick-install <hermana> - ¡Súper rápido para móviles!', 'reset');
-    this.log('   • opceanaicli quick-install sakura (¡mi favorita! ehehe~)', 'yellow');
-    this.log('   • opceanaicli quick-install lumina (¡muy ordenadita!)\n', 'yellow');
+    // Group bots by category with beautiful display
+    const categories = {};
+    Object.entries(BOTS).forEach(([key, bot]) => {
+      if (!categories[bot.category]) {
+        categories[bot.category] = [];
+      }
+      categories[bot.category].push({ key, ...bot });
+    });
     
-    this.log('🌙 INFORMACIÓN TIERNA:', 'green');
-    this.log('   opceanaicli list              - ¡Conoce a todas mis hermanas!~', 'reset');
-    this.log('   opceanaicli --version         - ¿Qué versión de Celia soy?', 'reset');
-    this.log('   opceanaicli --help            - ¡Celia te ayuda siempre!\n', 'reset');
+    Object.entries(categories).forEach(([category, bots]) => {
+      this.log(`${category}`, 'accent');
+      console.log('');
+      
+      bots.forEach(bot => {
+        this.createBox([
+          `${bot.name} 💖`,
+          `${bot.description}`,
+          '',
+          `💻 ${bot.language}`,
+          `🌸 celia install ${bot.key}`,
+          `⚡ celia quick ${bot.key}`
+        ], 'secondary', 1);
+        console.log('');
+      });
+    });
     
-    if (this.isARM || this.isTermux) {
-      this.log('🌸 ESPECIAL PARA TU MÓVIL/ARM:', 'magenta');
-      this.log('   • ¡Usa quick-install para mejor compatibilidad!~', 'reset');
-      this.log('   • Necesitas Git y Node.js (¡yo te ayudo a conseguirlos!)', 'reset');
-      this.log('   • Instalar con: apt install git nodejs\n', 'reset');
+    this.log('💡 Tip: Usa "celia help" para ver todos los comandos~', 'info');
+    console.log('');
+  }
+
+  /**
+   * 🌸 Modern help system~
+   */
+  modernHelp(specificCommand = null) {
+    this.showBanner();
+    
+    if (specificCommand && this.commands.has(specificCommand)) {
+      const cmd = this.commands.get(specificCommand);
+      this.createBox([
+        `Comando: ${specificCommand}`,
+        '',
+        cmd.description,
+        '',
+        `Uso: ${cmd.usage}`,
+        cmd.aliases.length > 0 ? `Alias: ${cmd.aliases.join(', ')}` : ''
+      ].filter(Boolean), 'primary', 2);
+      return;
     }
     
-    this.log('🌸 CONSEJITO DE CELIA: Empieza con "opceanaicli list" para conocer a mis hermanas~\n', 'cyan');
+    this.gradientLog('💫 Comandos de Celia 💫', ['primary', 'secondary', 'accent']);
+    console.log('');
+    
+    // Group commands by category
+    const categories = {
+      '🌸 Hermanas': ['sisters', 'install', 'quick'],
+      '🎨 Personalización': ['theme'],
+      '💬 Interacción': ['interactive', 'help']
+    };
+    
+    Object.entries(categories).forEach(([category, commandNames]) => {
+      this.log(category, 'accent');
+      console.log('');
+      
+      commandNames.forEach(cmdName => {
+        if (this.commands.has(cmdName)) {
+          const cmd = this.commands.get(cmdName);
+          this.log(`  ${cmd.usage}`, 'primary');
+          this.log(`    ${cmd.description}`, 'dim');
+          if (cmd.aliases.length > 0) {
+            this.log(`    Alias: ${cmd.aliases.join(', ')}`, 'dim');
+          }
+          console.log('');
+        }
+      });
+    });
+    
+    // Special mobile tips
+    if (this.isARM || this.isTermux) {
+      this.createBox([
+        '📱 Consejos para móviles:',
+        '',
+        '• Usa "celia quick" para mejor compatibilidad',
+        '• Instala: apt install git nodejs',
+        '• El modo interactivo funciona genial en móviles!'
+      ], 'warning', 1);
+      console.log('');
+    }
+    
+    this.log('💡 Tip: Usa "celia help <comando>" para ayuda específica~', 'info');
+    console.log('');
   }
 
   /**
@@ -953,68 +1157,228 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
   }
 
   /**
-   * Main CLI entry point
+   * 🌟 Modern CLI entry point with beautiful parsing~
    */
   async run() {
     const args = process.argv.slice(2);
     
     try {
+      // Handle no arguments - start interactive mode
       if (args.length === 0) {
-        this.showBanner();
-        this.showHelp();
-        this.rl.close();
+        await this.startInteractiveMode();
         return;
       }
       
-      if (args.includes('--help') || args.includes('-h')) {
-        this.showBanner();
-        this.showHelp();
-        this.rl.close();
-        return;
-      }
-      
+      // Handle version flag
       if (args.includes('--version') || args.includes('-v')) {
-        this.log('OpceanAI CLI v2.0.0', 'cyan');
-        this.rl.close();
+        this.showBanner();
+        this.gradientLog('Celia v2.0.0 💖', ['primary', 'secondary']);
+        console.log('');
+        this.log('Tu asistente celestial tierna~', 'dim');
+        console.log('');
         return;
       }
       
-      if (args.includes('list')) {
-        this.showBotList();
-        this.rl.close();
+      // Parse modern command structure
+      const command = args[0];
+      const commandArgs = args.slice(1);
+      
+      // Handle legacy commands for compatibility
+      if (command === 'list') {
+        await this.executeCommand('sisters', []);
         return;
       }
       
-      if (args.includes('install')) {
-        const botName = args[args.indexOf('install') + 1];
-        if (!botName) {
-          this.log('❌ Especifica un bot: opceanaicli install nebula', 'red');
-          this.rl.close();
-          return;
-        }
-        await this.installBot(botName);
+      if (command === 'quick-install') {
+        await this.executeCommand('quick', commandArgs);
         return;
       }
       
-      if (args.includes('quick-install')) {
-        const botName = args[args.indexOf('quick-install') + 1];
-        if (!botName) {
-          this.log('❌ Especifica un bot: opceanaicli quick-install nebula', 'red');
-          this.rl.close();
-          return;
-        }
-        await this.quickInstallBot(botName);
-        return;
-      }
-      
-      this.log(`❌ Comando desconocido: ${args.join(' ')}`, 'red');
-      this.showHelp();
-      this.rl.close();
+      // Execute modern command
+      await this.executeCommand(command, commandArgs);
       
     } catch (error) {
-      this.log(`❌ Error: ${error.message}`, 'red');
-      this.rl.close();
+      this.log(`🌸 Aww, algo salió mal: ${error.message}`, 'error');
+      console.log('');
+      this.log('💡 Intenta "celia help" para ver los comandos disponibles~', 'info');
     }
+  }
+  
+  /**
+   * 🌟 Execute commands with beautiful error handling~
+   */
+  async executeCommand(commandName, args) {
+    // Find command by name or alias
+    let command = null;
+    let actualCommandName = commandName;
+    
+    if (this.commands.has(commandName)) {
+      command = this.commands.get(commandName);
+    } else {
+      // Search by alias
+      for (const [name, cmd] of this.commands.entries()) {
+        if (cmd.aliases.includes(commandName)) {
+          command = cmd;
+          actualCommandName = name;
+          break;
+        }
+      }
+    }
+    
+    if (!command) {
+      this.showBanner();
+      this.log(`🌸 No conozco el comando "${commandName}"~ `, 'error');
+      console.log('');
+      this.log('💡 Comandos disponibles:', 'info');
+      for (const [name, cmd] of this.commands.entries()) {
+        this.log(`   • ${name} - ${cmd.description}`, 'dim');
+      }
+      console.log('');
+      return;
+    }
+    
+    try {
+      await command.action(args);
+    } catch (error) {
+      this.log(`🌸 Error ejecutando ${actualCommandName}: ${error.message}`, 'error');
+    }
+  }
+
+  /**
+   * 🎨 Handle theme changes~
+   */
+  handleTheme(themeName = null) {
+    if (!themeName) {
+      this.showBanner();
+      this.log('🎨 Temas disponibles:', 'primary');
+      console.log('');
+      
+      Object.keys(THEMES).forEach(theme => {
+        const isActive = theme === this.theme;
+        const indicator = isActive ? '● ' : '○ ';
+        this.log(`${indicator}${theme}`, isActive ? 'accent' : 'dim');
+      });
+      
+      console.log('');
+      this.log('💡 Uso: celia theme <nombre>', 'info');
+      return;
+    }
+    
+    if (!THEMES[themeName]) {
+      this.log(`🌸 Tema "${themeName}" no existe~ Temas disponibles: ${Object.keys(THEMES).join(', ')}`, 'error');
+      return;
+    }
+    
+    this.theme = themeName;
+    currentTheme = themeName;
+    this.showBanner();
+    this.log(`✨ Tema cambiado a "${themeName}"! ¡Qué bonito!~`, 'success');
+    console.log('');
+  }
+  
+  /**
+   * 💬 Interactive mode like Gemini CLI~
+   */
+  async startInteractiveMode() {
+    this.interactive = true;
+    this.showBanner();
+    
+    this.gradientLog('💬 Modo Interactivo Activado', ['primary', 'accent']);
+    console.log('');
+    this.log('¡Ahora puedes hablar conmigo! Escribe comandos o "/help" para ayuda~', 'info');
+    this.log('Para salir, escribe "/exit" o presiona Ctrl+C', 'dim');
+    console.log('');
+    
+    while (this.interactive) {
+      try {
+        const input = await this.question('🌸 Celia> ');
+        
+        if (!input.trim()) continue;
+        
+        // Handle slash commands like Gemini CLI
+        if (input.startsWith('/')) {
+          await this.handleSlashCommand(input.slice(1));
+          continue;
+        }
+        
+        // Handle regular commands
+        const args = input.trim().split(' ');
+        const command = args[0];
+        const commandArgs = args.slice(1);
+        
+        if (command === 'exit' || command === 'quit') {
+          this.log('🌸 ¡Hasta luego! ¡Que tengas un día celestial!~', 'primary');
+          break;
+        }
+        
+        await this.executeCommand(command, commandArgs);
+        console.log('');
+        
+      } catch (error) {
+        if (error.code === 'SIGINT') {
+          this.log('\n🌸 ¡Hasta luego! ¡Que tengas un día celestial!~', 'primary');
+          break;
+        }
+        this.log(`🌸 Error: ${error.message}`, 'error');
+      }
+    }
+    
+    this.interactive = false;
+    this.rl.close();
+  }
+  
+  /**
+   * 🌟 Handle slash commands like Gemini CLI~
+   */
+  async handleSlashCommand(command) {
+    const args = command.split(' ');
+    const cmd = args[0];
+    const params = args.slice(1);
+    
+    switch (cmd) {
+      case 'help':
+        this.modernHelp(params[0]);
+        break;
+      case 'theme':
+        this.handleTheme(params[0]);
+        break;
+      case 'sisters':
+      case 'list':
+        this.showSistersGrid();
+        break;
+      case 'clear':
+        console.clear();
+        this.showBanner();
+        break;
+      case 'exit':
+      case 'quit':
+        this.interactive = false;
+        break;
+      default:
+        this.log(`🌸 Comando slash "/${cmd}" no reconocido. Prueba "/help"~`, 'error');
+    }
+  }
+  
+  /**
+   * 💖 Modern install with beautiful UI~
+   */
+  async modernInstall(botName) {
+    if (!botName) {
+      this.showBanner();
+      this.log('🌸 ¡Necesito saber qué hermana quieres instalar!~', 'warning');
+      console.log('');
+      this.log('💡 Uso: celia install <hermana>', 'info');
+      console.log('');
+      this.log('🌸 Hermanas disponibles:', 'primary');
+      Object.keys(BOTS).forEach(key => {
+        this.log(`   • ${key}`, 'dim');
+      });
+      console.log('');
+      return;
+    }
+    
+    // Use the original install logic but with beautiful UI
+    await this.installBot(botName);
   }
 }
 
