@@ -2,18 +2,44 @@
  * 🔍 System detection and environment analysis
  */
 
-const os = require('os');
-const fs = require('fs');
+import * as os from 'os';
+import * as fs from 'fs';
+import { ISystemDetector, ISystemArchitecture, ISystemPlatform, ISystemCPU } from '../types/system';
 
-class SystemDetector {
+export class SystemDetector implements ISystemDetector {
+  public architecture: ISystemArchitecture;
+  public platform: ISystemPlatform;
+  public cpu: ISystemCPU;
+  public isTermux: boolean;
+  public isARM: boolean;
+  public isRISCV: boolean;
+  public isx86: boolean;
+  public isMIPS: boolean;
+  public isPowerPC: boolean;
+  public is64Bit: boolean;
+  public isEmbedded: boolean;
+
   constructor() {
+    // Initialize properties to avoid undefined issues
+    this.architecture = {} as ISystemArchitecture;
+    this.platform = {} as ISystemPlatform;
+    this.cpu = {} as ISystemCPU;
+    this.isTermux = false;
+    this.isARM = false;
+    this.isRISCV = false;
+    this.isx86 = false;
+    this.isMIPS = false;
+    this.isPowerPC = false;
+    this.is64Bit = false;
+    this.isEmbedded = false;
+    
     this.detectSystemEnvironment();
   }
   
   /**
    * 🔍 Comprehensive system and processor detection~
    */
-  detectSystemEnvironment() {
+  private detectSystemEnvironment(): void {
     const arch = os.arch();
     const platform = os.platform();
     const release = os.release();
@@ -64,8 +90,8 @@ class SystemDetector {
   /**
    * 🏗️ Get architecture family from Node.js arch string~
    */
-  getArchitectureFamily(arch) {
-    const families = {
+  private getArchitectureFamily(arch: string): string {
+    const families: { [key: string]: string } = {
       'arm': 'ARM',
       'arm64': 'ARM', 
       'armv7l': 'ARM',
@@ -87,7 +113,7 @@ class SystemDetector {
   /**
    * 🔢 Get architecture bit width~
    */
-  getArchitectureBits(arch) {
+  private getArchitectureBits(arch: string): number {
     const bits64 = ['x64', 'arm64', 'aarch64', 'ppc64', 'riscv64', 's390x'];
     return bits64.includes(arch) ? 64 : 32;
   }
@@ -95,8 +121,8 @@ class SystemDetector {
   /**
    * 🖥️ Get friendly platform name~
    */
-  getPlatformName(platform) {
-    const names = {
+  private getPlatformName(platform: string): string {
+    const names: { [key: string]: string } = {
       'linux': 'Linux',
       'darwin': 'macOS',
       'win32': 'Windows',
@@ -112,7 +138,7 @@ class SystemDetector {
   /**
    * 📱 Detect mobile platform environments~
    */
-  detectMobilePlatform() {
+  private detectMobilePlatform(): boolean {
     return !!(
       this.isTermux ||
       process.env.ANDROID_ROOT ||
@@ -126,21 +152,25 @@ class SystemDetector {
   /**
    * 🐳 Detect container environments~
    */
-  detectContainerEnvironment() {
-    return !!(
-      process.env.container ||
-      process.env.DOCKER_CONTAINER ||
-      process.env.KUBERNETES_SERVICE_HOST ||
-      fs.existsSync('/.dockerenv') ||
-      (fs.existsSync('/proc/1/cgroup') && 
-       fs.readFileSync('/proc/1/cgroup', 'utf8').includes('docker'))
-    );
+  private detectContainerEnvironment(): boolean {
+    try {
+      return !!(
+        process.env.container ||
+        process.env.DOCKER_CONTAINER ||
+        process.env.KUBERNETES_SERVICE_HOST ||
+        fs.existsSync('/.dockerenv') ||
+        (fs.existsSync('/proc/1/cgroup') && 
+         fs.readFileSync('/proc/1/cgroup', 'utf8').includes('docker'))
+      );
+    } catch (error) {
+      return false;
+    }
   }
 
   /**
    * 🔧 Get CPU vendor from model string~
    */
-  getCpuVendor(model) {
+  private getCpuVendor(model: string): string {
     const modelLower = model.toLowerCase();
     if (modelLower.includes('intel')) return 'Intel';
     if (modelLower.includes('amd')) return 'AMD';
@@ -155,8 +185,8 @@ class SystemDetector {
   /**
    * ⚡ Detect CPU features and capabilities~
    */
-  detectCpuFeatures() {
-    const features = [];
+  private detectCpuFeatures(): string[] {
+    const features: string[] = [];
     
     try {
       // Check for common CPU flags on Linux
@@ -179,100 +209,68 @@ class SystemDetector {
   /**
    * 🤖 Detect embedded system environments~
    */
-  detectEmbeddedSystem() {
+  private detectEmbeddedSystem(): boolean {
     return !!(
+      this.isARM && 
+      (this.cpu.count <= 4 && this.cpu.speed < 2000) ||
       this.isTermux ||
-      this.platform.isMobile ||
-      process.env.OPENWRT_BUILD ||
-      process.env.BUILDROOT_BUILD ||
-      (this.cpu.count === 1 && this.cpu.speed < 1000) ||
-      (this.isARM && this.platform.raw === 'linux')
+      process.env.EMBEDDED_DEVICE ||
+      this.platform.isMobile
     );
   }
 
   /**
-   * 🏷️ Get friendly system type description~
+   * 📋 Generate system compatibility report~
    */
-  getSystemType() {
-    if (this.isTermux) return 'Termux Android';
-    if (this.platform.isMobile) return 'sistema móvil';
-    if (this.isEmbedded) return 'sistema embebido';
-    if (this.platform.isContainer) return 'contenedor';
-    if (this.isRISCV) return 'RISC-V';
-    if (this.isARM && this.is64Bit) return 'ARM 64-bit';
-    if (this.isARM) return 'ARM 32-bit';
-    return 'tu sistema';
+  generateCompatibilityReport(): string[] {
+    const report: string[] = [];
+    
+    report.push(`Sistema: ${this.platform.name} (${this.platform.raw})`);
+    report.push(`Arquitectura: ${this.architecture.family} ${this.architecture.bits}-bit`);
+    report.push(`CPU: ${this.cpu.vendor} ${this.cpu.model} (${this.cpu.count} cores)`);
+    
+    if (this.platform.isMobile) report.push('✓ Plataforma móvil detectada');
+    if (this.platform.isContainer) report.push('✓ Entorno contenedorizado');
+    if (this.isTermux) report.push('✓ Termux Android detectado');
+    if (this.isEmbedded) report.push('✓ Sistema embebido detectado');
+    
+    if (this.cpu.features.length > 0) {
+      report.push(`Características CPU: ${this.cpu.features.join(', ')}`);
+    }
+    
+    return report;
   }
 
   /**
-   * ⚡ Get processor-optimized installation commands~
+   * 🎯 Get performance recommendations based on system~
    */
-  getOptimizedInstallCommand(language, targetDir) {
-    const baseCommands = {
-      'Node.js': 'npm install',
-      'Python': 'pip install -r requirements.txt',
-      'TypeScript': 'npm install && npm run build'
-    };
-
-    let command = baseCommands[language] || 'npm install';
+  getPerformanceRecommendations(): string[] {
+    const recommendations: string[] = [];
     
-    // Apply processor-specific optimizations
-    if (this.isARM || this.isEmbedded) {
-      // Use fewer parallel jobs on ARM/embedded to avoid memory issues
-      if (language === 'Node.js' || language === 'TypeScript') {
-        command = command.replace('npm install', 'npm install --maxsockets 1');
+    if (this.isEmbedded || this.cpu.count <= 2) {
+      recommendations.push('Usar configuraciones de bajo consumo');
+      recommendations.push('Limitar concurrencia de procesos');
+    }
+    
+    if (this.isARM) {
+      recommendations.push('Usar binarios compilados para ARM cuando sea posible');
+      if (this.architecture.bits === 32) {
+        recommendations.push('Cuidado con límites de memoria en ARM 32-bit');
       }
     }
     
-    if (this.isRISCV) {
-      // RISC-V may need single-threaded builds
-      if (language === 'Node.js' || language === 'TypeScript') {
-        command = command.replace('npm install', 'npm install --maxsockets 1 --progress false');
-      }
-    }
-    
-    if (this.cpu.count === 1) {
-      // Single core systems - be gentle
-      if (language === 'Python') {
-        command = command.replace('pip install', 'pip install --no-cache-dir');
-      }
-    }
-    
-    return command;
-  }
-
-  /**
-   * 🎯 Get system-specific recommendations~
-   */
-  getSystemRecommendations() {
-    const recommendations = [];
-    
-    if (this.isARM && this.platform.raw === 'linux') {
-      recommendations.push('💡 ARM Linux: Considera usar binarios pre-compilados cuando sea posible');
-    }
-    
-    if (this.isRISCV) {
-      recommendations.push('🆕 RISC-V: Arquitectura experimental - reporta cualquier problema');
-    }
-    
-    if (this.isEmbedded) {
-      recommendations.push('⚡ Sistema embebido: Funcionalidad optimizada automáticamente');
-    }
-    
-    if (this.cpu.count === 1) {
-      recommendations.push('🐌 Un solo núcleo: Instalaciones serán más lentas pero funcionales');
-    }
-    
-    if (this.cpu.speed > 0 && this.cpu.speed < 1000) {
-      recommendations.push('🕐 CPU lenta detectada: Paciencia durante instalaciones');
+    if (this.isTermux) {
+      recommendations.push('Usar comandos compatibles con Termux');
+      recommendations.push('Verificar permisos de almacenamiento');
     }
     
     if (this.platform.isContainer) {
-      recommendations.push('🐳 Contenedor: Algunas funciones del sistema pueden estar limitadas');
+      recommendations.push('Optimizar para entornos contenedorizados');
+      recommendations.push('Considerar límites de recursos del contenedor');
     }
     
     return recommendations;
   }
 }
 
-module.exports = SystemDetector;
+export default SystemDetector;

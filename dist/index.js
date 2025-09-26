@@ -1,7 +1,9 @@
 'use strict';
 
+var os = require('os');
+var fs2 = require('fs');
+var child_process = require('child_process');
 var readline = require('readline');
-var fs = require('fs');
 var path = require('path');
 
 function _interopNamespace(e) {
@@ -22,8 +24,9 @@ function _interopNamespace(e) {
   return Object.freeze(n);
 }
 
+var os__namespace = /*#__PURE__*/_interopNamespace(os);
+var fs2__namespace = /*#__PURE__*/_interopNamespace(fs2);
 var readline__namespace = /*#__PURE__*/_interopNamespace(readline);
-var fs__namespace = /*#__PURE__*/_interopNamespace(fs);
 var path__namespace = /*#__PURE__*/_interopNamespace(path);
 
 var __defProp = Object.defineProperty;
@@ -437,7 +440,7 @@ var init_logger = __esm({
         const interval = setInterval(() => {
           const frame = frames[i % frames.length];
           const colorIndex = i % colors.length;
-          const color = colors[colorIndex];
+          const color = colors[colorIndex] || "primary";
           const colorCode = theme[color] || theme.primary;
           process.stdout.write(`\r${theme.dim}${message} ${colorCode}${frame}${theme.reset}`);
           i++;
@@ -470,7 +473,7 @@ var init_logger = __esm({
        */
       gradientLog(text, colorKeys = ["primary", "secondary", "accent"]) {
         const theme = this.getTheme();
-        const colors = colorKeys.map((key) => theme[key]);
+        const colors = colorKeys.map((key) => theme[key] || theme.primary);
         const chars = text.split("");
         const colorStep = colors.length / chars.length;
         let output = "";
@@ -491,13 +494,64 @@ var init_logger = __esm({
         console.log(`${theme[style]}${randomSparkle} ${text} ${randomSparkle}${theme.reset}`);
       }
       /**
-       * 🌊 Wave text effect~
+       * 🌊 Wave text effect (animated)~
+       */
+      async waveText(text, style = "primary", speed = 100) {
+        var _a;
+        const theme = this.getTheme();
+        const chars = text.split("");
+        for (let wave = 0; wave < 3; wave++) {
+          process.stdout.write("\r" + " ".repeat(text.length + 10));
+          process.stdout.write("\r");
+          for (let i = 0; i < chars.length; i++) {
+            const char = Math.sin(wave + i * 0.5) > 0 ? ((_a = chars[i]) == null ? void 0 : _a.toUpperCase()) || chars[i] : chars[i];
+            process.stdout.write(`${theme[style] || theme.primary}${char}${theme.reset}`);
+          }
+          await new Promise((resolve2) => setTimeout(resolve2, speed));
+        }
+        process.stdout.write("\n");
+      }
+      /**
+       * 🌊 Wave text effect (static)~
        */
       waveLog(text, style = "accent") {
         const theme = this.getTheme();
         const waves = ["\u3030\uFE0F", "\u{1F30A}", "\u301C", "\uFF5E"];
         const randomWave = waves[Math.floor(Math.random() * waves.length)];
-        console.log(`${theme[style]}${randomWave} ${text} ${randomWave}${theme.reset}`);
+        console.log(`${theme[style] || theme.accent}${randomWave} ${text} ${randomWave}${theme.reset}`);
+      }
+      /**
+       * 💓 Pulse text effect~
+       */
+      async pulseText(text, style = "accent", pulses = 3) {
+        const theme = this.getTheme();
+        for (let i = 0; i < pulses; i++) {
+          process.stdout.write(`\r${theme[style] || theme.accent}${text}${theme.reset}`);
+          await new Promise((resolve2) => setTimeout(resolve2, 300));
+          process.stdout.write(`\r${theme.dim}${text}${theme.reset}`);
+          await new Promise((resolve2) => setTimeout(resolve2, 300));
+        }
+        process.stdout.write(`\r${theme[style] || theme.accent}${text}${theme.reset}
+`);
+      }
+      /**
+       * 📊 Progress bar~
+       */
+      async showProgressBar(message, duration = 2e3, width = 30) {
+        const theme = this.getTheme();
+        const startTime = Date.now();
+        while (Date.now() - startTime < duration) {
+          const elapsed = Date.now() - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const filled = Math.floor(progress * width);
+          const empty = width - filled;
+          const bar = "\u2588".repeat(filled) + "\u2591".repeat(empty);
+          const percentage = Math.floor(progress * 100);
+          process.stdout.write(`\r${theme.info}${message} ${theme.accent}[${bar}] ${percentage}%${theme.reset}`);
+          await new Promise((resolve2) => setTimeout(resolve2, 50));
+        }
+        process.stdout.write(`\r${theme.success}${message} [${"\u2588".repeat(width)}] 100% \u2713${theme.reset}
+`);
       }
       /**
        * 💖 Heart text effect~
@@ -561,45 +615,60 @@ var init_logger = __esm({
   }
 });
 
-// src/services/system.js
-var require_system = __commonJS({
-  "src/services/system.js"(exports, module) {
+// src/services/system.ts
+var system_exports = {};
+__export(system_exports, {
+  SystemDetector: () => SystemDetector,
+  default: () => system_default
+});
+var _SystemDetector, SystemDetector, system_default;
+var init_system = __esm({
+  "src/services/system.ts"() {
     init_cjs_shims();
-    var os = __require("os");
-    var fs2 = __require("fs");
-    var _SystemDetector = class _SystemDetector {
+    _SystemDetector = class _SystemDetector {
       constructor() {
+        this.architecture = {};
+        this.platform = {};
+        this.cpu = {};
+        this.isTermux = false;
+        this.isARM = false;
+        this.isRISCV = false;
+        this.isx86 = false;
+        this.isMIPS = false;
+        this.isPowerPC = false;
+        this.is64Bit = false;
+        this.isEmbedded = false;
         this.detectSystemEnvironment();
       }
       /**
        * 🔍 Comprehensive system and processor detection~
        */
       detectSystemEnvironment() {
-        const arch = os.arch();
-        const platform = os.platform();
-        const release = os.release();
-        const cpus = os.cpus();
+        const arch2 = os__namespace.arch();
+        const platform2 = os__namespace.platform();
+        const release2 = os__namespace.release();
+        const cpus2 = os__namespace.cpus();
         this.architecture = {
-          raw: arch,
-          family: this.getArchitectureFamily(arch),
-          bits: this.getArchitectureBits(arch),
-          endianness: os.endianness(),
-          isLittleEndian: os.endianness() === "LE"
+          raw: arch2,
+          family: this.getArchitectureFamily(arch2),
+          bits: this.getArchitectureBits(arch2),
+          endianness: os__namespace.endianness(),
+          isLittleEndian: os__namespace.endianness() === "LE"
         };
         this.platform = {
-          raw: platform,
-          name: this.getPlatformName(platform),
-          isUnix: ["linux", "darwin", "freebsd", "openbsd", "netbsd", "sunos", "aix"].includes(platform),
-          isWindows: platform === "win32",
+          raw: platform2,
+          name: this.getPlatformName(platform2),
+          isUnix: ["linux", "darwin", "freebsd", "openbsd", "netbsd", "sunos", "aix"].includes(platform2),
+          isWindows: platform2 === "win32",
           isMobile: this.detectMobilePlatform(),
           isContainer: this.detectContainerEnvironment(),
-          release
+          release: release2
         };
         this.cpu = {
-          count: cpus.length,
-          model: cpus[0] ? cpus[0].model : "Unknown",
-          speed: cpus[0] ? cpus[0].speed : 0,
-          vendor: this.getCpuVendor(cpus[0] ? cpus[0].model : ""),
+          count: cpus2.length,
+          model: cpus2[0] ? cpus2[0].model : "Unknown",
+          speed: cpus2[0] ? cpus2[0].speed : 0,
+          vendor: this.getCpuVendor(cpus2[0] ? cpus2[0].model : ""),
           features: this.detectCpuFeatures()
         };
         this.isTermux = !!(process.env.PREFIX && process.env.PREFIX.includes("com.termux"));
@@ -614,7 +683,7 @@ var require_system = __commonJS({
       /**
        * 🏗️ Get architecture family from Node.js arch string~
        */
-      getArchitectureFamily(arch) {
+      getArchitectureFamily(arch2) {
         const families = {
           "arm": "ARM",
           "arm64": "ARM",
@@ -631,19 +700,19 @@ var require_system = __commonJS({
           "s390": "IBM Z",
           "s390x": "IBM Z"
         };
-        return families[arch] || "Unknown";
+        return families[arch2] || "Unknown";
       }
       /**
        * 🔢 Get architecture bit width~
        */
-      getArchitectureBits(arch) {
+      getArchitectureBits(arch2) {
         const bits64 = ["x64", "arm64", "aarch64", "ppc64", "riscv64", "s390x"];
-        return bits64.includes(arch) ? 64 : 32;
+        return bits64.includes(arch2) ? 64 : 32;
       }
       /**
        * 🖥️ Get friendly platform name~
        */
-      getPlatformName(platform) {
+      getPlatformName(platform2) {
         const names = {
           "linux": "Linux",
           "darwin": "macOS",
@@ -654,7 +723,7 @@ var require_system = __commonJS({
           "sunos": "Solaris",
           "aix": "AIX"
         };
-        return names[platform] || platform;
+        return names[platform2] || platform2;
       }
       /**
        * 📱 Detect mobile platform environments~
@@ -667,7 +736,11 @@ var require_system = __commonJS({
        * 🐳 Detect container environments~
        */
       detectContainerEnvironment() {
-        return !!(process.env.container || process.env.DOCKER_CONTAINER || process.env.KUBERNETES_SERVICE_HOST || fs2.existsSync("/.dockerenv") || fs2.existsSync("/proc/1/cgroup") && fs2.readFileSync("/proc/1/cgroup", "utf8").includes("docker"));
+        try {
+          return !!(process.env.container || process.env.DOCKER_CONTAINER || process.env.KUBERNETES_SERVICE_HOST || fs2__namespace.existsSync("/.dockerenv") || fs2__namespace.existsSync("/proc/1/cgroup") && fs2__namespace.readFileSync("/proc/1/cgroup", "utf8").includes("docker"));
+        } catch (error) {
+          return false;
+        }
       }
       /**
        * 🔧 Get CPU vendor from model string~
@@ -689,8 +762,8 @@ var require_system = __commonJS({
       detectCpuFeatures() {
         const features = [];
         try {
-          if (this.platform.raw === "linux" && fs2.existsSync("/proc/cpuinfo")) {
-            const cpuinfo = fs2.readFileSync("/proc/cpuinfo", "utf8");
+          if (this.platform.raw === "linux" && fs2__namespace.existsSync("/proc/cpuinfo")) {
+            const cpuinfo = fs2__namespace.readFileSync("/proc/cpuinfo", "utf8");
             if (cpuinfo.includes("sse")) features.push("SSE");
             if (cpuinfo.includes("sse2")) features.push("SSE2");
             if (cpuinfo.includes("avx")) features.push("AVX");
@@ -706,86 +779,68 @@ var require_system = __commonJS({
        * 🤖 Detect embedded system environments~
        */
       detectEmbeddedSystem() {
-        return !!(this.isTermux || this.platform.isMobile || process.env.OPENWRT_BUILD || process.env.BUILDROOT_BUILD || this.cpu.count === 1 && this.cpu.speed < 1e3 || this.isARM && this.platform.raw === "linux");
+        return !!(this.isARM && (this.cpu.count <= 4 && this.cpu.speed < 2e3) || this.isTermux || process.env.EMBEDDED_DEVICE || this.platform.isMobile);
       }
       /**
-       * 🏷️ Get friendly system type description~
+       * 📋 Generate system compatibility report~
        */
-      getSystemType() {
-        if (this.isTermux) return "Termux Android";
-        if (this.platform.isMobile) return "sistema m\xF3vil";
-        if (this.isEmbedded) return "sistema embebido";
-        if (this.platform.isContainer) return "contenedor";
-        if (this.isRISCV) return "RISC-V";
-        if (this.isARM && this.is64Bit) return "ARM 64-bit";
-        if (this.isARM) return "ARM 32-bit";
-        return "tu sistema";
+      generateCompatibilityReport() {
+        const report = [];
+        report.push(`Sistema: ${this.platform.name} (${this.platform.raw})`);
+        report.push(`Arquitectura: ${this.architecture.family} ${this.architecture.bits}-bit`);
+        report.push(`CPU: ${this.cpu.vendor} ${this.cpu.model} (${this.cpu.count} cores)`);
+        if (this.platform.isMobile) report.push("\u2713 Plataforma m\xF3vil detectada");
+        if (this.platform.isContainer) report.push("\u2713 Entorno contenedorizado");
+        if (this.isTermux) report.push("\u2713 Termux Android detectado");
+        if (this.isEmbedded) report.push("\u2713 Sistema embebido detectado");
+        if (this.cpu.features.length > 0) {
+          report.push(`Caracter\xEDsticas CPU: ${this.cpu.features.join(", ")}`);
+        }
+        return report;
       }
       /**
-       * ⚡ Get processor-optimized installation commands~
+       * 🎯 Get performance recommendations based on system~
        */
-      getOptimizedInstallCommand(language, targetDir) {
-        const baseCommands = {
-          "Node.js": "npm install",
-          "Python": "pip install -r requirements.txt",
-          "TypeScript": "npm install && npm run build"
-        };
-        let command = baseCommands[language] || "npm install";
-        if (this.isARM || this.isEmbedded) {
-          if (language === "Node.js" || language === "TypeScript") {
-            command = command.replace("npm install", "npm install --maxsockets 1");
-          }
-        }
-        if (this.isRISCV) {
-          if (language === "Node.js" || language === "TypeScript") {
-            command = command.replace("npm install", "npm install --maxsockets 1 --progress false");
-          }
-        }
-        if (this.cpu.count === 1) {
-          if (language === "Python") {
-            command = command.replace("pip install", "pip install --no-cache-dir");
-          }
-        }
-        return command;
-      }
-      /**
-       * 🎯 Get system-specific recommendations~
-       */
-      getSystemRecommendations() {
+      getPerformanceRecommendations() {
         const recommendations = [];
-        if (this.isARM && this.platform.raw === "linux") {
-          recommendations.push("\u{1F4A1} ARM Linux: Considera usar binarios pre-compilados cuando sea posible");
+        if (this.isEmbedded || this.cpu.count <= 2) {
+          recommendations.push("Usar configuraciones de bajo consumo");
+          recommendations.push("Limitar concurrencia de procesos");
         }
-        if (this.isRISCV) {
-          recommendations.push("\u{1F195} RISC-V: Arquitectura experimental - reporta cualquier problema");
+        if (this.isARM) {
+          recommendations.push("Usar binarios compilados para ARM cuando sea posible");
+          if (this.architecture.bits === 32) {
+            recommendations.push("Cuidado con l\xEDmites de memoria en ARM 32-bit");
+          }
         }
-        if (this.isEmbedded) {
-          recommendations.push("\u26A1 Sistema embebido: Funcionalidad optimizada autom\xE1ticamente");
-        }
-        if (this.cpu.count === 1) {
-          recommendations.push("\u{1F40C} Un solo n\xFAcleo: Instalaciones ser\xE1n m\xE1s lentas pero funcionales");
-        }
-        if (this.cpu.speed > 0 && this.cpu.speed < 1e3) {
-          recommendations.push("\u{1F550} CPU lenta detectada: Paciencia durante instalaciones");
+        if (this.isTermux) {
+          recommendations.push("Usar comandos compatibles con Termux");
+          recommendations.push("Verificar permisos de almacenamiento");
         }
         if (this.platform.isContainer) {
-          recommendations.push("\u{1F433} Contenedor: Algunas funciones del sistema pueden estar limitadas");
+          recommendations.push("Optimizar para entornos contenedorizados");
+          recommendations.push("Considerar l\xEDmites de recursos del contenedor");
         }
         return recommendations;
       }
     };
     __name(_SystemDetector, "SystemDetector");
-    var SystemDetector3 = _SystemDetector;
-    module.exports = SystemDetector3;
+    SystemDetector = _SystemDetector;
+    system_default = SystemDetector;
   }
 });
 
-// src/security/security.js
-var require_security = __commonJS({
-  "src/security/security.js"(exports, module) {
+// src/security/security.ts
+var security_exports = {};
+__export(security_exports, {
+  SecurityUtils: () => SecurityUtils,
+  default: () => security_default
+});
+var _SecurityUtils, SecurityUtils, security_default;
+var init_security = __esm({
+  "src/security/security.ts"() {
     init_cjs_shims();
-    var { execFileSync } = __require("child_process");
-    var _SecurityUtils = class _SecurityUtils {
+    _SecurityUtils = class _SecurityUtils {
       /**
        * 🛡️ Sanitiza nombres de directorio para prevenir inyección
        */
@@ -852,7 +907,7 @@ var require_security = __commonJS({
           }
           return arg;
         });
-        return execFileSync(command, safeArgs, {
+        return child_process.execFileSync(command, safeArgs, {
           stdio: "inherit",
           encoding: "utf8",
           ...options
@@ -919,41 +974,82 @@ var require_security = __commonJS({
         if (!value || typeof value !== "string") {
           return "";
         }
-        let sanitized = value.replace(/[\x00-\x1F\x7F]/g, "");
         if (sensitive) {
-          sanitized = sanitized.replace(/[^a-zA-Z0-9._-]/g, "");
+          return value.replace(/[;&|`$\\<>"']/g, "").trim();
         }
-        return sanitized.trim();
+        return value.replace(/[;&|`$\\]/g, "").trim();
       }
       /**
-       * 🛡️ Parsea comandos de instalación de forma segura
+       * 🛡️ Valida argumentos de línea de comandos
        */
-      static parseInstallCommand(command) {
-        if (!command || typeof command !== "string") {
-          return [];
-        }
-        const cleaned = command.replace(/^(npm|pip|pip3)\s+/, "").trim();
-        const args = cleaned.split(/\s+/).filter((arg) => {
-          return arg && arg.length > 0 && !/[;&|`$]/.test(arg) && // No metacaracteres peligrosos
-          arg.length < 100;
+      static validateCommandArgs(args) {
+        return args.map((arg) => {
+          if (typeof arg !== "string") {
+            throw new Error("Todos los argumentos deben ser strings");
+          }
+          const sanitized = arg.replace(/[;&|`$\\]/g, "");
+          if (sanitized !== arg) {
+            throw new Error(`Argumento contiene caracteres peligrosos: ${arg}`);
+          }
+          return sanitized;
         });
-        return args;
       }
       /**
-       * 🛡️ Obtener archivos críticos según el lenguaje
+       * 🛡️ Genera nombre de archivo seguro
        */
-      static getCriticalFiles(language) {
-        const files = {
-          "Node.js": ["package.json"],
-          "Python": ["requirements.txt"],
-          "TypeScript": ["package.json", "tsconfig.json"]
-        };
-        return files[language] || ["README.md"];
+      static sanitizeFileName(fileName) {
+        if (!fileName || typeof fileName !== "string") {
+          throw new Error("Nombre de archivo inv\xE1lido");
+        }
+        const sanitized = fileName.replace(/[<>:"/\\|?*]/g, "").replace(/^\.+/, "").replace(/\s+/g, "_").substring(0, 255);
+        if (!sanitized || sanitized.length === 0) {
+          throw new Error("Nombre de archivo resulta vac\xEDo despu\xE9s de sanitizaci\xF3n");
+        }
+        return sanitized;
+      }
+      /**
+       * 🛡️ Verifica que una ruta esté dentro de un directorio permitido
+       */
+      static isPathSafe(filePath, allowedDir) {
+        if (!filePath || !allowedDir) {
+          return false;
+        }
+        try {
+          const path2 = __require("path");
+          const resolved = path2.resolve(filePath);
+          const allowed = path2.resolve(allowedDir);
+          return resolved.startsWith(allowed + path2.sep) || resolved === allowed;
+        } catch (error) {
+          return false;
+        }
+      }
+      /**
+       * 🛡️ Genera hash seguro para identificación
+       */
+      static generateSafeHash(input) {
+        const crypto = __require("crypto");
+        return crypto.createHash("sha256").update(input).digest("hex").substring(0, 16);
+      }
+      /**
+       * 🛡️ Valida formato de email básico
+       */
+      static validateEmail(email) {
+        if (!email || typeof email !== "string") {
+          return false;
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+      }
+      /**
+       * 🛡️ Escapa caracteres especiales para regex
+       */
+      static escapeRegex(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       }
     };
     __name(_SecurityUtils, "SecurityUtils");
-    var SecurityUtils3 = _SecurityUtils;
-    module.exports = SecurityUtils3;
+    SecurityUtils = _SecurityUtils;
+    security_default = SecurityUtils;
   }
 });
 
@@ -1371,7 +1467,7 @@ __export(celia_exports, {
   CeliaAssistant: () => CeliaAssistant,
   default: () => celia_default
 });
-var VERSION, NODE_MIN_VERSION, THEMES2, BOTS, Logger2, SystemDetector, SecurityUtils, PromptUtils2, ListCommand, HelpCommand, ThemeCommand, StatusCommand, _CeliaAssistant, CeliaAssistant, celia_default;
+var VERSION, NODE_MIN_VERSION, THEMES2, BOTS, Logger2, SystemDetector2, SecurityUtils2, PromptUtils2, ListCommand, HelpCommand, ThemeCommand, StatusCommand, _CeliaAssistant, CeliaAssistant, celia_default;
 var init_celia = __esm({
   "src/cli/celia.ts"() {
     init_cjs_shims();
@@ -1380,8 +1476,8 @@ var init_celia = __esm({
     ({ THEMES: THEMES2 } = require_themes());
     ({ BOTS } = require_bots());
     Logger2 = (init_logger(), __toCommonJS(logger_exports));
-    SystemDetector = require_system();
-    SecurityUtils = require_security();
+    SystemDetector2 = (init_system(), __toCommonJS(system_exports));
+    SecurityUtils2 = (init_security(), __toCommonJS(security_exports));
     PromptUtils2 = (init_prompt(), __toCommonJS(prompt_exports));
     ListCommand = require_list();
     HelpCommand = require_help();
@@ -1391,7 +1487,7 @@ var init_celia = __esm({
       constructor() {
         this.interactive = false;
         this.logger = new Logger2();
-        this.system = new SystemDetector();
+        this.system = new SystemDetector2();
         this.prompt = new PromptUtils2();
         this.router = new CommandRouter();
         this.initializeCommands();
@@ -1400,7 +1496,7 @@ var init_celia = __esm({
        * 🛡️ Verificar prerrequisitos críticos
        */
       static checkCriticalPrerequisites() {
-        if (!SecurityUtils.validateNodeVersion(NODE_MIN_VERSION)) {
+        if (!SecurityUtils2.validateNodeVersion(NODE_MIN_VERSION)) {
           throw new Error(`Versi\xF3n de Node.js muy antigua. Se requiere >= ${NODE_MIN_VERSION}. Versi\xF3n actual: ${process.version}`);
         }
       }
@@ -1408,7 +1504,7 @@ var init_celia = __esm({
        * 🛡️ Mostrar estado de prerrequisitos
        */
       showPrerequisiteStatus() {
-        const missing = SecurityUtils.checkPrerequisites();
+        const missing = SecurityUtils2.checkPrerequisites();
         if (missing.length > 0) {
           this.logger.log("\n\u26A0\uFE0F  Prerrequisitos faltantes:", "warning");
           missing.forEach((cmd) => {
@@ -1610,10 +1706,10 @@ var init_fs = __esm({
        * Cross-platform directory removal with ARM/Termux compatibility
        */
       static removeDirectory(dirPath, system) {
-        if (!fs__namespace.existsSync(dirPath)) return;
+        if (!fs2__namespace.existsSync(dirPath)) return;
         try {
-          if (fs__namespace.rmSync) {
-            fs__namespace.rmSync(dirPath, { recursive: true, force: true });
+          if (fs2__namespace.rmSync) {
+            fs2__namespace.rmSync(dirPath, { recursive: true, force: true });
           } else {
             _FileSystemUtils.removeDirectoryRecursive(dirPath);
           }
@@ -1629,35 +1725,35 @@ var init_fs = __esm({
        * Recursive directory removal fallback
        */
       static removeDirectoryRecursive(dirPath) {
-        if (!fs__namespace.existsSync(dirPath)) return;
-        const files = fs__namespace.readdirSync(dirPath);
+        if (!fs2__namespace.existsSync(dirPath)) return;
+        const files = fs2__namespace.readdirSync(dirPath);
         files.forEach((file) => {
           const filePath = path__namespace.join(dirPath, file);
-          const stat = fs__namespace.statSync(filePath);
+          const stat = fs2__namespace.statSync(filePath);
           if (stat.isDirectory()) {
             _FileSystemUtils.removeDirectoryRecursive(filePath);
           } else {
-            fs__namespace.unlinkSync(filePath);
+            fs2__namespace.unlinkSync(filePath);
           }
         });
-        fs__namespace.rmdirSync(dirPath);
+        fs2__namespace.rmdirSync(dirPath);
       }
       /**
        * System-specific directory removal
        */
       static removeDirectoryWithSystem(dirPath, system) {
-        const SecurityUtils3 = require_security();
+        const SecurityUtils4 = (init_security(), __toCommonJS(security_exports));
         try {
           if (system.platform.isWindows) {
-            SecurityUtils3.execSafe("rmdir", ["/s", "/q", dirPath]);
+            SecurityUtils4.execSafe("rmdir", ["/s", "/q", dirPath]);
           } else if (system.isTermux) {
             try {
-              SecurityUtils3.execSafe("rm", ["-rf", dirPath]);
+              SecurityUtils4.execSafe("rm", ["-rf", dirPath]);
             } catch (termuxError) {
-              SecurityUtils3.execSafe("rm", ["-r", dirPath]);
+              SecurityUtils4.execSafe("rm", ["-r", dirPath]);
             }
           } else {
-            SecurityUtils3.execSafe("rm", ["-rf", dirPath]);
+            SecurityUtils4.execSafe("rm", ["-rf", dirPath]);
           }
         } catch (cmdError) {
           if (system.isARM || system.isTermux || system.isEmbedded) {
@@ -1673,8 +1769,8 @@ var init_fs = __esm({
        */
       static ensureDirectory(dirPath) {
         try {
-          if (!fs__namespace.existsSync(dirPath)) {
-            fs__namespace.mkdirSync(dirPath, { recursive: true });
+          if (!fs2__namespace.existsSync(dirPath)) {
+            fs2__namespace.mkdirSync(dirPath, { recursive: true });
           }
           return true;
         } catch (error) {
@@ -1686,7 +1782,7 @@ var init_fs = __esm({
        */
       static copyFile(src, dest) {
         try {
-          fs__namespace.copyFileSync(src, dest);
+          fs2__namespace.copyFileSync(src, dest);
           return true;
         } catch (error) {
           return false;
@@ -1697,7 +1793,7 @@ var init_fs = __esm({
        */
       static readFile(filePath, encoding = "utf8") {
         try {
-          return fs__namespace.readFileSync(filePath, encoding);
+          return fs2__namespace.readFileSync(filePath, encoding);
         } catch (error) {
           return null;
         }
@@ -1707,7 +1803,7 @@ var init_fs = __esm({
        */
       static writeFile(filePath, content, encoding = "utf8") {
         try {
-          fs__namespace.writeFileSync(filePath, content, encoding);
+          fs2__namespace.writeFileSync(filePath, content, encoding);
           return true;
         } catch (error) {
           return false;
@@ -1717,14 +1813,14 @@ var init_fs = __esm({
        * Check if path exists
        */
       static exists(filePath) {
-        return fs__namespace.existsSync(filePath);
+        return fs2__namespace.existsSync(filePath);
       }
       /**
        * Get file stats safely
        */
       static getStats(filePath) {
         try {
-          return fs__namespace.statSync(filePath);
+          return fs2__namespace.statSync(filePath);
         } catch (error) {
           return null;
         }
@@ -1734,7 +1830,7 @@ var init_fs = __esm({
        */
       static isDirectory(dirPath) {
         try {
-          const stat = fs__namespace.statSync(dirPath);
+          const stat = fs2__namespace.statSync(dirPath);
           return stat.isDirectory();
         } catch (error) {
           return false;
@@ -1745,7 +1841,7 @@ var init_fs = __esm({
        */
       static isFile(filePath) {
         try {
-          const stat = fs__namespace.statSync(filePath);
+          const stat = fs2__namespace.statSync(filePath);
           return stat.isFile();
         } catch (error) {
           return false;
@@ -1756,7 +1852,7 @@ var init_fs = __esm({
        */
       static readDirectory(dirPath) {
         try {
-          return fs__namespace.readdirSync(dirPath);
+          return fs2__namespace.readdirSync(dirPath);
         } catch (error) {
           return null;
         }
@@ -1900,9 +1996,9 @@ var require_package = __commonJS({
 // src/index.ts
 init_cjs_shims();
 var CeliaAssistant2 = (init_celia(), __toCommonJS(celia_exports));
-var SecurityUtils2 = require_security();
+var SecurityUtils3 = (init_security(), __toCommonJS(security_exports));
 var Logger3 = (init_logger(), __toCommonJS(logger_exports));
-var SystemDetector2 = require_system();
+var SystemDetector3 = (init_system(), __toCommonJS(system_exports));
 var CommandRouter2 = (init_router(), __toCommonJS(router_exports));
 var { THEMES: THEMES3 } = require_themes();
 var { BOTS: BOTS2 } = require_bots();
@@ -1918,8 +2014,8 @@ exports.FileSystemUtils = FileSystemUtils2;
 exports.Logger = Logger3;
 exports.NODE_MIN_VERSION = NODE_MIN_VERSION2;
 exports.PromptUtils = PromptUtils3;
-exports.SecurityUtils = SecurityUtils2;
-exports.SystemDetector = SystemDetector2;
+exports.SecurityUtils = SecurityUtils3;
+exports.SystemDetector = SystemDetector3;
 exports.THEMES = THEMES3;
 exports.VERSION = VERSION2;
 exports.version = version;

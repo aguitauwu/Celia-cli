@@ -102,7 +102,7 @@ export class Logger {
    */
   gradientLog(text: string, colorKeys: ThemeStyle[] = ['primary', 'secondary', 'accent']): void {
     const theme = this.getTheme();
-    const colors = colorKeys.map(key => theme[key]);
+    const colors = colorKeys.map(key => theme[key] || theme.primary);
     const chars = text.split('');
     const colorStep = colors.length / chars.length;
     
@@ -127,13 +127,72 @@ export class Logger {
   }
   
   /**
-   * 🌊 Wave text effect~
+   * 🌊 Wave text effect (animated)~
+   */
+  async waveText(text: string, style: ThemeStyle = 'primary', speed: number = 100): Promise<void> {
+    const theme = this.getTheme();
+    const chars = text.split('');
+    
+    for (let wave = 0; wave < 3; wave++) {
+      process.stdout.write('\r' + ' '.repeat(text.length + 10));
+      process.stdout.write('\r');
+      
+      for (let i = 0; i < chars.length; i++) {
+        const char = Math.sin(wave + i * 0.5) > 0 ? chars[i]?.toUpperCase() || chars[i] : chars[i];
+        process.stdout.write(`${theme[style] || theme.primary}${char}${theme.reset}`);
+      }
+      await new Promise(resolve => setTimeout(resolve, speed));
+    }
+    process.stdout.write('\n');
+  }
+  
+  /**
+   * 🌊 Wave text effect (static)~
    */
   waveLog(text: string, style: ThemeStyle = 'accent'): void {
     const theme = this.getTheme();
     const waves = ['〰️', '🌊', '〜', '～'];
     const randomWave = waves[Math.floor(Math.random() * waves.length)];
-    console.log(`${theme[style]}${randomWave} ${text} ${randomWave}${theme.reset}`);
+    console.log(`${theme[style] || theme.accent}${randomWave} ${text} ${randomWave}${theme.reset}`);
+  }
+  
+  /**
+   * 💓 Pulse text effect~
+   */
+  async pulseText(text: string, style: ThemeStyle = 'accent', pulses: number = 3): Promise<void> {
+    const theme = this.getTheme();
+    
+    for (let i = 0; i < pulses; i++) {
+      process.stdout.write(`\r${theme[style] || theme.accent}${text}${theme.reset}`);
+      await new Promise(resolve => setTimeout(resolve, 300));
+      process.stdout.write(`\r${theme.dim}${text}${theme.reset}`);
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
+    process.stdout.write(`\r${theme[style] || theme.accent}${text}${theme.reset}\n`);
+  }
+  
+  /**
+   * 📊 Progress bar~
+   */
+  async showProgressBar(message: string, duration: number = 2000, width: number = 30): Promise<void> {
+    const theme = this.getTheme();
+    const startTime = Date.now();
+    
+    while (Date.now() - startTime < duration) {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const filled = Math.floor(progress * width);
+      const empty = width - filled;
+      
+      const bar = '█'.repeat(filled) + '░'.repeat(empty);
+      const percentage = Math.floor(progress * 100);
+      
+      process.stdout.write(`\r${theme.info}${message} ${theme.accent}[${bar}] ${percentage}%${theme.reset}`);
+      
+      await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    
+    process.stdout.write(`\r${theme.success}${message} [${'█'.repeat(width)}] 100% ✓${theme.reset}\n`);
   }
   
   /**
