@@ -161,64 +161,96 @@ var init_router = __esm({
   }
 });
 
-// src/config/constants.js
-var require_constants = __commonJS({
-  "src/config/constants.js"(exports, module) {
+// src/config/constants.ts
+var constants_exports = {};
+__export(constants_exports, {
+  CLI_NAME: () => CLI_NAME,
+  CONSTANTS: () => CONSTANTS,
+  DEFAULT_TIMEOUT: () => DEFAULT_TIMEOUT,
+  GIT_TIMEOUT: () => GIT_TIMEOUT,
+  INSTALL_TIMEOUT: () => INSTALL_TIMEOUT,
+  MAX_ARGUMENT_LENGTH: () => MAX_ARGUMENT_LENGTH,
+  MAX_FILENAME_LENGTH: () => MAX_FILENAME_LENGTH,
+  NODE_MIN_VERSION: () => NODE_MIN_VERSION,
+  PACKAGE_MANAGERS: () => PACKAGE_MANAGERS,
+  SUPPORTED_ARCHITECTURES: () => SUPPORTED_ARCHITECTURES,
+  SUPPORTED_PLATFORMS: () => SUPPORTED_PLATFORMS,
+  VERSION: () => VERSION,
+  default: () => constants_default
+});
+var CLI_NAME, VERSION, NODE_MIN_VERSION, DEFAULT_TIMEOUT, GIT_TIMEOUT, INSTALL_TIMEOUT, MAX_FILENAME_LENGTH, MAX_ARGUMENT_LENGTH, SUPPORTED_PLATFORMS, SUPPORTED_ARCHITECTURES, PACKAGE_MANAGERS, CONSTANTS, constants_default;
+var init_constants = __esm({
+  "src/config/constants.ts"() {
     init_cjs_shims();
-    module.exports = {
-      CLI_NAME: "opceanaicli",
-      VERSION: "2.0.0",
-      NODE_MIN_VERSION: "14.0.0",
-      // Timeout configurations
-      DEFAULT_TIMEOUT: 3e4,
-      GIT_TIMEOUT: 6e4,
-      INSTALL_TIMEOUT: 18e4,
-      // File limits
-      MAX_FILENAME_LENGTH: 100,
-      MAX_ARGUMENT_LENGTH: 1e3,
-      // System detection
-      SUPPORTED_PLATFORMS: ["win32", "linux", "darwin", "android"],
-      SUPPORTED_ARCHITECTURES: ["x64", "ia32", "arm", "arm64", "armv7l", "aarch64"],
-      // Package managers
-      PACKAGE_MANAGERS: {
-        npm: {
-          name: "npm",
-          lockFile: "package-lock.json",
-          installCommand: ["install"],
-          addCommand: ["install"],
-          runCommand: ["run"]
-        },
-        pnpm: {
-          name: "pnpm",
-          lockFile: "pnpm-lock.yaml",
-          installCommand: ["install"],
-          addCommand: ["add"],
-          runCommand: ["run"]
-        },
-        yarn: {
-          name: "yarn",
-          lockFile: "yarn.lock",
-          installCommand: ["install"],
-          addCommand: ["add"],
-          runCommand: ["run"]
-        },
-        bun: {
-          name: "bun",
-          lockFile: "bun.lockb",
-          installCommand: ["install"],
-          addCommand: ["add"],
-          runCommand: ["run"]
-        }
+    CLI_NAME = "opceanaicli";
+    VERSION = "2.0.0";
+    NODE_MIN_VERSION = "14.0.0";
+    DEFAULT_TIMEOUT = 3e4;
+    GIT_TIMEOUT = 6e4;
+    INSTALL_TIMEOUT = 18e4;
+    MAX_FILENAME_LENGTH = 100;
+    MAX_ARGUMENT_LENGTH = 1e3;
+    SUPPORTED_PLATFORMS = ["win32", "linux", "darwin", "android"];
+    SUPPORTED_ARCHITECTURES = ["x64", "ia32", "arm", "arm64", "armv7l", "aarch64"];
+    PACKAGE_MANAGERS = {
+      npm: {
+        name: "npm",
+        lockFile: "package-lock.json",
+        installCommand: ["install"],
+        addCommand: ["install"],
+        runCommand: ["run"]
+      },
+      pnpm: {
+        name: "pnpm",
+        lockFile: "pnpm-lock.yaml",
+        installCommand: ["install"],
+        addCommand: ["add"],
+        runCommand: ["run"]
+      },
+      yarn: {
+        name: "yarn",
+        lockFile: "yarn.lock",
+        installCommand: ["install"],
+        addCommand: ["add"],
+        runCommand: ["run"]
+      },
+      bun: {
+        name: "bun",
+        lockFile: "bun.lockb",
+        installCommand: ["install"],
+        addCommand: ["add"],
+        runCommand: ["run"]
       }
     };
+    CONSTANTS = {
+      CLI_NAME,
+      VERSION,
+      NODE_MIN_VERSION,
+      DEFAULT_TIMEOUT,
+      GIT_TIMEOUT,
+      INSTALL_TIMEOUT,
+      MAX_FILENAME_LENGTH,
+      MAX_ARGUMENT_LENGTH,
+      SUPPORTED_PLATFORMS,
+      SUPPORTED_ARCHITECTURES,
+      PACKAGE_MANAGERS
+    };
+    constants_default = CONSTANTS;
   }
 });
 
-// src/config/themes.js
-var require_themes = __commonJS({
-  "src/config/themes.js"(exports, module) {
+// src/config/themes.ts
+var themes_exports = {};
+__export(themes_exports, {
+  DEFAULT_THEME: () => DEFAULT_THEME,
+  THEMES: () => THEMES,
+  default: () => themes_default
+});
+var THEMES, DEFAULT_THEME, themes_default;
+var init_themes = __esm({
+  "src/config/themes.ts"() {
     init_cjs_shims();
-    var THEMES4 = {
+    THEMES = {
       celestial: {
         primary: "\x1B[38;5;147m",
         // Light purple
@@ -240,6 +272,14 @@ var require_themes = __commonJS({
         // Dim gray
         bright: "\x1B[38;5;15m",
         // White
+        bold: "\x1B[1m",
+        // Bold
+        underline: "\x1B[4m",
+        // Underline
+        italic: "\x1B[3m",
+        // Italic
+        strikethrough: "\x1B[9m",
+        // Strikethrough
         reset: "\x1B[0m"
       },
       kawaii: {
@@ -263,6 +303,14 @@ var require_themes = __commonJS({
         // Medium gray
         bright: "\x1B[38;5;15m",
         // White
+        bold: "\x1B[1m",
+        // Bold
+        underline: "\x1B[4m",
+        // Underline
+        italic: "\x1B[3m",
+        // Italic
+        strikethrough: "\x1B[9m",
+        // Strikethrough
         reset: "\x1B[0m"
       },
       dreamy: {
@@ -286,21 +334,33 @@ var require_themes = __commonJS({
         // Dark gray
         bright: "\x1B[38;5;15m",
         // White
+        bold: "\x1B[1m",
+        // Bold
+        underline: "\x1B[4m",
+        // Underline
+        italic: "\x1B[3m",
+        // Italic
+        strikethrough: "\x1B[9m",
+        // Strikethrough
         reset: "\x1B[0m"
       }
     };
-    module.exports = {
-      THEMES: THEMES4,
-      DEFAULT_THEME: "celestial"
-    };
+    DEFAULT_THEME = "celestial";
+    themes_default = { THEMES, DEFAULT_THEME };
   }
 });
 
-// src/config/bots.js
-var require_bots = __commonJS({
-  "src/config/bots.js"(exports, module) {
+// src/config/bots.ts
+var bots_exports = {};
+__export(bots_exports, {
+  BOTS: () => BOTS,
+  default: () => bots_default
+});
+var BOTS, bots_default;
+var init_bots = __esm({
+  "src/config/bots.ts"() {
     init_cjs_shims();
-    var BOTS3 = {
+    BOTS = {
       nebula: {
         name: "Nebula",
         url: "https://github.com/OpceanAI/Nebula-Open-source",
@@ -312,8 +372,8 @@ var require_bots = __commonJS({
           { name: "CLIENT_ID", description: "Discord Client ID", required: true, sensitive: false },
           { name: "OWNER_ID", description: "Discord Owner ID", required: true, sensitive: false },
           { name: "MONGO_CONNECTION", description: "MongoDB Connection URL", required: true, sensitive: true },
-          { name: "LAVALINK_HOST", description: "Lavalink Host", required: false, default: "localhost" },
-          { name: "LAVALINK_PORT", description: "Lavalink Port", required: false, default: "2333" },
+          { name: "LAVALINK_HOST", description: "Lavalink Host", required: false, default: "localhost", sensitive: false },
+          { name: "LAVALINK_PORT", description: "Lavalink Port", required: false, default: "2333", sensitive: false },
           { name: "LAVALINK_PASSWORD", description: "Lavalink Password", required: false, default: "youshallnotpass", sensitive: true },
           { name: "WEATHER_API_KEY", description: "Weather API Key", required: false, sensitive: true },
           { name: "TRANSLATE_API_KEY", description: "Translation API Key", required: false, sensitive: true }
@@ -374,9 +434,7 @@ var require_bots = __commonJS({
         ]
       }
     };
-    module.exports = {
-      BOTS: BOTS3
-    };
+    bots_default = BOTS;
   }
 });
 
@@ -386,20 +444,20 @@ __export(logger_exports, {
   Logger: () => Logger,
   default: () => logger_default
 });
-var THEMES, DEFAULT_THEME, _Logger, Logger, logger_default;
+var THEMES2, DEFAULT_THEME2, _Logger, Logger, logger_default;
 var init_logger = __esm({
   "src/utils/logger.ts"() {
     init_cjs_shims();
-    ({ THEMES, DEFAULT_THEME } = require_themes());
+    ({ THEMES: THEMES2, DEFAULT_THEME: DEFAULT_THEME2 } = (init_themes(), __toCommonJS(themes_exports)));
     _Logger = class _Logger {
-      constructor(theme = DEFAULT_THEME) {
+      constructor(theme = DEFAULT_THEME2) {
         this.theme = theme;
       }
       /**
        * Set current theme
        */
       setTheme(theme) {
-        if (THEMES[theme]) {
+        if (THEMES2[theme]) {
           this.theme = theme;
         }
       }
@@ -407,7 +465,7 @@ var init_logger = __esm({
        * Get current theme colors
        */
       getTheme() {
-        return THEMES[this.theme];
+        return THEMES2[this.theme];
       }
       /**
        * 🌙 Celia's beautiful theming system~
@@ -959,11 +1017,13 @@ var init_security = __esm({
        */
       static validateNodeVersion(requiredVersion = "14.0.0") {
         const currentVersion = process.version;
-        const current = currentVersion.slice(1).split(".").map(Number);
-        const required = requiredVersion.split(".").map(Number);
+        const current = currentVersion.slice(1).split(".").map((v) => parseInt(v, 10) || 0);
+        const required = requiredVersion.split(".").map((v) => parseInt(v, 10) || 0);
         for (let i = 0; i < 3; i++) {
-          if (current[i] > required[i]) return true;
-          if (current[i] < required[i]) return false;
+          const currentNum = current[i] || 0;
+          const requiredNum = required[i] || 0;
+          if (currentNum > requiredNum) return true;
+          if (currentNum < requiredNum) return false;
         }
         return true;
       }
@@ -1214,7 +1274,7 @@ ${message}`);
 var require_list = __commonJS({
   "src/cli/commands/list.js"(exports, module) {
     init_cjs_shims();
-    var { BOTS: BOTS3 } = require_bots();
+    var { BOTS: BOTS4 } = (init_bots(), __toCommonJS(bots_exports));
     var _ListCommand = class _ListCommand {
       constructor(logger) {
         this.logger = logger;
@@ -1224,7 +1284,7 @@ var require_list = __commonJS({
         this.logger.gradientLog("\u{1F338} \xA1Mis Hermanas Bot! \u{1F338}", ["primary", "secondary", "accent"]);
         console.log("");
         const categories = {};
-        Object.entries(BOTS3).forEach(([key, bot]) => {
+        Object.entries(BOTS4).forEach(([key, bot]) => {
           if (!categories[bot.category]) {
             categories[bot.category] = [];
           }
@@ -1350,7 +1410,7 @@ var require_help = __commonJS({
 var require_theme = __commonJS({
   "src/cli/commands/theme.js"(exports, module) {
     init_cjs_shims();
-    var { THEMES: THEMES4 } = require_themes();
+    var { THEMES: THEMES5 } = (init_themes(), __toCommonJS(themes_exports));
     var _ThemeCommand = class _ThemeCommand {
       constructor(logger) {
         this.logger = logger;
@@ -1361,8 +1421,8 @@ var require_theme = __commonJS({
           this.showAvailableThemes();
           return;
         }
-        if (!THEMES4[themeName]) {
-          this.logger.log(`\u{1F338} Tema "${themeName}" no existe~ Temas disponibles: ${Object.keys(THEMES4).join(", ")}`, "error");
+        if (!THEMES5[themeName]) {
+          this.logger.log(`\u{1F338} Tema "${themeName}" no existe~ Temas disponibles: ${Object.keys(THEMES5).join(", ")}`, "error");
           return;
         }
         await this.logger.showLoading(`\u{1F3A8} Cambiando a tema ${themeName}`, 1500);
@@ -1379,7 +1439,7 @@ var require_theme = __commonJS({
         this.showBanner();
         this.logger.log("\u{1F3A8} Temas disponibles:", "primary");
         console.log("");
-        Object.keys(THEMES4).forEach((theme) => {
+        Object.keys(THEMES5).forEach((theme) => {
           const isActive = theme === this.logger.theme;
           const indicator = isActive ? "\u25CF " : "\u25CB ";
           this.logger.log(`${indicator}${theme}`, isActive ? "accent" : "dim");
@@ -1467,14 +1527,14 @@ __export(celia_exports, {
   CeliaAssistant: () => CeliaAssistant,
   default: () => celia_default
 });
-var VERSION, NODE_MIN_VERSION, THEMES2, BOTS, Logger2, SystemDetector2, SecurityUtils2, PromptUtils2, ListCommand, HelpCommand, ThemeCommand, StatusCommand, _CeliaAssistant, CeliaAssistant, celia_default;
+var VERSION2, NODE_MIN_VERSION2, THEMES3, BOTS2, Logger2, SystemDetector2, SecurityUtils2, PromptUtils2, ListCommand, HelpCommand, ThemeCommand, StatusCommand, _CeliaAssistant, CeliaAssistant, celia_default;
 var init_celia = __esm({
   "src/cli/celia.ts"() {
     init_cjs_shims();
     init_router();
-    ({ VERSION, NODE_MIN_VERSION } = require_constants());
-    ({ THEMES: THEMES2 } = require_themes());
-    ({ BOTS } = require_bots());
+    ({ VERSION: VERSION2, NODE_MIN_VERSION: NODE_MIN_VERSION2 } = (init_constants(), __toCommonJS(constants_exports)));
+    ({ THEMES: THEMES3 } = (init_themes(), __toCommonJS(themes_exports)));
+    ({ BOTS: BOTS2 } = (init_bots(), __toCommonJS(bots_exports)));
     Logger2 = (init_logger(), __toCommonJS(logger_exports));
     SystemDetector2 = (init_system(), __toCommonJS(system_exports));
     SecurityUtils2 = (init_security(), __toCommonJS(security_exports));
@@ -1496,8 +1556,8 @@ var init_celia = __esm({
        * 🛡️ Verificar prerrequisitos críticos
        */
       static checkCriticalPrerequisites() {
-        if (!SecurityUtils2.validateNodeVersion(NODE_MIN_VERSION)) {
-          throw new Error(`Versi\xF3n de Node.js muy antigua. Se requiere >= ${NODE_MIN_VERSION}. Versi\xF3n actual: ${process.version}`);
+        if (!SecurityUtils2.validateNodeVersion(NODE_MIN_VERSION2)) {
+          throw new Error(`Versi\xF3n de Node.js muy antigua. Se requiere >= ${NODE_MIN_VERSION2}. Versi\xF3n actual: ${process.version}`);
         }
       }
       /**
@@ -1599,7 +1659,7 @@ var init_celia = __esm({
        */
       showVersion() {
         this.showBanner();
-        this.logger.gradientLog(`Celia v${VERSION} \u{1F496}`, ["primary", "secondary"]);
+        this.logger.gradientLog(`Celia v${VERSION2} \u{1F496}`, ["primary", "secondary"]);
         console.log("");
         this.logger.log("Tu asistente celestial tierna~", "dim");
         this.showPrerequisiteStatus();
@@ -2000,24 +2060,24 @@ var SecurityUtils3 = (init_security(), __toCommonJS(security_exports));
 var Logger3 = (init_logger(), __toCommonJS(logger_exports));
 var SystemDetector3 = (init_system(), __toCommonJS(system_exports));
 var CommandRouter2 = (init_router(), __toCommonJS(router_exports));
-var { THEMES: THEMES3 } = require_themes();
-var { BOTS: BOTS2 } = require_bots();
-var { VERSION: VERSION2, NODE_MIN_VERSION: NODE_MIN_VERSION2 } = require_constants();
+var { THEMES: THEMES4 } = (init_themes(), __toCommonJS(themes_exports));
+var { BOTS: BOTS3 } = (init_bots(), __toCommonJS(bots_exports));
+var { VERSION: VERSION3, NODE_MIN_VERSION: NODE_MIN_VERSION3 } = (init_constants(), __toCommonJS(constants_exports));
 var FileSystemUtils2 = (init_fs(), __toCommonJS(fs_exports));
 var PromptUtils3 = (init_prompt(), __toCommonJS(prompt_exports));
 var version = require_package().version;
 
-exports.BOTS = BOTS2;
+exports.BOTS = BOTS3;
 exports.CeliaAssistant = CeliaAssistant2;
 exports.CommandRouter = CommandRouter2;
 exports.FileSystemUtils = FileSystemUtils2;
 exports.Logger = Logger3;
-exports.NODE_MIN_VERSION = NODE_MIN_VERSION2;
+exports.NODE_MIN_VERSION = NODE_MIN_VERSION3;
 exports.PromptUtils = PromptUtils3;
 exports.SecurityUtils = SecurityUtils3;
 exports.SystemDetector = SystemDetector3;
-exports.THEMES = THEMES3;
-exports.VERSION = VERSION2;
+exports.THEMES = THEMES4;
+exports.VERSION = VERSION3;
 exports.version = version;
 //# sourceMappingURL=index.js.map
 //# sourceMappingURL=index.js.map

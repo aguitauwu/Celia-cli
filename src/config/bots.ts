@@ -2,7 +2,9 @@
  * 🌸 Celia's bot sisters configuration
  */
 
-const BOTS = {
+import { IBots, IBotConfig, IEnvVar } from '../types/bots';
+
+export const BOTS: IBots = {
   nebula: {
     name: 'Nebula',
     url: 'https://github.com/OpceanAI/Nebula-Open-source',
@@ -14,8 +16,8 @@ const BOTS = {
       { name: 'CLIENT_ID', description: 'Discord Client ID', required: true, sensitive: false },
       { name: 'OWNER_ID', description: 'Discord Owner ID', required: true, sensitive: false },
       { name: 'MONGO_CONNECTION', description: 'MongoDB Connection URL', required: true, sensitive: true },
-      { name: 'LAVALINK_HOST', description: 'Lavalink Host', required: false, default: 'localhost' },
-      { name: 'LAVALINK_PORT', description: 'Lavalink Port', required: false, default: '2333' },
+      { name: 'LAVALINK_HOST', description: 'Lavalink Host', required: false, default: 'localhost', sensitive: false },
+      { name: 'LAVALINK_PORT', description: 'Lavalink Port', required: false, default: '2333', sensitive: false },
       { name: 'LAVALINK_PASSWORD', description: 'Lavalink Password', required: false, default: 'youshallnotpass', sensitive: true },
       { name: 'WEATHER_API_KEY', description: 'Weather API Key', required: false, sensitive: true },
       { name: 'TRANSLATE_API_KEY', description: 'Translation API Key', required: false, sensitive: true }
@@ -77,6 +79,4 @@ const BOTS = {
   }
 };
 
-module.exports = {
-  BOTS
-};
+export default BOTS;

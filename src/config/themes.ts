@@ -2,7 +2,9 @@
  * 🌸 Celia's beautiful theme system
  */
 
-const THEMES = {
+import { IThemes, ITheme, ThemeName } from '../types/theme';
+
+export const THEMES: IThemes = {
   celestial: {
     primary: '\x1b[38;5;147m',     // Light purple
     secondary: '\x1b[38;5;183m',   // Pink
@@ -14,6 +16,10 @@ const THEMES = {
     text: '\x1b[38;5;250m',        // Light gray
     dim: '\x1b[38;5;244m',         // Dim gray
     bright: '\x1b[38;5;15m',       // White
+    bold: '\x1b[1m',               // Bold
+    underline: '\x1b[4m',          // Underline
+    italic: '\x1b[3m',             // Italic
+    strikethrough: '\x1b[9m',      // Strikethrough
     reset: '\x1b[0m'
   },
   kawaii: {
@@ -27,6 +33,10 @@ const THEMES = {
     text: '\x1b[38;5;255m',        // Bright white
     dim: '\x1b[38;5;242m',         // Medium gray
     bright: '\x1b[38;5;15m',       // White
+    bold: '\x1b[1m',               // Bold
+    underline: '\x1b[4m',          // Underline
+    italic: '\x1b[3m',             // Italic
+    strikethrough: '\x1b[9m',      // Strikethrough
     reset: '\x1b[0m'
   },
   dreamy: {
@@ -40,11 +50,14 @@ const THEMES = {
     text: '\x1b[38;5;252m',        // Off white
     dim: '\x1b[38;5;240m',         // Dark gray
     bright: '\x1b[38;5;15m',       // White
+    bold: '\x1b[1m',               // Bold
+    underline: '\x1b[4m',          // Underline
+    italic: '\x1b[3m',             // Italic
+    strikethrough: '\x1b[9m',      // Strikethrough
     reset: '\x1b[0m'
   }
 };
 
-module.exports = {
-  THEMES,
-  DEFAULT_THEME: 'celestial'
-};
+export const DEFAULT_THEME: ThemeName = 'celestial';
+
+export default { THEMES, DEFAULT_THEME };
