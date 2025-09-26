@@ -239,6 +239,27 @@ class CeliaAssistant {
       usage: 'celia interactive',
       action: () => this.startInteractiveMode()
     });
+    
+    this.commands.set('status', {
+      aliases: ['info', 'system'],
+      description: '🔧 Información del sistema y entorno',
+      usage: 'celia status',
+      action: () => this.showSystemInfo()
+    });
+    
+    this.commands.set('tips', {
+      aliases: ['consejos', 'ayuda'],
+      description: '💡 Consejos útiles de Celia',
+      usage: 'celia tips',
+      action: () => this.showTips()
+    });
+    
+    this.commands.set('about', {
+      aliases: ['acerca', 'info'],
+      description: '💖 Información sobre Celia',
+      usage: 'celia about',
+      action: () => this.showAbout()
+    });
   }
 
   /**
@@ -461,7 +482,8 @@ class CeliaAssistant {
     const categories = {
       '🌸 Hermanas': ['sisters', 'install', 'quick'],
       '🎨 Personalización': ['theme'],
-      '💬 Interacción': ['interactive', 'help']
+      '💬 Interacción': ['interactive', 'help'],
+      '🔧 Información': ['status', 'tips', 'about']
     };
     
     Object.entries(categories).forEach(([category, commandNames]) => {
@@ -1277,7 +1299,7 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
   }
   
   /**
-   * 💬 Interactive mode like Gemini CLI~
+   * 💬 Enhanced interactive mode like Gemini CLI~
    */
   async startInteractiveMode() {
     this.interactive = true;
@@ -1285,15 +1307,38 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
     
     this.gradientLog('💬 Modo Interactivo Activado', ['primary', 'accent']);
     console.log('');
-    this.log('¡Ahora puedes hablar conmigo! Escribe comandos o "/help" para ayuda~', 'info');
-    this.log('Para salir, escribe "/exit" o presiona Ctrl+C', 'dim');
-    console.log('');
+    
+    // Show welcome tips with animation
+    const welcomeMessages = [
+      '¡Ahora puedes hablar conmigo! 💖',
+      'Usa comandos como "sisters", "install", "theme"...',
+      'O comandos slash como "/help", "/tips", "/about"',
+      'Para salir, escribe "/exit" o presiona Ctrl+C'
+    ];
+    
+    for (let i = 0; i < welcomeMessages.length; i++) {
+      setTimeout(() => {
+        this.log(welcomeMessages[i], i % 2 === 0 ? 'info' : 'dim');
+        if (i === welcomeMessages.length - 1) {
+          setTimeout(() => {
+            console.log('');
+            this.showRandomTip();
+          }, 500);
+        }
+      }, i * 800);
+    }
+    
+    // Wait for welcome animation to finish
+    await new Promise(resolve => setTimeout(resolve, welcomeMessages.length * 800 + 1000));
     
     while (this.interactive) {
       try {
-        const input = await this.question('🌸 Celia> ');
+        const input = await this.question(this.getPrompt());
         
-        if (!input.trim()) continue;
+        if (!input.trim()) {
+          this.showRandomTip();
+          continue;
+        }
         
         // Handle slash commands like Gemini CLI
         if (input.startsWith('/')) {
@@ -1328,7 +1373,40 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
   }
   
   /**
-   * 🌟 Handle slash commands like Gemini CLI~
+   * 🌟 Get dynamic prompt with theme colors~
+   */
+  getPrompt() {
+    const theme = THEMES[this.theme];
+    const prompts = [
+      '🌸 Celia> ',
+      '💖 Celia> ',
+      '✨ Celia> ',
+      '🌙 Celia> '
+    ];
+    const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+    return `${theme.primary}${randomPrompt}${theme.reset}`;
+  }
+  
+  /**
+   * 🌟 Show random helpful tips~
+   */
+  showRandomTip() {
+    const tips = [
+      '💡 Tip: Usa "/sisters" para conocer a mis hermanas~',
+      '🎨 Tip: Cambia de tema con "/theme <nombre>"',
+      '⚡ Tip: Instalación rápida con "/quick <hermana>"',
+      '🔄 Tip: "/clear" limpia la pantalla bonito~',
+      '📱 Tip: En móviles funciono súper bien!',
+      '💫 Tip: "/about" te cuenta más sobre mí~'
+    ];
+    
+    const randomTip = tips[Math.floor(Math.random() * tips.length)];
+    this.log(randomTip, 'dim');
+    console.log('');
+  }
+  
+  /**
+   * 🌟 Enhanced slash commands like Gemini CLI~
    */
   async handleSlashCommand(command) {
     const args = command.split(' ');
@@ -1337,26 +1415,121 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
     
     switch (cmd) {
       case 'help':
+      case 'h':
         this.modernHelp(params[0]);
         break;
       case 'theme':
+      case 'themes':
         this.handleTheme(params[0]);
         break;
       case 'sisters':
       case 'list':
+      case 'hermanas':
         this.showSistersGrid();
         break;
+      case 'install':
+        await this.modernInstall(params[0]);
+        break;
+      case 'quick':
+      case 'fast':
+        await this.quickInstallBot(params[0]);
+        break;
+      case 'status':
+      case 'info':
+        this.showSystemInfo();
+        break;
+      case 'tips':
+      case 'consejos':
+        this.showTips();
+        break;
+      case 'about':
+      case 'acerca':
+        this.showAbout();
+        break;
       case 'clear':
+      case 'cls':
         console.clear();
         this.showBanner();
         break;
+      case 'refresh':
+      case 'reload':
+        this.showBanner();
+        this.log('✨ ¡Interfaz actualizada!~', 'success');
+        break;
+      case 'version':
+      case 'v':
+        this.showVersion();
+        break;
       case 'exit':
       case 'quit':
+      case 'bye':
         this.interactive = false;
         break;
       default:
-        this.log(`🌸 Comando slash "/${cmd}" no reconocido. Prueba "/help"~`, 'error');
+        this.showSlashCommandSuggestions(cmd);
     }
+  }
+  
+  /**
+   * 🌟 Show intelligent command suggestions~
+   */
+  showSlashCommandSuggestions(cmd) {
+    const allCommands = ['help', 'theme', 'sisters', 'install', 'quick', 'status', 'tips', 'about', 'clear', 'version', 'exit'];
+    
+    // Simple similarity function
+    const similarity = (a, b) => {
+      const longer = a.length > b.length ? a : b;
+      const shorter = a.length > b.length ? b : a;
+      const editDistance = this.levenshteinDistance(longer, shorter);
+      return (longer.length - editDistance) / longer.length;
+    };
+    
+    const suggestions = allCommands
+      .map(command => ({ command, score: similarity(cmd, command) }))
+      .filter(item => item.score > 0.3)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3)
+      .map(item => item.command);
+    
+    this.log(`🌸 Comando "/${cmd}" no reconocido~`, 'error');
+    console.log('');
+    
+    if (suggestions.length > 0) {
+      this.log('💡 ¿Tal vez quisiste decir?', 'info');
+      suggestions.forEach(suggestion => {
+        this.log(`   /${suggestion}`, 'accent');
+      });
+    } else {
+      this.log('💡 Usa "/help" para ver todos los comandos disponibles~', 'info');
+    }
+    console.log('');
+  }
+  
+  /**
+   * 🌟 Calculate edit distance for suggestions~
+   */
+  levenshteinDistance(str1, str2) {
+    const matrix = [];
+    for (let i = 0; i <= str2.length; i++) {
+      matrix[i] = [i];
+    }
+    for (let j = 0; j <= str1.length; j++) {
+      matrix[0][j] = j;
+    }
+    for (let i = 1; i <= str2.length; i++) {
+      for (let j = 1; j <= str1.length; j++) {
+        if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+          matrix[i][j] = matrix[i - 1][j - 1];
+        } else {
+          matrix[i][j] = Math.min(
+            matrix[i - 1][j - 1] + 1,
+            matrix[i][j - 1] + 1,
+            matrix[i - 1][j] + 1
+          );
+        }
+      }
+    }
+    return matrix[str2.length][str1.length];
   }
   
   /**
@@ -1379,6 +1552,105 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
     
     // Use the original install logic but with beautiful UI
     await this.installBot(botName);
+  }
+  
+  /**
+   * 🌟 Show system information~
+   */
+  showSystemInfo() {
+    this.showBanner();
+    this.gradientLog('🔧 Información del Sistema', ['primary', 'accent']);
+    console.log('');
+    
+    const info = [
+      `Sistema: ${this.platform}`,
+      `Arquitectura: ${os.arch()}`,
+      `Node.js: ${process.version}`,
+      `Tema actual: ${this.theme}`,
+      `Modo: ${this.interactive ? 'Interactivo' : 'Comando único'}`,
+      `Termux: ${this.isTermux ? 'Sí' : 'No'}`,
+      `ARM: ${this.isARM ? 'Sí' : 'No'}`
+    ];
+    
+    this.createBox(info, 'info', 1);
+    console.log('');
+  }
+  
+  /**
+   * 🌟 Show helpful tips~
+   */
+  showTips() {
+    this.showBanner();
+    this.gradientLog('💡 Consejos de Celia', ['primary', 'secondary']);
+    console.log('');
+    
+    const tips = [
+      '🌸 Usa "/sisters" para ver todas mis hermanas',
+      '🎨 Cambia de tema con "/theme kawaii" o "/theme dreamy"',
+      '⚡ Para instalación rápida usa "/quick <hermana>"',
+      '💬 Los comandos slash (/) funcionan en modo interactivo',
+      '🔄 Usa "/clear" para limpiar la pantalla',
+      '❓ "/help <comando>" te da ayuda específica',
+      '🚀 En móviles, usa quick-install para mejor compatibilidad'
+    ];
+    
+    tips.forEach((tip, index) => {
+      setTimeout(() => {
+        this.log(tip, index % 2 === 0 ? 'info' : 'accent');
+      }, index * 100);
+    });
+    
+    setTimeout(() => {
+      console.log('');
+      this.log('✨ ¡Espero que estos consejos te ayuden!~', 'success');
+      console.log('');
+    }, tips.length * 100 + 200);
+  }
+  
+  /**
+   * 🌟 Show about information~
+   */
+  showAbout() {
+    this.showBanner();
+    this.gradientLog('💖 Acerca de Celia', ['primary', 'secondary', 'accent']);
+    console.log('');
+    
+    const about = [
+      '¡Holi! Soy Celia, tu asistente celestial tierna~ ✨',
+      '',
+      '💖 Cuido de mis cinco hermanas bot con mucho amor:',
+      '   🎵 Nebula - Mi hermana musical responsable',
+      '   🤖 Archan - Mi hermana súper inteligente', 
+      '   🌸 Sakura - Mi hermana kawaii (¡somos parecidas!)',
+      '   ⚡ Lumina - Mi hermana organizadora',
+      '   📊 Katu - Mi hermana estadística',
+      '',
+      '🌟 Características especiales:',
+      '   • Instalación guiada paso a paso',
+      '   • Soporte multi-plataforma (incluso móviles!)',
+      '   • Temas visuales personalizables',
+      '   • Modo interactivo súper tierno',
+      '   • Detección automática de entorno',
+      '',
+      '💫 Creada con amor por OpceanAI'
+    ];
+    
+    this.createBox(about, 'primary', 2);
+    console.log('');
+  }
+  
+  /**
+   * 🌟 Show version information~
+   */
+  showVersion() {
+    this.createBox([
+      'Celia v2.0.0 💖',
+      '',
+      '✨ Tu asistente celestial tierna',
+      '🌸 CLI moderno y hermoso',
+      '💫 Con mucho amor de OpceanAI'
+    ], 'accent', 2);
+    console.log('');
   }
 }
 
