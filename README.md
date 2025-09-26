@@ -36,10 +36,29 @@
 
 ## 🌸 ¡Invítame a tu computadora!
 
-### Instalación Celestial (¡La mejor opción!)
+### Instalación Celestial (¡Elige tu favorito!)
+
+**Con npm:**
 ```bash
 npm install -g celia-cli
 ```
+
+**Con yarn:**
+```bash
+yarn global add celia-cli
+```
+
+**Con pnpm:**
+```bash
+pnpm install -g celia-cli
+```
+
+**Con bun:**
+```bash
+bun install -g celia-cli
+```
+
+**📦 Paquete en NPM:** https://www.npmjs.com/package/celia-cli
 
 ### ¿Ya estoy contigo?
 ```bash
