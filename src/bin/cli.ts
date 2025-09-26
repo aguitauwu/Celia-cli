@@ -14,8 +14,9 @@ async function main() {
     
     const celia = new CeliaAssistant();
     await celia.run();
-  } catch (error) {
-    console.error('🌸 Fatal error:', error.message);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('🌸 Fatal error:', message);
     process.exit(1);
   }
 }
