@@ -2,15 +2,25 @@
  * 🎨 Theme command - changes visual appearance
  */
 
-const { THEMES } = require('../../config/themes');
+import { ICommand } from '../../types/command';
+import { Logger } from '../../utils/logger';
+import { ThemeName } from '../../types/theme';
+import { THEMES } from '../../config/themes';
 
-class ThemeCommand {
-  constructor(logger) {
-    this.logger = logger;
-  }
-  
-  async execute(args = []) {
-    const themeName = args[0];
+export class ThemeCommand implements ICommand {
+  public readonly name = 'theme';
+  public readonly config = {
+    name: 'theme',
+    description: '🎨 Cambia el tema visual de la interfaz',
+    usage: 'celia theme [nombre]',
+    aliases: ['tema', 'color', 'colors'],
+    action: this.execute.bind(this)
+  };
+
+  constructor(private readonly logger: Logger) {}
+
+  async execute(args: string[] = []): Promise<void> {
+    const themeName = args[0] as ThemeName;
     
     if (!themeName) {
       this.showAvailableThemes();
@@ -18,10 +28,17 @@ class ThemeCommand {
     }
     
     if (!THEMES[themeName]) {
-      this.logger.log(`🌸 Tema "${themeName}" no existe~ Temas disponibles: ${Object.keys(THEMES).join(', ')}`, 'error');
+      this.logger.log(
+        `🌸 Tema "${themeName}" no existe~ Temas disponibles: ${Object.keys(THEMES).join(', ')}`, 
+        'error'
+      );
       return;
     }
     
+    await this.changeTheme(themeName);
+  }
+  
+  private async changeTheme(themeName: ThemeName): Promise<void> {
     // Beautiful theme transition animation
     await this.logger.showLoading(`🎨 Cambiando a tema ${themeName}`, 1500);
     
@@ -39,12 +56,13 @@ class ThemeCommand {
     }, 500);
   }
   
-  showAvailableThemes() {
+  private showAvailableThemes(): void {
     this.showBanner();
     this.logger.log('🎨 Temas disponibles:', 'primary');
     console.log('');
     
-    Object.keys(THEMES).forEach(theme => {
+    const availableThemes = Object.keys(THEMES) as ThemeName[];
+    availableThemes.forEach(theme => {
       const isActive = theme === this.logger.theme;
       const indicator = isActive ? '● ' : '○ ';
       this.logger.log(`${indicator}${theme}`, isActive ? 'accent' : 'dim');
@@ -54,7 +72,7 @@ class ThemeCommand {
     this.logger.log('💡 Uso: celia theme <nombre>', 'info');
   }
   
-  showBanner() {
+  private showBanner(): void {
     console.clear();
     console.log('');
     
@@ -72,4 +90,4 @@ class ThemeCommand {
   }
 }
 
-module.exports = ThemeCommand;
+export default ThemeCommand;

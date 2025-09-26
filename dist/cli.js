@@ -1263,24 +1263,41 @@ ${message}`);
   }
 });
 
-// src/cli/commands/list.js
-var require_list = __commonJS({
-  "src/cli/commands/list.js"(exports, module) {
+// src/cli/commands/list.ts
+var list_exports = {};
+__export(list_exports, {
+  ListCommand: () => ListCommand,
+  default: () => list_default
+});
+var _ListCommand, ListCommand, list_default;
+var init_list = __esm({
+  "src/cli/commands/list.ts"() {
     init_cjs_shims();
-    var { BOTS: BOTS3 } = (init_bots(), __toCommonJS(bots_exports));
-    var _ListCommand = class _ListCommand {
+    init_bots();
+    _ListCommand = class _ListCommand {
       constructor(logger) {
         this.logger = logger;
+        this.name = "list";
+        this.config = {
+          name: "list",
+          description: "\u{1F338} Lista todas las hermanas bot disponibles",
+          usage: "celia list",
+          aliases: ["l", "sisters", "hermanas"],
+          action: this.execute.bind(this)
+        };
       }
       async execute(args = []) {
         this.showBanner();
         this.logger.gradientLog("\u{1F338} \xA1Mis Hermanas Bot! \u{1F338}", ["primary", "secondary", "accent"]);
         console.log("");
         const categories = {};
-        Object.entries(BOTS3).forEach(([key, bot]) => {
-          if (!categories[bot.category]) {
-            categories[bot.category] = [];
+        Object.entries(BOTS).forEach(([key, bot]) => {
+          const category = bot.category || "Otros";
+          if (!categories[category]) {
+            categories[category] = [];
           }
+          categories[category] = categories[category] || [];
+          categories[category].push({ key, ...bot });
           categories[bot.category].push({ key, ...bot });
         });
         Object.entries(categories).forEach(([category, bots]) => {
@@ -1317,19 +1334,33 @@ var require_list = __commonJS({
       }
     };
     __name(_ListCommand, "ListCommand");
-    var ListCommand2 = _ListCommand;
-    module.exports = ListCommand2;
+    ListCommand = _ListCommand;
+    list_default = ListCommand;
   }
 });
 
-// src/cli/commands/help.js
-var require_help = __commonJS({
-  "src/cli/commands/help.js"(exports, module) {
+// src/cli/commands/help.ts
+var help_exports = {};
+__export(help_exports, {
+  HelpCommand: () => HelpCommand,
+  default: () => help_default
+});
+var _HelpCommand, HelpCommand, help_default;
+var init_help = __esm({
+  "src/cli/commands/help.ts"() {
     init_cjs_shims();
-    var _HelpCommand = class _HelpCommand {
+    _HelpCommand = class _HelpCommand {
       constructor(logger, commandRouter) {
         this.logger = logger;
         this.commandRouter = commandRouter;
+        this.name = "help";
+        this.config = {
+          name: "help",
+          description: "\u{1F4AB} Muestra ayuda y comandos disponibles",
+          usage: "celia help [comando]",
+          aliases: ["h", "?", "ayuda"],
+          action: this.execute.bind(this)
+        };
       }
       async execute(args = []) {
         const specificCommand = args[0];
@@ -1342,14 +1373,19 @@ var require_help = __commonJS({
       }
       showSpecificHelp(commandName) {
         const command = this.commandRouter.getCommand(commandName);
-        this.logger.createBox([
+        if (!command) {
+          this.logger.log(`\u{1F338} Comando "${commandName}" no encontrado~`, "error");
+          return;
+        }
+        const boxContent = [
           `Comando: ${commandName}`,
           "",
-          command.config.description,
+          command.config.description || "",
           "",
-          `Uso: ${command.config.usage}`,
-          command.config.aliases.length > 0 ? `Alias: ${command.config.aliases.join(", ")}` : ""
-        ].filter(Boolean), "primary", 2);
+          `Uso: ${command.config.usage || ""}`,
+          command.config.aliases && command.config.aliases.length > 0 ? `Alias: ${command.config.aliases.join(", ")}` : ""
+        ].filter(Boolean);
+        this.logger.createBox(boxContent, "primary", 2);
       }
       showGeneralHelp() {
         this.logger.gradientLog("\u{1F4AB} Comandos de Celia \u{1F4AB}", ["primary", "secondary", "accent"]);
@@ -1366,9 +1402,9 @@ var require_help = __commonJS({
           commandNames.forEach((cmdName) => {
             const command = this.commandRouter.getCommand(cmdName);
             if (command) {
-              this.logger.log(`  ${command.config.usage}`, "primary");
-              this.logger.log(`    ${command.config.description}`, "dim");
-              if (command.config.aliases.length > 0) {
+              this.logger.log(`  ${command.config.usage || ""}`, "primary");
+              this.logger.log(`    ${command.config.description || ""}`, "dim");
+              if (command.config.aliases && command.config.aliases.length > 0) {
                 this.logger.log(`    Alias: ${command.config.aliases.join(", ")}`, "dim");
               }
               console.log("");
@@ -1394,19 +1430,33 @@ var require_help = __commonJS({
       }
     };
     __name(_HelpCommand, "HelpCommand");
-    var HelpCommand2 = _HelpCommand;
-    module.exports = HelpCommand2;
+    HelpCommand = _HelpCommand;
+    help_default = HelpCommand;
   }
 });
 
-// src/cli/commands/theme.js
-var require_theme = __commonJS({
-  "src/cli/commands/theme.js"(exports, module) {
+// src/cli/commands/theme.ts
+var theme_exports = {};
+__export(theme_exports, {
+  ThemeCommand: () => ThemeCommand,
+  default: () => theme_default
+});
+var _ThemeCommand, ThemeCommand, theme_default;
+var init_theme = __esm({
+  "src/cli/commands/theme.ts"() {
     init_cjs_shims();
-    var { THEMES: THEMES4 } = (init_themes(), __toCommonJS(themes_exports));
-    var _ThemeCommand = class _ThemeCommand {
+    init_themes();
+    _ThemeCommand = class _ThemeCommand {
       constructor(logger) {
         this.logger = logger;
+        this.name = "theme";
+        this.config = {
+          name: "theme",
+          description: "\u{1F3A8} Cambia el tema visual de la interfaz",
+          usage: "celia theme [nombre]",
+          aliases: ["tema", "color", "colors"],
+          action: this.execute.bind(this)
+        };
       }
       async execute(args = []) {
         const themeName = args[0];
@@ -1414,10 +1464,16 @@ var require_theme = __commonJS({
           this.showAvailableThemes();
           return;
         }
-        if (!THEMES4[themeName]) {
-          this.logger.log(`\u{1F338} Tema "${themeName}" no existe~ Temas disponibles: ${Object.keys(THEMES4).join(", ")}`, "error");
+        if (!THEMES[themeName]) {
+          this.logger.log(
+            `\u{1F338} Tema "${themeName}" no existe~ Temas disponibles: ${Object.keys(THEMES).join(", ")}`,
+            "error"
+          );
           return;
         }
+        await this.changeTheme(themeName);
+      }
+      async changeTheme(themeName) {
         await this.logger.showLoading(`\u{1F3A8} Cambiando a tema ${themeName}`, 1500);
         this.logger.setTheme(themeName);
         console.clear();
@@ -1432,7 +1488,8 @@ var require_theme = __commonJS({
         this.showBanner();
         this.logger.log("\u{1F3A8} Temas disponibles:", "primary");
         console.log("");
-        Object.keys(THEMES4).forEach((theme) => {
+        const availableThemes = Object.keys(THEMES);
+        availableThemes.forEach((theme) => {
           const isActive = theme === this.logger.theme;
           const indicator = isActive ? "\u25CF " : "\u25CB ";
           this.logger.log(`${indicator}${theme}`, isActive ? "accent" : "dim");
@@ -1456,19 +1513,33 @@ var require_theme = __commonJS({
       }
     };
     __name(_ThemeCommand, "ThemeCommand");
-    var ThemeCommand2 = _ThemeCommand;
-    module.exports = ThemeCommand2;
+    ThemeCommand = _ThemeCommand;
+    theme_default = ThemeCommand;
   }
 });
 
-// src/cli/commands/status.js
-var require_status = __commonJS({
-  "src/cli/commands/status.js"(exports, module) {
+// src/cli/commands/status.ts
+var status_exports = {};
+__export(status_exports, {
+  StatusCommand: () => StatusCommand,
+  default: () => status_default
+});
+var _StatusCommand, StatusCommand, status_default;
+var init_status = __esm({
+  "src/cli/commands/status.ts"() {
     init_cjs_shims();
-    var _StatusCommand = class _StatusCommand {
+    _StatusCommand = class _StatusCommand {
       constructor(logger, system) {
         this.logger = logger;
         this.system = system;
+        this.name = "status";
+        this.config = {
+          name: "status",
+          description: "\u{1F527} Muestra informaci\xF3n del sistema y compatibilidad",
+          usage: "celia status",
+          aliases: ["stat", "info", "sistema"],
+          action: this.execute.bind(this)
+        };
       }
       async execute(args = []) {
         this.showBanner();
@@ -1481,8 +1552,17 @@ var require_status = __commonJS({
           `\u{1F338} Node.js: ${process.version}`,
           `\u{1F3E0} Directorio: ${process.cwd()}`
         ];
+        if (this.system.isTermux) {
+          systemInfo.push("\u{1F4F1} Entorno: Termux (Android)");
+        }
+        if (this.system.platform.isContainer) {
+          systemInfo.push("\u{1F433} Entorno: Contenedorizado");
+        }
+        if (this.system.platform.isMobile) {
+          systemInfo.push("\u{1F4F1} Plataforma m\xF3vil detectada");
+        }
         this.logger.createBox(systemInfo, "info", 1);
-        const recommendations = this.system.getSystemRecommendations();
+        const recommendations = this.system.getPerformanceRecommendations();
         if (recommendations.length > 0) {
           console.log("");
           this.logger.createBox([
@@ -1491,6 +1571,13 @@ var require_status = __commonJS({
             ...recommendations
           ], "warning", 1);
         }
+        console.log("");
+        this.logger.log("\u{1F4CB} Reporte de Compatibilidad:", "accent");
+        console.log("");
+        const compatReport = this.system.generateCompatibilityReport();
+        compatReport.forEach((line) => {
+          this.logger.log(`  ${line}`, "text");
+        });
         console.log("");
       }
       showBanner() {
@@ -1509,8 +1596,8 @@ var require_status = __commonJS({
       }
     };
     __name(_StatusCommand, "StatusCommand");
-    var StatusCommand2 = _StatusCommand;
-    module.exports = StatusCommand2;
+    StatusCommand = _StatusCommand;
+    status_default = StatusCommand;
   }
 });
 
@@ -1520,7 +1607,7 @@ __export(celia_exports, {
   CeliaAssistant: () => CeliaAssistant,
   default: () => celia_default
 });
-var VERSION2, NODE_MIN_VERSION2, THEMES3, BOTS2, Logger2, SystemDetector2, SecurityUtils2, PromptUtils2, ListCommand, HelpCommand, ThemeCommand, StatusCommand, _CeliaAssistant, CeliaAssistant, celia_default;
+var VERSION2, NODE_MIN_VERSION2, THEMES3, BOTS2, Logger2, SystemDetector2, SecurityUtils2, PromptUtils2, ListCommand2, HelpCommand2, ThemeCommand2, StatusCommand2, _CeliaAssistant, CeliaAssistant, celia_default;
 var init_celia = __esm({
   "src/cli/celia.ts"() {
     init_cjs_shims();
@@ -1532,10 +1619,10 @@ var init_celia = __esm({
     SystemDetector2 = (init_system(), __toCommonJS(system_exports));
     SecurityUtils2 = (init_security(), __toCommonJS(security_exports));
     PromptUtils2 = (init_prompt(), __toCommonJS(prompt_exports));
-    ListCommand = require_list();
-    HelpCommand = require_help();
-    ThemeCommand = require_theme();
-    StatusCommand = require_status();
+    ListCommand2 = (init_list(), __toCommonJS(list_exports));
+    HelpCommand2 = (init_help(), __toCommonJS(help_exports));
+    ThemeCommand2 = (init_theme(), __toCommonJS(theme_exports));
+    StatusCommand2 = (init_status(), __toCommonJS(status_exports));
     _CeliaAssistant = class _CeliaAssistant {
       constructor() {
         this.interactive = false;
@@ -1572,10 +1659,10 @@ var init_celia = __esm({
        * 🌸 Initialize Celia's modern command system~
        */
       initializeCommands() {
-        const listCommand = new ListCommand(this.logger);
-        const helpCommand = new HelpCommand(this.logger, this.router);
-        const themeCommand = new ThemeCommand(this.logger);
-        const statusCommand = new StatusCommand(this.logger, this.system);
+        const listCommand = new ListCommand2(this.logger);
+        const helpCommand = new HelpCommand2(this.logger, this.router);
+        const themeCommand = new ThemeCommand2(this.logger);
+        const statusCommand = new StatusCommand2(this.logger, this.system);
         this.router.register("sisters", {
           aliases: ["list", "hermanas"],
           description: "\u{1F338} Conoce a todas mis hermanas bot",

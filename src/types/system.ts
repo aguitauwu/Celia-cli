@@ -40,4 +40,8 @@ export interface ISystemDetector {
   isPowerPC: boolean;
   is64Bit: boolean;
   isEmbedded: boolean;
+  
+  // Methods
+  generateCompatibilityReport(): string[];
+  getPerformanceRecommendations(): string[];
 }

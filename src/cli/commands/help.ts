@@ -2,13 +2,26 @@
  * 💫 Help command - shows available commands and usage
  */
 
-class HelpCommand {
-  constructor(logger, commandRouter) {
-    this.logger = logger;
-    this.commandRouter = commandRouter;
-  }
-  
-  async execute(args = []) {
+import { ICommand } from '../../types/command';
+import { Logger } from '../../utils/logger';
+import { CommandRouter } from '../router';
+
+export class HelpCommand implements ICommand {
+  public readonly name = 'help';
+  public readonly config = {
+    name: 'help',
+    description: '💫 Muestra ayuda y comandos disponibles',
+    usage: 'celia help [comando]',
+    aliases: ['h', '?', 'ayuda'],
+    action: this.execute.bind(this)
+  };
+
+  constructor(
+    private readonly logger: Logger,
+    private readonly commandRouter: CommandRouter
+  ) {}
+
+  async execute(args: string[] = []): Promise<void> {
     const specificCommand = args[0];
     
     this.showBanner();
@@ -21,25 +34,32 @@ class HelpCommand {
     this.showGeneralHelp();
   }
   
-  showSpecificHelp(commandName) {
+  private showSpecificHelp(commandName: string): void {
     const command = this.commandRouter.getCommand(commandName);
     
-    this.logger.createBox([
+    if (!command) {
+      this.logger.log(`🌸 Comando "${commandName}" no encontrado~`, 'error');
+      return;
+    }
+    
+    const boxContent: string[] = [
       `Comando: ${commandName}`,
       '',
-      command.config.description,
+      command.config.description || '',
       '',
-      `Uso: ${command.config.usage}`,
-      command.config.aliases.length > 0 ? `Alias: ${command.config.aliases.join(', ')}` : ''
-    ].filter(Boolean), 'primary', 2);
+      `Uso: ${command.config.usage || ''}`,
+      command.config.aliases && command.config.aliases.length > 0 ? `Alias: ${command.config.aliases.join(', ')}` : ''
+    ].filter(Boolean) as string[];
+    
+    this.logger.createBox(boxContent, 'primary', 2);
   }
   
-  showGeneralHelp() {
+  private showGeneralHelp(): void {
     this.logger.gradientLog('💫 Comandos de Celia 💫', ['primary', 'secondary', 'accent']);
     console.log('');
     
     // Group commands by category
-    const categories = {
+    const categories: { [key: string]: string[] } = {
       '🌸 Hermanas': ['sisters', 'install', 'quick'],
       '🎨 Personalización': ['theme'],
       '💬 Interacción': ['interactive', 'help'],
@@ -53,9 +73,9 @@ class HelpCommand {
       commandNames.forEach(cmdName => {
         const command = this.commandRouter.getCommand(cmdName);
         if (command) {
-          this.logger.log(`  ${command.config.usage}`, 'primary');
-          this.logger.log(`    ${command.config.description}`, 'dim');
-          if (command.config.aliases.length > 0) {
+          this.logger.log(`  ${command.config.usage || ''}`, 'primary');
+          this.logger.log(`    ${command.config.description || ''}`, 'dim');
+          if (command.config.aliases && command.config.aliases.length > 0) {
             this.logger.log(`    Alias: ${command.config.aliases.join(', ')}`, 'dim');
           }
           console.log('');
@@ -67,7 +87,7 @@ class HelpCommand {
     console.log('');
   }
   
-  showBanner() {
+  private showBanner(): void {
     console.clear();
     console.log('');
     
@@ -85,4 +105,4 @@ class HelpCommand {
   }
 }
 
-module.exports = HelpCommand;
+export default HelpCommand;

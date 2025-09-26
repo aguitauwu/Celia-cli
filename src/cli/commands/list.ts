@@ -2,26 +2,41 @@
  * 🌸 List command - shows all bot sisters
  */
 
-const { BOTS } = require('../../config/bots');
+import { ICommand } from '../../types/command';
+import { Logger } from '../../utils/logger';
+import { IBotConfig } from '../../types/bots';
+import { BOTS } from '../../config/bots';
 
-class ListCommand {
-  constructor(logger) {
-    this.logger = logger;
-  }
-  
-  async execute(args = []) {
+interface IBotWithKey extends IBotConfig {
+  key: string;
+}
+
+export class ListCommand implements ICommand {
+  public readonly name = 'list';
+  public readonly config = {
+    name: 'list',
+    description: '🌸 Lista todas las hermanas bot disponibles',
+    usage: 'celia list',
+    aliases: ['l', 'sisters', 'hermanas'],
+    action: this.execute.bind(this)
+  };
+
+  constructor(private readonly logger: Logger) {}
+
+  async execute(args: string[] = []): Promise<void> {
     this.showBanner();
     
     this.logger.gradientLog('🌸 ¡Mis Hermanas Bot! 🌸', ['primary', 'secondary', 'accent']);
     console.log('');
     
     // Group bots by category with beautiful display
-    const categories = {};
+    const categories: { [key: string]: IBotWithKey[] } = {};
     Object.entries(BOTS).forEach(([key, bot]) => {
-      if (!categories[bot.category]) {
-        categories[bot.category] = [];
+      const category = bot.category || 'Otros';
+      if (!categories[category]) {
+        categories[category] = [];
       }
-      categories[bot.category].push({ key, ...bot });
+      categories[category].push({ key, ...bot });
     });
     
     Object.entries(categories).forEach(([category, bots]) => {
@@ -45,7 +60,7 @@ class ListCommand {
     console.log('');
   }
   
-  showBanner() {
+  private showBanner(): void {
     console.clear();
     console.log('');
     
@@ -64,4 +79,4 @@ class ListCommand {
   }
 }
 
-module.exports = ListCommand;
+export default ListCommand;
