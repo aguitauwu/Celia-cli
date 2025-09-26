@@ -16,18 +16,18 @@ export interface IConfirmOptions {
   defaultValue?: boolean;
 }
 
-export interface ISelectOptions {
+export interface ISelectOptions<T = string> {
   message: string;
-  choices: Array<{ name: string; value: any; description?: string }>;
-  defaultValue?: any;
+  choices: Array<{ name: string; value: T; description?: string }>;
+  defaultValue?: T;
 }
 
 export interface IPromptUtils {
   // Basic input
   text(options: IPromptOptions): Promise<string>;
   confirm(options: IConfirmOptions): Promise<boolean>;
-  select(options: ISelectOptions): Promise<any>;
-  multiSelect(options: ISelectOptions): Promise<any[]>;
+  select<T = string>(options: ISelectOptions<T>): Promise<T>;
+  multiSelect<T = string>(options: ISelectOptions<T>): Promise<T[]>;
   
   // Specialized prompts
   password(message: string): Promise<string>;

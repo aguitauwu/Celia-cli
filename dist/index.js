@@ -1623,7 +1623,7 @@ var _CeliaAssistant = class _CeliaAssistant {
         await this.router.execute(command, commandArgs);
         console.log("");
       } catch (error) {
-        if (error.code === "SIGINT") {
+        if (typeof error === "object" && error !== null && "code" in error && error.code === "SIGINT") {
           this.logger.log("\n\u{1F338} \xA1Hasta luego! \xA1Que tengas un d\xEDa celestial!~", "primary");
           break;
         }

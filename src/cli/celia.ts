@@ -256,8 +256,8 @@ export class CeliaAssistant {
         await this.router.execute(command, commandArgs);
         console.log('');
         
-      } catch (error: any) {
-        if (error.code === 'SIGINT') {
+      } catch (error: unknown) {
+        if (typeof error === 'object' && error !== null && 'code' in error && error.code === 'SIGINT') {
           this.logger.log('\n🌸 ¡Hasta luego! ¡Que tengas un día celestial!~', 'primary');
           break;
         }

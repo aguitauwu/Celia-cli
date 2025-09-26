@@ -669,20 +669,20 @@ interface IConfirmOptions {
     message: string;
     defaultValue?: boolean;
 }
-interface ISelectOptions {
+interface ISelectOptions<T = string> {
     message: string;
     choices: Array<{
         name: string;
-        value: any;
+        value: T;
         description?: string;
     }>;
-    defaultValue?: any;
+    defaultValue?: T;
 }
 interface IPromptUtils {
     text(options: IPromptOptions): Promise<string>;
     confirm(options: IConfirmOptions): Promise<boolean>;
-    select(options: ISelectOptions): Promise<any>;
-    multiSelect(options: ISelectOptions): Promise<any[]>;
+    select<T = string>(options: ISelectOptions<T>): Promise<T>;
+    multiSelect<T = string>(options: ISelectOptions<T>): Promise<T[]>;
     password(message: string): Promise<string>;
     number(message: string, defaultValue?: number): Promise<number>;
     email(message: string): Promise<string>;
@@ -698,17 +698,18 @@ interface IPromptConstructor {
 /**
  * 🌸 Main Export Type Definitions
  */
+
 interface ICeliaAssistantConfig {
     theme?: string;
     verbose?: boolean;
     interactive?: boolean;
-    [key: string]: any;
 }
 interface ICeliaAssistant {
-    logger: any;
-    system: any;
-    prompt: any;
-    run(args: string[]): Promise<void>;
+    logger: ILogger;
+    system: ISystemDetector;
+    prompt: IPromptUtils;
+    interactive: boolean;
+    run(): Promise<void>;
 }
 
 /**

@@ -2,18 +2,22 @@
  * 🌸 Main Export Type Definitions
  */
 
+import { ILogger } from './logger';
+import { ISystemDetector } from './system';
+import { IPromptUtils } from './prompt';
+
 export interface ICeliaAssistantConfig {
   theme?: string;
   verbose?: boolean;
   interactive?: boolean;
-  [key: string]: any;
 }
 
 export interface ICeliaAssistant {
-  logger: any; // Will be typed properly in logger interface
-  system: any; // Will be typed properly in system interface
-  prompt: any; // Will be typed properly in prompt interface
-  run(args: string[]): Promise<void>;
+  logger: ILogger;
+  system: ISystemDetector;
+  prompt: IPromptUtils;
+  interactive: boolean;
+  run(): Promise<void>;
 }
 
 // Re-export all other types for convenience
