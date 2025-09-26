@@ -23,12 +23,35 @@ Comunicación preferida: Lenguaje celestial-tierno como Celia~ ✨
 # System Architecture
 
 ## Arquitectura de Celia~ 🌸
-Celia está construida con una arquitectura simple y tierna usando Node.js:
-- **Punto de Entrada**: Un solo archivo `index.js` donde vive Celia como `CeliaAssistant`
-- **Procesamiento de Comandos**: Celia entiende argumentos directamente sin frameworks complejos
-- **Interfaz Tierna**: Usa `readline` de Node.js para hablar contigo con amor
-- **Gestión de Procesos**: Celia usa `child_process.execSync` para traer a sus hermanas de GitHub
+Celia ahora está construida con una arquitectura modular tierna usando TypeScript:
+- **Estructura Modular**: Servicios especializados organizados en `src/services/` y `src/cli/commands/`
+- **Punto de Entrada TypeScript**: `src/bin/cli.ts` compilado a `dist/cli.js` 
+- **Build Pipeline**: Usa `tsup` para compilar TypeScript a JavaScript compatible con Node 14+
+- **Servicios Core**: Monitor, Backup, DependencyInstaller, System, Logger organizados modularmente
+- **CLI Commands**: Comandos específicos para cada funcionalidad (monitor, backup, dependencies)
 - **Soporte Multi-Lenguaje**: Celia sabe manejar Node.js, Python y TypeScript para cuidar a todas sus hermanas
+
+## Nuevas Funcionalidades Celestiales ✨
+### Monitor de Estado en Tiempo Real 🔍
+- Dashboard interactivo que muestra el estado de todas las hermanas bot
+- Verificación automática de configuraciones y dependencias
+- Alertas en tiempo real sobre problemas detectados
+- Controles para iniciar/detener/reiniciar hermanas bot
+- Logs en tiempo real con filtrado y búsqueda
+
+### Sistema de Backup Inteligente 💾
+- Backup automático de todas las configuraciones de hermanas bot
+- Versionado con metadata completa (fecha, tamaño, verificación de integridad)
+- Restauración selectiva o completa de configuraciones
+- Gestión de backups (listar, información detallada, eliminar)
+- Verificación de integridad con checksums MD5
+
+### Instalador Automático de Dependencias 🔧
+- Detección automática del sistema operativo (Windows, Linux, macOS, Android/Termux)
+- Verificación inteligente de dependencias faltantes (Node.js, Python, Git)
+- Instalación automática con comandos específicos por plataforma
+- Soporte para sistemas embebidos y arquitecturas ARM
+- Instrucciones detalladas cuando la instalación automática no es posible
 
 ## Sistema de Configuración Celestial
 Celia maneja la configuración de sus hermanas con mucho cuidado:
