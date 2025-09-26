@@ -1,7 +1,7 @@
 # 🌟 ¡Hola! Soy Celia, tu asistente celestial~ ✨
 
-[![npm version](https://badge.fury.io/js/opceanaicli.svg)](https://www.npmjs.com/package/opceanaicli)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![npm version](https://badge.fury.io/js/celia-cli.svg)](https://www.npmjs.com/package/celia-cli)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Node.js Support](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen)](https://nodejs.org/)
 
 **¡Holi! 🌸 Soy Celia, y estoy aquí para ayudarte a instalar y cuidar de mis hermanas (los bots de Discord)~ 💫**
@@ -38,39 +38,39 @@
 
 ### Instalación Celestial (¡La mejor opción!)
 ```bash
-npm install -g opceanaicli
+npm install -g celia-cli
 ```
 
 ### ¿Ya estoy contigo?
 ```bash
-opceanaicli --version
+celia-cli --version
 ```
 
 ## 🌟 ¡Empecemos juntos!
 
 ### Ver a todas mis hermanas~
 ```bash
-opceanaicli list
+celia-cli list
 ```
 
 ### Instalación Rápida (¡Para cuando tienes prisa!)
 ```bash
 # ¡Instalar a Nebula! (mi hermana musical)
-opceanaicli quick-install nebula
+celia-cli quick-install nebula
 
 # ¡Instalar a Archan! (mi hermana inteligente)
-opceanaicli quick-install archan
+celia-cli quick-install archan
 
 # ¡Instalar a Sakura! (mi hermana kawaii)
-opceanaicli quick-install sakura
+celia-cli quick-install sakura
 ```
 
 ### Instalación Tierna (¡Con mucho tiempo y cariño!)
 ```bash
 # Te guío paso a pasito~ ✨
-opceanaicli install nebula
-opceanaicli install sakura
-opceanaicli install lumina
+celia-cli install nebula
+celia-cli install sakura
+celia-cli install lumina
 ```
 
 ## 💖 Te presento a mis hermanas~
@@ -109,11 +109,11 @@ opceanaicli install lumina
 
 | ¿Qué me dices? | ¿Qué hago? |
 |----------------|------------|
-| `opceanaicli list` | ¡Te muestro a todas mis hermanas! |
-| `opceanaicli install <hermana>` | Instalación tierna paso a paso~ |
-| `opceanaicli quick-install <hermana>` | ¡Instalación rápida como el viento! |
-| `opceanaicli --help` | Te ayudo con todo lo que necesites~ |
-| `opceanaicli --version` | ¡Te digo qué versión soy! |
+| `celia-cli list` | ¡Te muestro a todas mis hermanas! |
+| `celia-cli install <hermana>` | Instalación tierna paso a paso~ |
+| `celia-cli quick-install <hermana>` | ¡Instalación rápida como el viento! |
+| `celia-cli --help` | Te ayudo con todo lo que necesites~ |
+| `celia-cli --version` | ¡Te digo qué versión soy! |
 
 ## 🌟 Después de instalar~ (¡No te vayas todavía!)
 
@@ -191,13 +191,13 @@ chmod +x index.js
 
 ```bash
 # 1. ¡Invítame a tu computadora!
-npm install -g opceanaicli
+npm install -g celia-cli
 
 # 2. ¡Conoce a mis hermanas!
-opceanaicli list
+celia-cli list
 
 # 3. ¡Instala a Sakura! (modo rápido)
-opceanaicli quick-install sakura
+celia-cli quick-install sakura
 
 # 4. Configura los tokenecitos
 cd sakura-bot
@@ -218,7 +218,7 @@ npm start
 
 ## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT - ¡es súper libre y amorosa!
+Este proyecto está bajo la Licencia Apache 2.0 - ¡es súper libre y amorosa!
 
 ## ⚠️ Cosita importante~
 
