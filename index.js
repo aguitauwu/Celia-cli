@@ -126,114 +126,6 @@ const BOTS = {
       { name: 'MONGODB_URI', description: 'MongoDB Connection URI (recomendado)', required: false, sensitive: true },
       { name: 'DATABASE_URL', description: 'PostgreSQL Database URL (alternativo)', required: false, sensitive: true }
     ]
-  },
-  aurora: {
-    name: 'Aurora',
-    url: 'https://github.com/OpceanAI/Aurora-Bot',
-    description: 'Mi hermana artística~ ¡Genera imágenes preciosas con IA y hace arte digital!',
-    language: 'Python',
-    category: '🎨 Arte Digital & IA',
-    envVars: [
-      { name: 'BOT_TOKEN', description: 'Discord Bot Token', required: true, sensitive: true },
-      { name: 'CLIENT_ID', description: 'Discord Client ID', required: true, sensitive: false },
-      { name: 'OPENAI_API_KEY', description: 'OpenAI API Key para DALL-E', required: true, sensitive: true },
-      { name: 'STABILITY_API_KEY', description: 'Stability AI API Key', required: false, sensitive: true },
-      { name: 'MIDJOURNEY_TOKEN', description: 'MidJourney Bot Token', required: false, sensitive: true },
-      { name: 'CLOUDINARY_URL', description: 'Cloudinary Storage URL', required: false, sensitive: true }
-    ]
-  },
-  cosmos: {
-    name: 'Cosmos',
-    url: 'https://github.com/OpceanAI/Cosmos-Bot',
-    description: 'Mi hermana espacial~ ¡Administra múltiples servidores como el universo!',
-    language: 'Go',
-    category: '🌌 Multi-Servidor & Administración',
-    envVars: [
-      { name: 'MAIN_BOT_TOKEN', description: 'Token Principal del Bot', required: true, sensitive: true },
-      { name: 'CLUSTER_ID', description: 'ID del Cluster de Servidores', required: true, sensitive: false },
-      { name: 'REDIS_URL', description: 'Redis Database URL', required: true, sensitive: true },
-      { name: 'POSTGRESQL_MAIN', description: 'PostgreSQL Principal URL', required: true, sensitive: true },
-      { name: 'WEBHOOK_SECRET', description: 'Webhook Secret Key', required: false, sensitive: true },
-      { name: 'ADMIN_GUILD_ID', description: 'ID del Servidor de Administración', required: false, sensitive: false }
-    ]
-  },
-  stella: {
-    name: 'Stella',
-    url: 'https://github.com/OpceanAI/Stella-Education-Bot',
-    description: 'Mi hermana educativa~ ¡Enseña idiomas y hace exámenes interactivos!',
-    language: 'Python',
-    category: '📚 Educación & Aprendizaje',
-    envVars: [
-      { name: 'BOT_TOKEN', description: 'Discord Bot Token', required: true, sensitive: true },
-      { name: 'CLIENT_ID', description: 'Discord Client ID', required: true, sensitive: false },
-      { name: 'OPENAI_API_KEY', description: 'OpenAI API Key', required: true, sensitive: true },
-      { name: 'MONGODB_EDUCATION', description: 'MongoDB para datos educativos', required: true, sensitive: true },
-      { name: 'DEEPL_API_KEY', description: 'DeepL Translation API', required: false, sensitive: true },
-      { name: 'QUIZ_API_KEY', description: 'Quiz Database API Key', required: false, sensitive: true }
-    ]
-  },
-  nova: {
-    name: 'Nova',
-    url: 'https://github.com/OpceanAI/Nova-Gaming-Bot',
-    description: 'Mi hermana gamer~ ¡Organiza torneos y conecta con APIs de videojuegos!',
-    language: 'TypeScript',
-    category: '🎮 Gaming & Entretenimiento',
-    envVars: [
-      { name: 'DISCORD_TOKEN', description: 'Discord Bot Token', required: true, sensitive: true },
-      { name: 'CLIENT_ID', description: 'Discord Application ID', required: true, sensitive: false },
-      { name: 'STEAM_API_KEY', description: 'Steam Web API Key', required: false, sensitive: true },
-      { name: 'RIOT_API_KEY', description: 'Riot Games API Key', required: false, sensitive: true },
-      { name: 'TWITCH_CLIENT_ID', description: 'Twitch Client ID', required: false, sensitive: true },
-      { name: 'TWITCH_CLIENT_SECRET', description: 'Twitch Client Secret', required: false, sensitive: true },
-      { name: 'DATABASE_GAMING', description: 'Gaming Database URL', required: true, sensitive: true }
-    ]
-  },
-  vega: {
-    name: 'Vega',
-    url: 'https://github.com/OpceanAI/Vega-Economy-Bot',
-    description: 'Mi hermana financiera~ ¡Maneja economía virtual y criptomonedas!',
-    language: 'Rust',
-    category: '💰 Economía & Finanzas',
-    envVars: [
-      { name: 'BOT_TOKEN', description: 'Discord Bot Token', required: true, sensitive: true },
-      { name: 'APPLICATION_ID', description: 'Discord Application ID', required: true, sensitive: false },
-      { name: 'DATABASE_ECONOMY', description: 'Economy Database URL', required: true, sensitive: true },
-      { name: 'COINAPI_KEY', description: 'CoinAPI Key para precios crypto', required: false, sensitive: true },
-      { name: 'PAYPAL_CLIENT_ID', description: 'PayPal Client ID', required: false, sensitive: true },
-      { name: 'STRIPE_SECRET_KEY', description: 'Stripe Secret Key', required: false, sensitive: true },
-      { name: 'REDIS_CACHE', description: 'Redis Cache URL', required: false, sensitive: true }
-    ]
-  },
-  lyra: {
-    name: 'Lyra',
-    url: 'https://github.com/OpceanAI/Lyra-Voice-Bot',
-    description: 'Mi hermana vocal~ ¡Clona voces y hace síntesis de voz súper realista!',
-    language: 'Python',
-    category: '🎤 Síntesis de Voz & Audio',
-    envVars: [
-      { name: 'BOT_TOKEN', description: 'Discord Bot Token', required: true, sensitive: true },
-      { name: 'CLIENT_ID', description: 'Discord Client ID', required: true, sensitive: false },
-      { name: 'ELEVENLABS_API_KEY', description: 'ElevenLabs API Key', required: true, sensitive: true },
-      { name: 'AZURE_SPEECH_KEY', description: 'Azure Speech Services Key', required: false, sensitive: true },
-      { name: 'GOOGLE_SPEECH_KEY', description: 'Google Cloud Speech API', required: false, sensitive: true },
-      { name: 'VOICE_MODELS_PATH', description: 'Ruta a modelos de voz locales', required: false, sensitive: false }
-    ]
-  },
-  iris: {
-    name: 'Iris',
-    url: 'https://github.com/OpceanAI/Iris-Security-Bot',
-    description: 'Mi hermana protectora~ ¡Seguridad avanzada y detección de amenazas!',
-    language: 'Go',
-    category: '🛡️ Seguridad & Protección',
-    envVars: [
-      { name: 'BOT_TOKEN', description: 'Discord Bot Token', required: true, sensitive: true },
-      { name: 'CLIENT_ID', description: 'Discord Client ID', required: true, sensitive: false },
-      { name: 'SECURITY_DATABASE', description: 'Security Database URL', required: true, sensitive: true },
-      { name: 'VIRUSTOTAL_API_KEY', description: 'VirusTotal API Key', required: false, sensitive: true },
-      { name: 'SHODAN_API_KEY', description: 'Shodan API Key', required: false, sensitive: true },
-      { name: 'WEBHOOK_ALERTS', description: 'Webhook para alertas de seguridad', required: false, sensitive: true },
-      { name: 'THREAT_INTEL_API', description: 'Threat Intelligence API', required: false, sensitive: true }
-    ]
   }
 };
 
@@ -244,16 +136,278 @@ class CeliaAssistant {
       output: process.stdout
     });
     
-    // 🌸 Celia's enhanced environment detection~
-    this.isTermux = process.env.PREFIX && process.env.PREFIX.includes('com.termux');
-    this.isARM = ['arm', 'arm64', 'armv7l', 'aarch64'].includes(os.arch());
-    this.platform = os.platform();
+    // 🌸 Celia's comprehensive system detection~
+    this.detectSystemEnvironment();
     this.theme = currentTheme;
     this.interactive = false;
     this.commands = new Map();
     
     // 🌙 Initialize Celia's beautiful commands~
     this.initializeCommands();
+  }
+
+  /**
+   * 🔍 Comprehensive system and processor detection~
+   */
+  detectSystemEnvironment() {
+    const arch = os.arch();
+    const platform = os.platform();
+    const release = os.release();
+    const cpus = os.cpus();
+    
+    // Enhanced architecture detection
+    this.architecture = {
+      raw: arch,
+      family: this.getArchitectureFamily(arch),
+      bits: this.getArchitectureBits(arch),
+      endianness: os.endianness(),
+      isLittleEndian: os.endianness() === 'LE'
+    };
+    
+    // Enhanced platform detection  
+    this.platform = {
+      raw: platform,
+      name: this.getPlatformName(platform),
+      isUnix: ['linux', 'darwin', 'freebsd', 'openbsd', 'netbsd', 'sunos', 'aix'].includes(platform),
+      isWindows: platform === 'win32',
+      isMobile: this.detectMobilePlatform(),
+      isContainer: this.detectContainerEnvironment(),
+      release: release
+    };
+    
+    // CPU information
+    this.cpu = {
+      count: cpus.length,
+      model: cpus[0] ? cpus[0].model : 'Unknown',
+      speed: cpus[0] ? cpus[0].speed : 0,
+      vendor: this.getCpuVendor(cpus[0] ? cpus[0].model : ''),
+      features: this.detectCpuFeatures()
+    };
+    
+    // Legacy compatibility properties
+    this.isTermux = process.env.PREFIX && process.env.PREFIX.includes('com.termux');
+    this.isARM = this.architecture.family === 'ARM';
+    
+    // Extended compatibility flags
+    this.isRISCV = this.architecture.family === 'RISC-V';
+    this.isx86 = this.architecture.family === 'x86';
+    this.isMIPS = this.architecture.family === 'MIPS';
+    this.isPowerPC = this.architecture.family === 'PowerPC';
+    this.is64Bit = this.architecture.bits === 64;
+    this.isEmbedded = this.detectEmbeddedSystem();
+  }
+
+  /**
+   * 🏗️ Get architecture family from Node.js arch string~
+   */
+  getArchitectureFamily(arch) {
+    const families = {
+      'arm': 'ARM',
+      'arm64': 'ARM', 
+      'armv7l': 'ARM',
+      'aarch64': 'ARM',
+      'x64': 'x86',
+      'x86': 'x86',
+      'ia32': 'x86',
+      'mips': 'MIPS',
+      'mipsel': 'MIPS',
+      'ppc': 'PowerPC',
+      'ppc64': 'PowerPC',
+      'riscv64': 'RISC-V',
+      's390': 'IBM Z',
+      's390x': 'IBM Z'
+    };
+    return families[arch] || 'Unknown';
+  }
+
+  /**
+   * 🔢 Get architecture bit width~
+   */
+  getArchitectureBits(arch) {
+    const bits64 = ['x64', 'arm64', 'aarch64', 'ppc64', 'riscv64', 's390x'];
+    return bits64.includes(arch) ? 64 : 32;
+  }
+
+  /**
+   * 🖥️ Get friendly platform name~
+   */
+  getPlatformName(platform) {
+    const names = {
+      'linux': 'Linux',
+      'darwin': 'macOS',
+      'win32': 'Windows',
+      'freebsd': 'FreeBSD',
+      'openbsd': 'OpenBSD', 
+      'netbsd': 'NetBSD',
+      'sunos': 'Solaris',
+      'aix': 'AIX'
+    };
+    return names[platform] || platform;
+  }
+
+  /**
+   * 📱 Detect mobile platform environments~
+   */
+  detectMobilePlatform() {
+    return !!(
+      this.isTermux ||
+      process.env.ANDROID_ROOT ||
+      process.env.ANDROID_DATA ||
+      process.env.PREFIX?.includes('com.termux') ||
+      process.env.IPHONE_SIMULATOR_DEVICE_TYPE_ID ||
+      process.env.REACT_NATIVE_DEBUGGER_WORKER
+    );
+  }
+
+  /**
+   * 🐳 Detect container environments~
+   */
+  detectContainerEnvironment() {
+    return !!(
+      process.env.container ||
+      process.env.DOCKER_CONTAINER ||
+      process.env.KUBERNETES_SERVICE_HOST ||
+      fs.existsSync('/.dockerenv') ||
+      (fs.existsSync('/proc/1/cgroup') && 
+       fs.readFileSync('/proc/1/cgroup', 'utf8').includes('docker'))
+    );
+  }
+
+  /**
+   * 🔧 Get CPU vendor from model string~
+   */
+  getCpuVendor(model) {
+    const modelLower = model.toLowerCase();
+    if (modelLower.includes('intel')) return 'Intel';
+    if (modelLower.includes('amd')) return 'AMD';
+    if (modelLower.includes('arm') || modelLower.includes('cortex')) return 'ARM';
+    if (modelLower.includes('apple')) return 'Apple';
+    if (modelLower.includes('qualcomm')) return 'Qualcomm';
+    if (modelLower.includes('broadcom')) return 'Broadcom';
+    if (modelLower.includes('mediatek')) return 'MediaTek';
+    return 'Unknown';
+  }
+
+  /**
+   * ⚡ Detect CPU features and capabilities~
+   */
+  detectCpuFeatures() {
+    const features = [];
+    
+    try {
+      // Check for common CPU flags on Linux
+      if (this.platform.raw === 'linux' && fs.existsSync('/proc/cpuinfo')) {
+        const cpuinfo = fs.readFileSync('/proc/cpuinfo', 'utf8');
+        if (cpuinfo.includes('sse')) features.push('SSE');
+        if (cpuinfo.includes('sse2')) features.push('SSE2');
+        if (cpuinfo.includes('avx')) features.push('AVX');
+        if (cpuinfo.includes('avx2')) features.push('AVX2');
+        if (cpuinfo.includes('neon')) features.push('NEON');
+        if (cpuinfo.includes('vfp')) features.push('VFP');
+      }
+    } catch (error) {
+      // Silent fail - feature detection is optional
+    }
+    
+    return features;
+  }
+
+  /**
+   * 🤖 Detect embedded system environments~
+   */
+  detectEmbeddedSystem() {
+    return !!(
+      this.isTermux ||
+      this.platform.isMobile ||
+      process.env.OPENWRT_BUILD ||
+      process.env.BUILDROOT_BUILD ||
+      (this.cpu.count === 1 && this.cpu.speed < 1000) ||
+      (this.isARM && this.platform.raw === 'linux')
+    );
+  }
+
+  /**
+   * 🏷️ Get friendly system type description~
+   */
+  getSystemType() {
+    if (this.isTermux) return 'Termux Android';
+    if (this.platform.isMobile) return 'sistema móvil';
+    if (this.isEmbedded) return 'sistema embebido';
+    if (this.platform.isContainer) return 'contenedor';
+    if (this.isRISCV) return 'RISC-V';
+    if (this.isARM && this.is64Bit) return 'ARM 64-bit';
+    if (this.isARM) return 'ARM 32-bit';
+    return 'tu sistema';
+  }
+
+  /**
+   * ⚡ Get processor-optimized installation commands~
+   */
+  getOptimizedInstallCommand(language, targetDir) {
+    const baseCommands = {
+      'Node.js': 'npm install',
+      'Python': 'pip install -r requirements.txt',
+      'TypeScript': 'npm install && npm run build'
+    };
+
+    let command = baseCommands[language] || 'npm install';
+    
+    // Apply processor-specific optimizations
+    if (this.isARM || this.isEmbedded) {
+      // Use fewer parallel jobs on ARM/embedded to avoid memory issues
+      if (language === 'Node.js' || language === 'TypeScript') {
+        command = command.replace('npm install', 'npm install --maxsockets 1');
+      }
+    }
+    
+    if (this.isRISCV) {
+      // RISC-V may need single-threaded builds
+      if (language === 'Node.js' || language === 'TypeScript') {
+        command = command.replace('npm install', 'npm install --maxsockets 1 --progress false');
+      }
+    }
+    
+    if (this.cpu.count === 1) {
+      // Single core systems - be gentle
+      if (language === 'Python') {
+        command = command.replace('pip install', 'pip install --no-cache-dir');
+      }
+    }
+    
+    return command;
+  }
+
+  /**
+   * 🎯 Get system-specific recommendations~
+   */
+  getSystemRecommendations() {
+    const recommendations = [];
+    
+    if (this.isARM && this.platform.raw === 'linux') {
+      recommendations.push('💡 ARM Linux: Considera usar binarios pre-compilados cuando sea posible');
+    }
+    
+    if (this.isRISCV) {
+      recommendations.push('🆕 RISC-V: Arquitectura experimental - reporta cualquier problema');
+    }
+    
+    if (this.isEmbedded) {
+      recommendations.push('⚡ Sistema embebido: Funcionalidad optimizada automáticamente');
+    }
+    
+    if (this.cpu.count === 1) {
+      recommendations.push('🐌 Un solo núcleo: Instalaciones serán más lentas pero funcionales');
+    }
+    
+    if (this.cpu.speed > 0 && this.cpu.speed < 1000) {
+      recommendations.push('🕐 CPU lenta detectada: Paciencia durante instalaciones');
+    }
+    
+    if (this.platform.isContainer) {
+      recommendations.push('🐳 Contenedor: Algunas funciones del sistema pueden estar limitadas');
+    }
+    
+    return recommendations;
   }
 
   /**
@@ -794,15 +948,35 @@ class CeliaAssistant {
       recommendations.push('Considerar reiniciar Celia periódicamente');
     }
     
-    // Check platform compatibility
+    // Enhanced platform compatibility checks
     if (this.isTermux) {
       diagnostics.push('📱 Modo Termux detectado');
       recommendations.push('Usar comandos "quick" para mejor compatibilidad móvil');
     }
     
+    if (this.platform.isMobile) {
+      diagnostics.push('📱 Plataforma móvil detectada');
+      recommendations.push('Funciones de red pueden tener limitaciones');
+    }
+    
     if (this.isARM) {
-      diagnostics.push('🔧 Arquitectura ARM detectada');
+      diagnostics.push(`🔧 Arquitectura ARM ${this.architecture.bits}-bit detectada`);
       recommendations.push('Instalar dependencias puede tomar más tiempo');
+    }
+    
+    if (this.isRISCV) {
+      diagnostics.push('⚙️ Arquitectura RISC-V detectada (experimental)');
+      recommendations.push('Usar instalación rápida para mejor compatibilidad');
+    }
+    
+    if (this.isEmbedded) {
+      diagnostics.push('🤖 Sistema embebido detectado');
+      recommendations.push('Recursos limitados - modo optimizado activo');
+    }
+    
+    if (this.platform.isContainer) {
+      diagnostics.push('🐳 Entorno contenedorizado detectado');
+      recommendations.push('Algunas funciones del sistema pueden estar limitadas');
     }
     
     // Show diagnostics
@@ -955,7 +1129,7 @@ class CeliaAssistant {
     } catch (error) {
       // Enhanced platform-specific commands with ARM/Termux support
       let command;
-      if (this.platform === 'win32') {
+      if (this.platform.isWindows) {
         command = `rmdir /s /q "${dirPath}"`;
       } else if (this.isTermux) {
         // Termux may have different rm behavior
@@ -968,8 +1142,8 @@ class CeliaAssistant {
         execSync(command);
       } catch (cmdError) {
         // Final fallback for ARM/mobile environments
-        if (this.isARM || this.isTermux) {
-          this.log('⚠️  Usando eliminación manual en entorno ARM/Termux', 'yellow');
+        if (this.isARM || this.isTermux || this.isEmbedded) {
+          this.log('⚠️  Usando eliminación manual en entorno embebido/móvil', 'yellow');
           this.removeDirectoryRecursive(dirPath);
         } else {
           throw cmdError;
@@ -1082,12 +1256,16 @@ class CeliaAssistant {
     // Theme indicator
     this.log(`🎨 Tema actual: ${this.theme}`, 'dim');
     
-    // Environment detection with love~
-    if (this.isARM || this.isTermux) {
+    // Enhanced environment detection with love~
+    if (this.isARM || this.isTermux || this.isEmbedded || this.platform.isMobile) {
       console.log('');
-      this.log('🌸 Entorno detectado:', 'info');
+      this.log('🌸 Entorno especializado detectado:', 'info');
       if (this.isTermux) this.log('   📱 Termux Android', 'success');
-      if (this.isARM) this.log('   🔧 Arquitectura ARM', 'success');
+      if (this.platform.isMobile) this.log('   📱 Plataforma móvil', 'success');
+      if (this.isARM) this.log(`   🔧 Arquitectura ARM ${this.architecture.bits}-bit`, 'success');
+      if (this.isRISCV) this.log('   ⚙️ Arquitectura RISC-V', 'success');
+      if (this.isEmbedded) this.log('   🤖 Sistema embebido detectado', 'success');
+      if (this.platform.isContainer) this.log('   🐳 Entorno contenedorizado', 'success');
     }
     
     console.log('');
@@ -1179,15 +1357,23 @@ class CeliaAssistant {
       });
     });
     
-    // Special mobile tips
-    if (this.isARM || this.isTermux) {
-      this.createBox([
-        '📱 Consejos para móviles:',
-        '',
-        '• Usa "celia quick" para mejor compatibilidad',
-        '• Instala: apt install git nodejs',
-        '• El modo interactivo funciona genial en móviles!'
-      ], 'warning', 1);
+    // Enhanced compatibility tips
+    const compatibilityTips = [];
+    if (this.platform.isMobile || this.isTermux) {
+      compatibilityTips.push('📱 Móviles/Termux:', '• Usa "celia quick" para mejor compatibilidad', '• Instala: apt install git nodejs');
+    }
+    if (this.isARM && !this.platform.isMobile) {
+      compatibilityTips.push('🔧 ARM Desktop:', '• Las dependencias pueden tardar más en compilar', '• Usa binarios pre-compilados cuando sea posible');
+    }
+    if (this.isRISCV) {
+      compatibilityTips.push('⚙️ RISC-V:', '• Arquitectura experimental, usa quick-install', '• Reporta cualquier problema de compatibilidad');
+    }
+    if (this.isEmbedded) {
+      compatibilityTips.push('🤖 Sistemas embebidos:', '• Funciones limitadas por recursos', '• Modo interactivo optimizado automáticamente');
+    }
+    
+    if (compatibilityTips.length > 0) {
+      this.createBox(compatibilityTips, 'warning', 1);
       console.log('');
     }
     
@@ -1241,12 +1427,18 @@ class CeliaAssistant {
       this.log(`\n🌸 ¡Trayendo a ${bot.name} a tu computadora!~`, 'blue');
       this.log(`🌙 Visitando su casita: ${bot.url}`, 'cyan');
       
-      // 🌸 Celia optimiza para tu móvil/ARM con amor~
-      if (this.isARM || this.isTermux) {
-        this.log('🌸 Optimizando para tu móvil con amor...', 'yellow');
+      // 🌸 Celia optimiza para tu sistema con amor~
+      if (this.isARM || this.isTermux || this.isEmbedded || this.platform.isMobile) {
+        const systemType = this.getSystemType();
+        this.log(`🌸 Optimizando para ${systemType} con amor...`, 'yellow');
         try {
-          // Prevent git from using system credential helpers that might not work on ARM
+          // Prevent git from using system credential helpers that might not work on embedded systems
           execSync('git config --global credential.helper ""', { stdio: 'ignore' });
+          
+          // Set processor-specific git options
+          if (this.isRISCV) {
+            execSync('git config --global pack.threads 1', { stdio: 'ignore' });
+          }
         } catch (e) {
           // Ignore if git config fails
         }
@@ -1526,27 +1718,6 @@ class CeliaAssistant {
         case 'Katu':
           content += this.generateKatuTemplate();
           break;
-        case 'Aurora':
-          content += this.generateAuroraTemplate();
-          break;
-        case 'Cosmos':
-          content += this.generateCosmosTemplate();
-          break;
-        case 'Stella':
-          content += this.generateStellaTemplate();
-          break;
-        case 'Nova':
-          content += this.generateNovaTemplate();
-          break;
-        case 'Vega':
-          content += this.generateVegaTemplate();
-          break;
-        case 'Lyra':
-          content += this.generateLyraTemplate();
-          break;
-        case 'Iris':
-          content += this.generateIrisTemplate();
-          break;
         default:
           content += this.generateGenericTemplate(bot);
       }
@@ -1640,119 +1811,6 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
 # DATABASE_URL=postgresql://user:pass@host:5432/katu
 # Si no configuras base de datos, Katu usará memoria interna`;
   }
-
-  generateAuroraTemplate() {
-    return `# 🎨 CONFIGURACIÓN PRINCIPAL (REQUERIDO)
-BOT_TOKEN=tu_token_de_discord_aqui
-CLIENT_ID=tu_client_id_de_discord_aqui
-
-# 🤖 INTELIGENCIA ARTIFICIAL PARA ARTE (REQUERIDO)
-OPENAI_API_KEY=tu_api_key_de_openai_dall_e_aqui
-
-# 🎨 APIS DE GENERACIÓN DE IMÁGENES (Opcional)
-# STABILITY_API_KEY=tu_stability_ai_api_key
-# MIDJOURNEY_TOKEN=tu_midjourney_bot_token
-
-# ☁️ ALMACENAMIENTO DE IMÁGENES (Opcional)
-# CLOUDINARY_URL=cloudinary://api_key:api_secret@cloud_name`;
-  }
-
-  generateCosmosTemplate() {
-    return `# 🌌 CONFIGURACIÓN PRINCIPAL (REQUERIDO)
-MAIN_BOT_TOKEN=tu_token_principal_del_bot_aqui
-CLUSTER_ID=tu_cluster_id_aqui
-
-# 🗄️ BASE DE DATOS PRINCIPAL (REQUERIDO)
-REDIS_URL=redis://localhost:6379
-POSTGRESQL_MAIN=postgresql://user:pass@host:5432/cosmos
-
-# 🔧 CONFIGURACIÓN DE CLUSTER (Opcional)
-# WEBHOOK_SECRET=tu_webhook_secret_key
-# ADMIN_GUILD_ID=id_del_servidor_de_administracion`;
-  }
-
-  generateStellaTemplate() {
-    return `# 📚 CONFIGURACIÓN PRINCIPAL (REQUERIDO)
-BOT_TOKEN=tu_token_de_discord_aqui
-CLIENT_ID=tu_client_id_de_discord_aqui
-
-# 🧠 INTELIGENCIA ARTIFICIAL EDUCATIVA (REQUERIDO)
-OPENAI_API_KEY=tu_api_key_de_openai_aqui
-
-# 🗄️ BASE DE DATOS EDUCATIVA (REQUERIDO)
-MONGODB_EDUCATION=mongodb+srv://user:pass@cluster.mongodb.net/education
-
-# 🌐 APIS DE TRADUCCIÓN Y QUIZZES (Opcional)
-# DEEPL_API_KEY=tu_deepl_api_key
-# QUIZ_API_KEY=tu_quiz_database_api_key`;
-  }
-
-  generateNovaTemplate() {
-    return `# 🎮 CONFIGURACIÓN PRINCIPAL (REQUERIDO)
-DISCORD_TOKEN=tu_token_de_discord_aqui
-CLIENT_ID=tu_application_id_de_discord_aqui
-
-# 🗄️ BASE DE DATOS GAMING (REQUERIDO)
-DATABASE_GAMING=postgresql://user:pass@host:5432/nova_gaming
-
-# 🎮 APIS DE VIDEOJUEGOS (Opcional)
-# STEAM_API_KEY=tu_steam_web_api_key
-# RIOT_API_KEY=tu_riot_games_api_key
-
-# 📺 INTEGRACIÓN TWITCH (Opcional)
-# TWITCH_CLIENT_ID=tu_twitch_client_id
-# TWITCH_CLIENT_SECRET=tu_twitch_client_secret`;
-  }
-
-  generateVegaTemplate() {
-    return `# 💰 CONFIGURACIÓN PRINCIPAL (REQUERIDO)
-BOT_TOKEN=tu_token_de_discord_aqui
-APPLICATION_ID=tu_application_id_de_discord_aqui
-
-# 🗄️ BASE DE DATOS ECONÓMICA (REQUERIDO)
-DATABASE_ECONOMY=postgresql://user:pass@host:5432/vega_economy
-
-# 💸 APIS FINANCIERAS (Opcional)
-# COINAPI_KEY=tu_coinapi_key_para_precios_crypto
-# PAYPAL_CLIENT_ID=tu_paypal_client_id
-# STRIPE_SECRET_KEY=tu_stripe_secret_key
-
-# ⚡ CACHE (Opcional)
-# REDIS_CACHE=redis://localhost:6379/1`;
-  }
-
-  generateLyraTemplate() {
-    return `# 🎤 CONFIGURACIÓN PRINCIPAL (REQUERIDO)
-BOT_TOKEN=tu_token_de_discord_aqui
-CLIENT_ID=tu_client_id_de_discord_aqui
-
-# 🗣️ SÍNTESIS DE VOZ (REQUERIDO)
-ELEVENLABS_API_KEY=tu_elevenlabs_api_key_aqui
-
-# 🎵 SERVICIOS DE VOZ ADICIONALES (Opcional)
-# AZURE_SPEECH_KEY=tu_azure_speech_services_key
-# GOOGLE_SPEECH_KEY=tu_google_cloud_speech_api_key
-
-# 📁 MODELOS LOCALES (Opcional)
-# VOICE_MODELS_PATH=/path/to/local/voice/models`;
-  }
-
-  generateIrisTemplate() {
-    return `# 🛡️ CONFIGURACIÓN PRINCIPAL (REQUERIDO)
-BOT_TOKEN=tu_token_de_discord_aqui
-CLIENT_ID=tu_client_id_de_discord_aqui
-
-# 🗄️ BASE DE DATOS DE SEGURIDAD (REQUERIDO)
-SECURITY_DATABASE=postgresql://user:pass@host:5432/iris_security
-
-# 🔍 APIS DE SEGURIDAD (Opcional)
-# VIRUSTOTAL_API_KEY=tu_virustotal_api_key
-# SHODAN_API_KEY=tu_shodan_api_key
-
-# 🚨 ALERTAS Y WEBHOOKS (Opcional)
-# WEBHOOK_ALERTS=https://discord.com/api/webhooks/tu_webhook
-# THREAT_INTEL_API=tu_threat_intelligence_api_key`;
-  }
   
   generateGenericTemplate(bot) {
     let content = `# ${bot.name.toUpperCase()} CONFIGURACIÓN (REQUERIDO)\n`;
@@ -1797,7 +1855,9 @@ SECURITY_DATABASE=postgresql://user:pass@host:5432/iris_security
       return true;
     }
     
-    execSync('npm install', { stdio: 'inherit', cwd: targetDir });
+    const optimizedCommand = this.getOptimizedInstallCommand('Node.js', targetDir);
+    this.log(`🚀 Ejecutando: ${optimizedCommand}`, 'info');
+    execSync(optimizedCommand, { stdio: 'inherit', cwd: targetDir });
     this.log('✅ Dependencias Node.js instaladas', 'green');
     return true;
   }
@@ -1805,7 +1865,9 @@ SECURITY_DATABASE=postgresql://user:pass@host:5432/iris_security
   async installPythonDeps(targetDir) {
     const reqFile = path.join(targetDir, 'requirements.txt');
     if (fs.existsSync(reqFile)) {
-      execSync('pip install -r requirements.txt', { stdio: 'inherit', cwd: targetDir });
+      const optimizedCommand = this.getOptimizedInstallCommand('Python', targetDir);
+      this.log(`🚀 Ejecutando: ${optimizedCommand}`, 'info');
+      execSync(optimizedCommand, { stdio: 'inherit', cwd: targetDir });
       this.log('✅ Dependencias Python instaladas', 'green');
     } else {
       this.log('ℹ️  No hay requirements.txt', 'yellow');
@@ -1819,13 +1881,22 @@ SECURITY_DATABASE=postgresql://user:pass@host:5432/iris_security
       return true;
     }
     
-    execSync('npm install', { stdio: 'inherit', cwd: targetDir });
+    const optimizedCommand = this.getOptimizedInstallCommand('TypeScript', targetDir);
+    this.log(`🚀 Ejecutando: ${optimizedCommand}`, 'info');
     
-    try {
-      execSync('npm run build', { stdio: 'inherit', cwd: targetDir });
-      this.log('✅ TypeScript compilado', 'green');
-    } catch {
-      this.log('⚠️  No se pudo compilar automáticamente', 'yellow');
+    // Split install and build commands for better error handling
+    const installCommand = optimizedCommand.split(' && ')[0];
+    const buildCommand = optimizedCommand.split(' && ')[1];
+    
+    execSync(installCommand, { stdio: 'inherit', cwd: targetDir });
+    
+    if (buildCommand) {
+      try {
+        execSync(buildCommand, { stdio: 'inherit', cwd: targetDir });
+        this.log('✅ TypeScript compilado', 'green');
+      } catch {
+        this.log('⚠️  No se pudo compilar automáticamente', 'yellow');
+      }
     }
     
     this.log('✅ Dependencias TypeScript instaladas', 'green');
@@ -2411,13 +2482,16 @@ SECURITY_DATABASE=postgresql://user:pass@host:5432/iris_security
     console.log('');
     
     const info = [
-      `Sistema: ${this.platform}`,
-      `Arquitectura: ${os.arch()}`,
-      `Node.js: ${process.version}`,
-      `Tema actual: ${this.theme}`,
-      `Modo: ${this.interactive ? 'Interactivo' : 'Comando único'}`,
-      `Termux: ${this.isTermux ? 'Sí' : 'No'}`,
-      `ARM: ${this.isARM ? 'Sí' : 'No'}`
+      `💻 Sistema: ${this.platform.name} (${this.platform.raw})`,
+      `🏭 Arquitectura: ${this.architecture.family} ${this.architecture.bits}-bit (${this.architecture.raw})`,
+      `🔧 Endianness: ${this.architecture.endianness}`,
+      `📊 CPU: ${this.cpu.vendor} (${this.cpu.count} cores)`,
+      `🌸 Node.js: ${process.version}`,
+      `🎨 Tema: ${this.theme}`,
+      `💬 Modo: ${this.interactive ? 'Interactivo' : 'Comando único'}`,
+      `📱 Móvil: ${this.platform.isMobile ? 'Sí' : 'No'}`,
+      `🐳 Contenedor: ${this.platform.isContainer ? 'Sí' : 'No'}`,
+      `🤖 Embebido: ${this.isEmbedded ? 'Sí' : 'No'}`
     ];
     
     this.createBox(info, 'info', 1);
