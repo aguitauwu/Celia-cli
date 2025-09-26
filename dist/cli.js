@@ -1,6 +1,28 @@
 #!/usr/bin/env node
 'use strict';
 
+var readline = require('readline');
+
+function _interopNamespace(e) {
+  if (e && e.__esModule) return e;
+  var n = Object.create(null);
+  if (e) {
+    Object.keys(e).forEach(function (k) {
+      if (k !== 'default') {
+        var d = Object.getOwnPropertyDescriptor(e, k);
+        Object.defineProperty(n, k, d.get ? d : {
+          enumerable: true,
+          get: function () { return e[k]; }
+        });
+      }
+    });
+  }
+  n.default = e;
+  return Object.freeze(n);
+}
+
+var readline__namespace = /*#__PURE__*/_interopNamespace(readline);
+
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
@@ -184,7 +206,7 @@ var require_constants = __commonJS({
 var require_themes = __commonJS({
   "src/config/themes.js"(exports, module) {
     init_cjs_shims();
-    var THEMES2 = {
+    var THEMES3 = {
       celestial: {
         primary: "\x1B[38;5;147m",
         // Light purple
@@ -256,7 +278,7 @@ var require_themes = __commonJS({
       }
     };
     module.exports = {
-      THEMES: THEMES2,
+      THEMES: THEMES3,
       DEFAULT_THEME: "celestial"
     };
   }
@@ -346,12 +368,18 @@ var require_bots = __commonJS({
   }
 });
 
-// src/utils/logger.js
-var require_logger = __commonJS({
-  "src/utils/logger.js"(exports, module) {
+// src/utils/logger.ts
+var logger_exports = {};
+__export(logger_exports, {
+  Logger: () => Logger,
+  default: () => logger_default
+});
+var THEMES, DEFAULT_THEME, _Logger, Logger, logger_default;
+var init_logger = __esm({
+  "src/utils/logger.ts"() {
     init_cjs_shims();
-    var { THEMES: THEMES2, DEFAULT_THEME } = require_themes();
-    var _Logger = class _Logger {
+    ({ THEMES, DEFAULT_THEME } = require_themes());
+    _Logger = class _Logger {
       constructor(theme = DEFAULT_THEME) {
         this.theme = theme;
       }
@@ -359,7 +387,7 @@ var require_logger = __commonJS({
        * Set current theme
        */
       setTheme(theme) {
-        if (THEMES2[theme]) {
+        if (THEMES[theme]) {
           this.theme = theme;
         }
       }
@@ -367,7 +395,7 @@ var require_logger = __commonJS({
        * Get current theme colors
        */
       getTheme() {
-        return THEMES2[this.theme];
+        return THEMES[this.theme];
       }
       /**
        * 🌙 Celia's beautiful theming system~
@@ -381,7 +409,7 @@ var require_logger = __commonJS({
        */
       async typeText(message, style = "text", speed = 50) {
         const theme = this.getTheme();
-        process.stdout.write(theme[style]);
+        process.stdout.write(theme[style] || theme.text);
         for (const char of message) {
           process.stdout.write(char);
           await new Promise((resolve) => setTimeout(resolve, speed));
@@ -399,8 +427,10 @@ var require_logger = __commonJS({
         let i = 0;
         const interval = setInterval(() => {
           const frame = frames[i % frames.length];
-          const color = colors[i % colors.length];
-          process.stdout.write(`\r${theme.dim}${message} ${theme[color]}${frame}${theme.reset}`);
+          const colorIndex = i % colors.length;
+          const color = colors[colorIndex];
+          const colorCode = theme[color] || theme.primary;
+          process.stdout.write(`\r${theme.dim}${message} ${colorCode}${frame}${theme.reset}`);
           i++;
         }, 100);
         await new Promise((resolve) => setTimeout(resolve, duration));
@@ -454,65 +484,60 @@ var require_logger = __commonJS({
       /**
        * 🌊 Wave text effect~
        */
-      async waveText(text, style = "primary", speed = 100) {
+      waveLog(text, style = "accent") {
         const theme = this.getTheme();
-        const chars = text.split("");
-        for (let wave = 0; wave < 3; wave++) {
-          process.stdout.write("\r" + " ".repeat(text.length + 10));
-          process.stdout.write("\r");
-          for (let i = 0; i < chars.length; i++) {
-            const char = Math.sin(wave + i * 0.5) > 0 ? chars[i].toUpperCase() : chars[i];
-            process.stdout.write(`${theme[style]}${char}${theme.reset}`);
-          }
-          await new Promise((resolve) => setTimeout(resolve, speed));
-        }
-        process.stdout.write("\n");
+        const waves = ["\u3030\uFE0F", "\u{1F30A}", "\u301C", "\uFF5E"];
+        const randomWave = waves[Math.floor(Math.random() * waves.length)];
+        console.log(`${theme[style]}${randomWave} ${text} ${randomWave}${theme.reset}`);
       }
       /**
-       * 💓 Pulse text effect~
+       * 💖 Heart text effect~
        */
-      async pulseText(text, style = "accent", pulses = 3) {
+      heartLog(text, style = "primary") {
         const theme = this.getTheme();
-        for (let i = 0; i < pulses; i++) {
-          process.stdout.write(`\r${theme[style]}${text}${theme.reset}`);
-          await new Promise((resolve) => setTimeout(resolve, 300));
-          process.stdout.write(`\r${theme.dim}${text}${theme.reset}`);
-          await new Promise((resolve) => setTimeout(resolve, 300));
-        }
-        process.stdout.write(`\r${theme[style]}${text}${theme.reset}
-`);
+        const hearts = ["\u{1F496}", "\u{1F495}", "\u{1F497}", "\u{1FA77}"];
+        const randomHeart = hearts[Math.floor(Math.random() * hearts.length)];
+        console.log(`${theme[style]}${randomHeart} ${text} ${randomHeart}${theme.reset}`);
       }
       /**
-       * 📊 Progress bar~
+       * 🔥 Fire text effect~
        */
-      async showProgressBar(message, duration = 2e3, width = 30) {
+      fireLog(text, style = "error") {
         const theme = this.getTheme();
-        const startTime = Date.now();
-        while (Date.now() - startTime < duration) {
-          const elapsed = Date.now() - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-          const filled = Math.floor(progress * width);
-          const empty = width - filled;
-          const bar = "\u2588".repeat(filled) + "\u2591".repeat(empty);
-          const percentage = Math.floor(progress * 100);
-          process.stdout.write(`\r${theme.info}${message} ${theme.accent}[${bar}] ${percentage}%${theme.reset}`);
-          await new Promise((resolve) => setTimeout(resolve, 50));
-        }
-        process.stdout.write(`\r${theme.success}${message} [${"\u2588".repeat(width)}] 100% \u2713${theme.reset}
-`);
+        const fires = ["\u{1F525}", "\u{1F4A5}", "\u26A1", "\u{1F4AB}"];
+        const randomFire = fires[Math.floor(Math.random() * fires.length)];
+        console.log(`${theme[style]}${randomFire} ${text} ${randomFire}${theme.reset}`);
       }
-      // Convenience methods for common log types
-      info(message) {
-        this.log(message, "info");
+      /**
+       * 🌸 Flower text effect~
+       */
+      flowerLog(text, style = "accent") {
+        const theme = this.getTheme();
+        const flowers = ["\u{1F338}", "\u{1F33A}", "\u{1F33B}", "\u{1F337}"];
+        const randomFlower = flowers[Math.floor(Math.random() * flowers.length)];
+        console.log(`${theme[style]}${randomFlower} ${text} ${randomFlower}${theme.reset}`);
       }
+      // Convenient logging shortcuts
       success(message) {
         this.log(message, "success");
+      }
+      error(message) {
+        this.log(message, "error");
       }
       warning(message) {
         this.log(message, "warning");
       }
-      error(message) {
-        this.log(message, "error");
+      info(message) {
+        this.log(message, "info");
+      }
+      primary(message) {
+        this.log(message, "primary");
+      }
+      secondary(message) {
+        this.log(message, "secondary");
+      }
+      accent(message) {
+        this.log(message, "accent");
       }
       dim(message) {
         this.log(message, "dim");
@@ -522,8 +547,8 @@ var require_logger = __commonJS({
       }
     };
     __name(_Logger, "Logger");
-    var Logger2 = _Logger;
-    module.exports = Logger2;
+    Logger = _Logger;
+    logger_default = Logger;
   }
 });
 
@@ -923,12 +948,17 @@ var require_security = __commonJS({
   }
 });
 
-// src/utils/prompt.js
-var require_prompt = __commonJS({
-  "src/utils/prompt.js"(exports, module) {
+// src/utils/prompt.ts
+var prompt_exports = {};
+__export(prompt_exports, {
+  PromptUtils: () => PromptUtils,
+  default: () => prompt_default
+});
+var _PromptUtils, PromptUtils, prompt_default;
+var init_prompt = __esm({
+  "src/utils/prompt.ts"() {
     init_cjs_shims();
-    var readline = __require("readline");
-    var _PromptUtils = class _PromptUtils {
+    _PromptUtils = class _PromptUtils {
       constructor() {
         this.rl = null;
       }
@@ -937,7 +967,7 @@ var require_prompt = __commonJS({
        */
       init() {
         if (!this.rl) {
-          this.rl = readline.createInterface({
+          this.rl = readline__namespace.createInterface({
             input: process.stdin,
             output: process.stdout
           });
@@ -1026,10 +1056,52 @@ var require_prompt = __commonJS({
         }
         return allCommands.filter((cmd) => cmd.toLowerCase().startsWith(input.toLowerCase())).slice(0, 10);
       }
+      /**
+       * Confirm action with user
+       */
+      async confirm(message, defaultValue = false) {
+        const suffix = defaultValue ? " (Y/n)" : " (y/N)";
+        const answer = await this.question(`${message}${suffix}: `);
+        if (!answer.trim()) {
+          return defaultValue;
+        }
+        return ["y", "yes", "si", "s\xED"].includes(answer.toLowerCase());
+      }
+      /**
+       * Select from multiple options
+       */
+      async select(message, options) {
+        console.log(`
+${message}`);
+        options.forEach((option, index2) => {
+          console.log(`  ${index2 + 1}. ${option}`);
+        });
+        const answer = await this.question("\nSelecciona una opci\xF3n (n\xFAmero): ");
+        const index = parseInt(answer.trim()) - 1;
+        if (index >= 0 && index < options.length) {
+          return options[index] || null;
+        }
+        return null;
+      }
+      /**
+       * Multi-line input
+       */
+      async multiline(prompt, endMarker = "END") {
+        console.log(`${prompt} (termina con '${endMarker}' en una l\xEDnea nueva):`);
+        const lines = [];
+        let line = "";
+        while (line !== endMarker) {
+          line = await this.question("> ");
+          if (line !== endMarker) {
+            lines.push(line);
+          }
+        }
+        return lines.join("\n");
+      }
     };
     __name(_PromptUtils, "PromptUtils");
-    var PromptUtils2 = _PromptUtils;
-    module.exports = PromptUtils2;
+    PromptUtils = _PromptUtils;
+    prompt_default = PromptUtils;
   }
 });
 
@@ -1173,7 +1245,7 @@ var require_help = __commonJS({
 var require_theme = __commonJS({
   "src/cli/commands/theme.js"(exports, module) {
     init_cjs_shims();
-    var { THEMES: THEMES2 } = require_themes();
+    var { THEMES: THEMES3 } = require_themes();
     var _ThemeCommand = class _ThemeCommand {
       constructor(logger) {
         this.logger = logger;
@@ -1184,8 +1256,8 @@ var require_theme = __commonJS({
           this.showAvailableThemes();
           return;
         }
-        if (!THEMES2[themeName]) {
-          this.logger.log(`\u{1F338} Tema "${themeName}" no existe~ Temas disponibles: ${Object.keys(THEMES2).join(", ")}`, "error");
+        if (!THEMES3[themeName]) {
+          this.logger.log(`\u{1F338} Tema "${themeName}" no existe~ Temas disponibles: ${Object.keys(THEMES3).join(", ")}`, "error");
           return;
         }
         await this.logger.showLoading(`\u{1F3A8} Cambiando a tema ${themeName}`, 1500);
@@ -1202,7 +1274,7 @@ var require_theme = __commonJS({
         this.showBanner();
         this.logger.log("\u{1F3A8} Temas disponibles:", "primary");
         console.log("");
-        Object.keys(THEMES2).forEach((theme) => {
+        Object.keys(THEMES3).forEach((theme) => {
           const isActive = theme === this.logger.theme;
           const indicator = isActive ? "\u25CF " : "\u25CB ";
           this.logger.log(`${indicator}${theme}`, isActive ? "accent" : "dim");
@@ -1290,18 +1362,18 @@ __export(celia_exports, {
   CeliaAssistant: () => CeliaAssistant,
   default: () => celia_default
 });
-var VERSION, NODE_MIN_VERSION, THEMES, BOTS, Logger, SystemDetector, SecurityUtils, PromptUtils, ListCommand, HelpCommand, ThemeCommand, StatusCommand, _CeliaAssistant, CeliaAssistant, celia_default;
+var VERSION, NODE_MIN_VERSION, THEMES2, BOTS, Logger2, SystemDetector, SecurityUtils, PromptUtils2, ListCommand, HelpCommand, ThemeCommand, StatusCommand, _CeliaAssistant, CeliaAssistant, celia_default;
 var init_celia = __esm({
   "src/cli/celia.ts"() {
     init_cjs_shims();
     init_router();
     ({ VERSION, NODE_MIN_VERSION } = require_constants());
-    ({ THEMES } = require_themes());
+    ({ THEMES: THEMES2 } = require_themes());
     ({ BOTS } = require_bots());
-    Logger = require_logger();
+    Logger2 = (init_logger(), __toCommonJS(logger_exports));
     SystemDetector = require_system();
     SecurityUtils = require_security();
-    PromptUtils = require_prompt();
+    PromptUtils2 = (init_prompt(), __toCommonJS(prompt_exports));
     ListCommand = require_list();
     HelpCommand = require_help();
     ThemeCommand = require_theme();
@@ -1309,9 +1381,9 @@ var init_celia = __esm({
     _CeliaAssistant = class _CeliaAssistant {
       constructor() {
         this.interactive = false;
-        this.logger = new Logger();
+        this.logger = new Logger2();
         this.system = new SystemDetector();
-        this.prompt = new PromptUtils();
+        this.prompt = new PromptUtils2();
         this.router = new CommandRouter();
         this.initializeCommands();
       }

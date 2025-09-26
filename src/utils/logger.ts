@@ -2,17 +2,20 @@
  * 🌸 Celia's beautiful logging system
  */
 
+import { ITheme, ThemeStyle, ThemeName } from '../types/theme';
 const { THEMES, DEFAULT_THEME } = require('../config/themes');
 
-class Logger {
-  constructor(theme = DEFAULT_THEME) {
+export class Logger {
+  public theme: ThemeName;
+
+  constructor(theme: ThemeName = DEFAULT_THEME) {
     this.theme = theme;
   }
   
   /**
    * Set current theme
    */
-  setTheme(theme) {
+  setTheme(theme: ThemeName): void {
     if (THEMES[theme]) {
       this.theme = theme;
     }
@@ -21,14 +24,14 @@ class Logger {
   /**
    * Get current theme colors
    */
-  getTheme() {
+  getTheme(): ITheme {
     return THEMES[this.theme];
   }
   
   /**
    * 🌙 Celia's beautiful theming system~
    */
-  log(message, style = 'text') {
+  log(message: string, style: ThemeStyle = 'text'): void {
     const theme = this.getTheme();
     console.log(`${theme[style]}${message}${theme.reset}`);
   }
@@ -36,9 +39,9 @@ class Logger {
   /**
    * ✨ Animated typing effect~
    */
-  async typeText(message, style = 'text', speed = 50) {
+  async typeText(message: string, style: ThemeStyle = 'text', speed: number = 50): Promise<void> {
     const theme = this.getTheme();
-    process.stdout.write(theme[style]);
+    process.stdout.write(theme[style] || theme.text);
     
     for (const char of message) {
       process.stdout.write(char);
@@ -51,18 +54,20 @@ class Logger {
   /**
    * ✨ Beautiful loading animation~
    */
-  async showLoading(message, duration = 2000) {
+  async showLoading(message: string, duration: number = 2000): Promise<void> {
     const theme = this.getTheme();
     const frames = ['⠂', '⠆', '⠎', '⠜', '⠸', '⠰', '⠠', '⠀'];
-    const colors = ['primary', 'secondary', 'accent'];
+    const colors: ThemeStyle[] = ['primary', 'secondary', 'accent'];
     
     process.stdout.write(theme.dim + message + ' ');
     
     let i = 0;
     const interval = setInterval(() => {
       const frame = frames[i % frames.length];
-      const color = colors[i % colors.length];
-      process.stdout.write(`\r${theme.dim}${message} ${theme[color]}${frame}${theme.reset}`);
+      const colorIndex = i % colors.length;
+      const color = colors[colorIndex] || 'primary';
+      const colorCode = theme[color] || theme.primary;
+      process.stdout.write(`\r${theme.dim}${message} ${colorCode}${frame}${theme.reset}`);
       i++;
     }, 100);
     
@@ -74,7 +79,7 @@ class Logger {
   /**
    * 🌟 Create beautiful boxes~
    */
-  createBox(content, style = 'primary', padding = 1) {
+  createBox(content: string | string[], style: ThemeStyle = 'primary', padding: number = 1): void {
     const theme = this.getTheme();
     const lines = Array.isArray(content) ? content : [content];
     const maxLength = Math.max(...lines.map(line => line.length));
@@ -95,7 +100,7 @@ class Logger {
   /**
    * 🌈 Gradient text effect~
    */
-  gradientLog(text, colorKeys = ['primary', 'secondary', 'accent']) {
+  gradientLog(text: string, colorKeys: ThemeStyle[] = ['primary', 'secondary', 'accent']): void {
     const theme = this.getTheme();
     const colors = colorKeys.map(key => theme[key]);
     const chars = text.split('');
@@ -114,7 +119,7 @@ class Logger {
   /**
    * ✨ Sparkle text effect~
    */
-  sparkleLog(text, style = 'primary') {
+  sparkleLog(text: string, style: ThemeStyle = 'primary'): void {
     const theme = this.getTheme();
     const sparkles = ['✨', '💫', '⭐', '🌟'];
     const randomSparkle = sparkles[Math.floor(Math.random() * sparkles.length)];
@@ -124,69 +129,53 @@ class Logger {
   /**
    * 🌊 Wave text effect~
    */
-  async waveText(text, style = 'primary', speed = 100) {
+  waveLog(text: string, style: ThemeStyle = 'accent'): void {
     const theme = this.getTheme();
-    const chars = text.split('');
-    
-    for (let wave = 0; wave < 3; wave++) {
-      process.stdout.write('\r' + ' '.repeat(text.length + 10));
-      process.stdout.write('\r');
-      
-      for (let i = 0; i < chars.length; i++) {
-        const char = Math.sin(wave + i * 0.5) > 0 ? chars[i].toUpperCase() : chars[i];
-        process.stdout.write(`${theme[style]}${char}${theme.reset}`);
-      }
-      await new Promise(resolve => setTimeout(resolve, speed));
-    }
-    process.stdout.write('\n');
+    const waves = ['〰️', '🌊', '〜', '～'];
+    const randomWave = waves[Math.floor(Math.random() * waves.length)];
+    console.log(`${theme[style]}${randomWave} ${text} ${randomWave}${theme.reset}`);
   }
   
   /**
-   * 💓 Pulse text effect~
+   * 💖 Heart text effect~
    */
-  async pulseText(text, style = 'accent', pulses = 3) {
+  heartLog(text: string, style: ThemeStyle = 'primary'): void {
     const theme = this.getTheme();
-    
-    for (let i = 0; i < pulses; i++) {
-      process.stdout.write(`\r${theme[style]}${text}${theme.reset}`);
-      await new Promise(resolve => setTimeout(resolve, 300));
-      process.stdout.write(`\r${theme.dim}${text}${theme.reset}`);
-      await new Promise(resolve => setTimeout(resolve, 300));
-    }
-    process.stdout.write(`\r${theme[style]}${text}${theme.reset}\n`);
+    const hearts = ['💖', '💕', '💗', '🩷'];
+    const randomHeart = hearts[Math.floor(Math.random() * hearts.length)];
+    console.log(`${theme[style]}${randomHeart} ${text} ${randomHeart}${theme.reset}`);
   }
   
   /**
-   * 📊 Progress bar~
+   * 🔥 Fire text effect~
    */
-  async showProgressBar(message, duration = 2000, width = 30) {
+  fireLog(text: string, style: ThemeStyle = 'error'): void {
     const theme = this.getTheme();
-    const startTime = Date.now();
-    
-    while (Date.now() - startTime < duration) {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const filled = Math.floor(progress * width);
-      const empty = width - filled;
-      
-      const bar = '█'.repeat(filled) + '░'.repeat(empty);
-      const percentage = Math.floor(progress * 100);
-      
-      process.stdout.write(`\r${theme.info}${message} ${theme.accent}[${bar}] ${percentage}%${theme.reset}`);
-      
-      await new Promise(resolve => setTimeout(resolve, 50));
-    }
-    
-    process.stdout.write(`\r${theme.success}${message} [${'█'.repeat(width)}] 100% ✓${theme.reset}\n`);
+    const fires = ['🔥', '💥', '⚡', '💫'];
+    const randomFire = fires[Math.floor(Math.random() * fires.length)];
+    console.log(`${theme[style]}${randomFire} ${text} ${randomFire}${theme.reset}`);
   }
   
-  // Convenience methods for common log types
-  info(message) { this.log(message, 'info'); }
-  success(message) { this.log(message, 'success'); }
-  warning(message) { this.log(message, 'warning'); }
-  error(message) { this.log(message, 'error'); }
-  dim(message) { this.log(message, 'dim'); }
-  bright(message) { this.log(message, 'bright'); }
+  /**
+   * 🌸 Flower text effect~
+   */
+  flowerLog(text: string, style: ThemeStyle = 'accent'): void {
+    const theme = this.getTheme();
+    const flowers = ['🌸', '🌺', '🌻', '🌷'];
+    const randomFlower = flowers[Math.floor(Math.random() * flowers.length)];
+    console.log(`${theme[style]}${randomFlower} ${text} ${randomFlower}${theme.reset}`);
+  }
+  
+  // Convenient logging shortcuts
+  success(message: string): void { this.log(message, 'success'); }
+  error(message: string): void { this.log(message, 'error'); }
+  warning(message: string): void { this.log(message, 'warning'); }
+  info(message: string): void { this.log(message, 'info'); }
+  primary(message: string): void { this.log(message, 'primary'); }
+  secondary(message: string): void { this.log(message, 'secondary'); }
+  accent(message: string): void { this.log(message, 'accent'); }
+  dim(message: string): void { this.log(message, 'dim'); }
+  bright(message: string): void { this.log(message, 'bright'); }
 }
 
-module.exports = Logger;
+export default Logger;

@@ -2,14 +2,15 @@
  * 🗂️ File system utilities with cross-platform support
  */
 
-const fs = require('fs');
-const path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
+import { ISystemDetector } from '../types/system';
 
-class FileSystemUtils {
+export class FileSystemUtils {
   /**
    * Cross-platform directory removal with ARM/Termux compatibility
    */
-  static removeDirectory(dirPath, system = null) {
+  static removeDirectory(dirPath: string, system?: ISystemDetector | null): void {
     if (!fs.existsSync(dirPath)) return;
     
     try {
@@ -33,7 +34,7 @@ class FileSystemUtils {
   /**
    * Recursive directory removal fallback
    */
-  static removeDirectoryRecursive(dirPath) {
+  static removeDirectoryRecursive(dirPath: string): void {
     if (!fs.existsSync(dirPath)) return;
     
     const files = fs.readdirSync(dirPath);
@@ -54,7 +55,7 @@ class FileSystemUtils {
   /**
    * System-specific directory removal
    */
-  static removeDirectoryWithSystem(dirPath, system) {
+  static removeDirectoryWithSystem(dirPath: string, system: ISystemDetector): void {
     const SecurityUtils = require('../security/security');
     
     try {
@@ -84,7 +85,7 @@ class FileSystemUtils {
   /**
    * Create directory with error handling
    */
-  static ensureDirectory(dirPath) {
+  static ensureDirectory(dirPath: string): boolean {
     try {
       if (!fs.existsSync(dirPath)) {
         fs.mkdirSync(dirPath, { recursive: true });
@@ -98,7 +99,7 @@ class FileSystemUtils {
   /**
    * Copy file with error handling
    */
-  static copyFile(src, dest) {
+  static copyFile(src: string, dest: string): boolean {
     try {
       fs.copyFileSync(src, dest);
       return true;
@@ -110,7 +111,7 @@ class FileSystemUtils {
   /**
    * Read file safely
    */
-  static readFile(filePath, encoding = 'utf8') {
+  static readFile(filePath: string, encoding: BufferEncoding = 'utf8'): string | null {
     try {
       return fs.readFileSync(filePath, encoding);
     } catch (error) {
@@ -121,7 +122,7 @@ class FileSystemUtils {
   /**
    * Write file safely
    */
-  static writeFile(filePath, content, encoding = 'utf8') {
+  static writeFile(filePath: string, content: string, encoding: BufferEncoding = 'utf8'): boolean {
     try {
       fs.writeFileSync(filePath, content, encoding);
       return true;
@@ -131,39 +132,99 @@ class FileSystemUtils {
   }
   
   /**
-   * Check if file exists and is readable
+   * Check if path exists
    */
-  static isReadable(filePath) {
-    try {
-      fs.accessSync(filePath, fs.constants.R_OK);
-      return true;
-    } catch (error) {
-      return false;
-    }
-  }
-  
-  /**
-   * Check if file exists and is writable
-   */
-  static isWritable(filePath) {
-    try {
-      fs.accessSync(filePath, fs.constants.W_OK);
-      return true;
-    } catch (error) {
-      return false;
-    }
+  static exists(filePath: string): boolean {
+    return fs.existsSync(filePath);
   }
   
   /**
    * Get file stats safely
    */
-  static getStats(filePath) {
+  static getStats(filePath: string): fs.Stats | null {
     try {
       return fs.statSync(filePath);
     } catch (error) {
       return null;
     }
   }
+  
+  /**
+   * Check if path is directory
+   */
+  static isDirectory(dirPath: string): boolean {
+    try {
+      const stat = fs.statSync(dirPath);
+      return stat.isDirectory();
+    } catch (error) {
+      return false;
+    }
+  }
+  
+  /**
+   * Check if path is file
+   */
+  static isFile(filePath: string): boolean {
+    try {
+      const stat = fs.statSync(filePath);
+      return stat.isFile();
+    } catch (error) {
+      return false;
+    }
+  }
+  
+  /**
+   * Get directory contents safely
+   */
+  static readDirectory(dirPath: string): string[] | null {
+    try {
+      return fs.readdirSync(dirPath);
+    } catch (error) {
+      return null;
+    }
+  }
+  
+  /**
+   * Get file extension
+   */
+  static getExtension(filePath: string): string {
+    return path.extname(filePath);
+  }
+  
+  /**
+   * Get file name without extension
+   */
+  static getBaseName(filePath: string, ext?: string): string {
+    return path.basename(filePath, ext);
+  }
+  
+  /**
+   * Get directory name
+   */
+  static getDirName(filePath: string): string {
+    return path.dirname(filePath);
+  }
+  
+  /**
+   * Join paths safely
+   */
+  static joinPath(...paths: string[]): string {
+    return path.join(...paths);
+  }
+  
+  /**
+   * Normalize path
+   */
+  static normalizePath(filePath: string): string {
+    return path.normalize(filePath);
+  }
+  
+  /**
+   * Get absolute path
+   */
+  static getAbsolutePath(filePath: string): string {
+    return path.resolve(filePath);
+  }
 }
 
-module.exports = FileSystemUtils;
+export default FileSystemUtils;

@@ -1,5 +1,31 @@
 'use strict';
 
+var readline = require('readline');
+var fs = require('fs');
+var path = require('path');
+
+function _interopNamespace(e) {
+  if (e && e.__esModule) return e;
+  var n = Object.create(null);
+  if (e) {
+    Object.keys(e).forEach(function (k) {
+      if (k !== 'default') {
+        var d = Object.getOwnPropertyDescriptor(e, k);
+        Object.defineProperty(n, k, d.get ? d : {
+          enumerable: true,
+          get: function () { return e[k]; }
+        });
+      }
+    });
+  }
+  n.default = e;
+  return Object.freeze(n);
+}
+
+var readline__namespace = /*#__PURE__*/_interopNamespace(readline);
+var fs__namespace = /*#__PURE__*/_interopNamespace(fs);
+var path__namespace = /*#__PURE__*/_interopNamespace(path);
+
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
@@ -189,7 +215,7 @@ var require_constants = __commonJS({
 var require_themes = __commonJS({
   "src/config/themes.js"(exports, module) {
     init_cjs_shims();
-    var THEMES3 = {
+    var THEMES4 = {
       celestial: {
         primary: "\x1B[38;5;147m",
         // Light purple
@@ -261,7 +287,7 @@ var require_themes = __commonJS({
       }
     };
     module.exports = {
-      THEMES: THEMES3,
+      THEMES: THEMES4,
       DEFAULT_THEME: "celestial"
     };
   }
@@ -351,12 +377,18 @@ var require_bots = __commonJS({
   }
 });
 
-// src/utils/logger.js
-var require_logger = __commonJS({
-  "src/utils/logger.js"(exports, module) {
+// src/utils/logger.ts
+var logger_exports = {};
+__export(logger_exports, {
+  Logger: () => Logger,
+  default: () => logger_default
+});
+var THEMES, DEFAULT_THEME, _Logger, Logger, logger_default;
+var init_logger = __esm({
+  "src/utils/logger.ts"() {
     init_cjs_shims();
-    var { THEMES: THEMES3, DEFAULT_THEME } = require_themes();
-    var _Logger = class _Logger {
+    ({ THEMES, DEFAULT_THEME } = require_themes());
+    _Logger = class _Logger {
       constructor(theme = DEFAULT_THEME) {
         this.theme = theme;
       }
@@ -364,7 +396,7 @@ var require_logger = __commonJS({
        * Set current theme
        */
       setTheme(theme) {
-        if (THEMES3[theme]) {
+        if (THEMES[theme]) {
           this.theme = theme;
         }
       }
@@ -372,7 +404,7 @@ var require_logger = __commonJS({
        * Get current theme colors
        */
       getTheme() {
-        return THEMES3[this.theme];
+        return THEMES[this.theme];
       }
       /**
        * 🌙 Celia's beautiful theming system~
@@ -386,10 +418,10 @@ var require_logger = __commonJS({
        */
       async typeText(message, style = "text", speed = 50) {
         const theme = this.getTheme();
-        process.stdout.write(theme[style]);
+        process.stdout.write(theme[style] || theme.text);
         for (const char of message) {
           process.stdout.write(char);
-          await new Promise((resolve) => setTimeout(resolve, speed));
+          await new Promise((resolve2) => setTimeout(resolve2, speed));
         }
         process.stdout.write(theme.reset + "\n");
       }
@@ -404,11 +436,13 @@ var require_logger = __commonJS({
         let i = 0;
         const interval = setInterval(() => {
           const frame = frames[i % frames.length];
-          const color = colors[i % colors.length];
-          process.stdout.write(`\r${theme.dim}${message} ${theme[color]}${frame}${theme.reset}`);
+          const colorIndex = i % colors.length;
+          const color = colors[colorIndex];
+          const colorCode = theme[color] || theme.primary;
+          process.stdout.write(`\r${theme.dim}${message} ${colorCode}${frame}${theme.reset}`);
           i++;
         }, 100);
-        await new Promise((resolve) => setTimeout(resolve, duration));
+        await new Promise((resolve2) => setTimeout(resolve2, duration));
         clearInterval(interval);
         process.stdout.write(`\r${theme.success}${message} \u2713${theme.reset}
 `);
@@ -459,65 +493,60 @@ var require_logger = __commonJS({
       /**
        * 🌊 Wave text effect~
        */
-      async waveText(text, style = "primary", speed = 100) {
+      waveLog(text, style = "accent") {
         const theme = this.getTheme();
-        const chars = text.split("");
-        for (let wave = 0; wave < 3; wave++) {
-          process.stdout.write("\r" + " ".repeat(text.length + 10));
-          process.stdout.write("\r");
-          for (let i = 0; i < chars.length; i++) {
-            const char = Math.sin(wave + i * 0.5) > 0 ? chars[i].toUpperCase() : chars[i];
-            process.stdout.write(`${theme[style]}${char}${theme.reset}`);
-          }
-          await new Promise((resolve) => setTimeout(resolve, speed));
-        }
-        process.stdout.write("\n");
+        const waves = ["\u3030\uFE0F", "\u{1F30A}", "\u301C", "\uFF5E"];
+        const randomWave = waves[Math.floor(Math.random() * waves.length)];
+        console.log(`${theme[style]}${randomWave} ${text} ${randomWave}${theme.reset}`);
       }
       /**
-       * 💓 Pulse text effect~
+       * 💖 Heart text effect~
        */
-      async pulseText(text, style = "accent", pulses = 3) {
+      heartLog(text, style = "primary") {
         const theme = this.getTheme();
-        for (let i = 0; i < pulses; i++) {
-          process.stdout.write(`\r${theme[style]}${text}${theme.reset}`);
-          await new Promise((resolve) => setTimeout(resolve, 300));
-          process.stdout.write(`\r${theme.dim}${text}${theme.reset}`);
-          await new Promise((resolve) => setTimeout(resolve, 300));
-        }
-        process.stdout.write(`\r${theme[style]}${text}${theme.reset}
-`);
+        const hearts = ["\u{1F496}", "\u{1F495}", "\u{1F497}", "\u{1FA77}"];
+        const randomHeart = hearts[Math.floor(Math.random() * hearts.length)];
+        console.log(`${theme[style]}${randomHeart} ${text} ${randomHeart}${theme.reset}`);
       }
       /**
-       * 📊 Progress bar~
+       * 🔥 Fire text effect~
        */
-      async showProgressBar(message, duration = 2e3, width = 30) {
+      fireLog(text, style = "error") {
         const theme = this.getTheme();
-        const startTime = Date.now();
-        while (Date.now() - startTime < duration) {
-          const elapsed = Date.now() - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-          const filled = Math.floor(progress * width);
-          const empty = width - filled;
-          const bar = "\u2588".repeat(filled) + "\u2591".repeat(empty);
-          const percentage = Math.floor(progress * 100);
-          process.stdout.write(`\r${theme.info}${message} ${theme.accent}[${bar}] ${percentage}%${theme.reset}`);
-          await new Promise((resolve) => setTimeout(resolve, 50));
-        }
-        process.stdout.write(`\r${theme.success}${message} [${"\u2588".repeat(width)}] 100% \u2713${theme.reset}
-`);
+        const fires = ["\u{1F525}", "\u{1F4A5}", "\u26A1", "\u{1F4AB}"];
+        const randomFire = fires[Math.floor(Math.random() * fires.length)];
+        console.log(`${theme[style]}${randomFire} ${text} ${randomFire}${theme.reset}`);
       }
-      // Convenience methods for common log types
-      info(message) {
-        this.log(message, "info");
+      /**
+       * 🌸 Flower text effect~
+       */
+      flowerLog(text, style = "accent") {
+        const theme = this.getTheme();
+        const flowers = ["\u{1F338}", "\u{1F33A}", "\u{1F33B}", "\u{1F337}"];
+        const randomFlower = flowers[Math.floor(Math.random() * flowers.length)];
+        console.log(`${theme[style]}${randomFlower} ${text} ${randomFlower}${theme.reset}`);
       }
+      // Convenient logging shortcuts
       success(message) {
         this.log(message, "success");
+      }
+      error(message) {
+        this.log(message, "error");
       }
       warning(message) {
         this.log(message, "warning");
       }
-      error(message) {
-        this.log(message, "error");
+      info(message) {
+        this.log(message, "info");
+      }
+      primary(message) {
+        this.log(message, "primary");
+      }
+      secondary(message) {
+        this.log(message, "secondary");
+      }
+      accent(message) {
+        this.log(message, "accent");
       }
       dim(message) {
         this.log(message, "dim");
@@ -527,8 +556,8 @@ var require_logger = __commonJS({
       }
     };
     __name(_Logger, "Logger");
-    var Logger3 = _Logger;
-    module.exports = Logger3;
+    Logger = _Logger;
+    logger_default = Logger;
   }
 });
 
@@ -537,7 +566,7 @@ var require_system = __commonJS({
   "src/services/system.js"(exports, module) {
     init_cjs_shims();
     var os = __require("os");
-    var fs = __require("fs");
+    var fs2 = __require("fs");
     var _SystemDetector = class _SystemDetector {
       constructor() {
         this.detectSystemEnvironment();
@@ -638,7 +667,7 @@ var require_system = __commonJS({
        * 🐳 Detect container environments~
        */
       detectContainerEnvironment() {
-        return !!(process.env.container || process.env.DOCKER_CONTAINER || process.env.KUBERNETES_SERVICE_HOST || fs.existsSync("/.dockerenv") || fs.existsSync("/proc/1/cgroup") && fs.readFileSync("/proc/1/cgroup", "utf8").includes("docker"));
+        return !!(process.env.container || process.env.DOCKER_CONTAINER || process.env.KUBERNETES_SERVICE_HOST || fs2.existsSync("/.dockerenv") || fs2.existsSync("/proc/1/cgroup") && fs2.readFileSync("/proc/1/cgroup", "utf8").includes("docker"));
       }
       /**
        * 🔧 Get CPU vendor from model string~
@@ -660,8 +689,8 @@ var require_system = __commonJS({
       detectCpuFeatures() {
         const features = [];
         try {
-          if (this.platform.raw === "linux" && fs.existsSync("/proc/cpuinfo")) {
-            const cpuinfo = fs.readFileSync("/proc/cpuinfo", "utf8");
+          if (this.platform.raw === "linux" && fs2.existsSync("/proc/cpuinfo")) {
+            const cpuinfo = fs2.readFileSync("/proc/cpuinfo", "utf8");
             if (cpuinfo.includes("sse")) features.push("SSE");
             if (cpuinfo.includes("sse2")) features.push("SSE2");
             if (cpuinfo.includes("avx")) features.push("AVX");
@@ -928,12 +957,17 @@ var require_security = __commonJS({
   }
 });
 
-// src/utils/prompt.js
-var require_prompt = __commonJS({
-  "src/utils/prompt.js"(exports, module) {
+// src/utils/prompt.ts
+var prompt_exports = {};
+__export(prompt_exports, {
+  PromptUtils: () => PromptUtils,
+  default: () => prompt_default
+});
+var _PromptUtils, PromptUtils, prompt_default;
+var init_prompt = __esm({
+  "src/utils/prompt.ts"() {
     init_cjs_shims();
-    var readline = __require("readline");
-    var _PromptUtils = class _PromptUtils {
+    _PromptUtils = class _PromptUtils {
       constructor() {
         this.rl = null;
       }
@@ -942,7 +976,7 @@ var require_prompt = __commonJS({
        */
       init() {
         if (!this.rl) {
-          this.rl = readline.createInterface({
+          this.rl = readline__namespace.createInterface({
             input: process.stdin,
             output: process.stdout
           });
@@ -963,14 +997,14 @@ var require_prompt = __commonJS({
        */
       async question(prompt, timeout = 3e4) {
         const rl = this.init();
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve2, reject) => {
           const timer = setTimeout(() => {
             console.log("\n\u23F0 Timeout - usando valor por defecto");
-            resolve("");
+            resolve2("");
           }, timeout);
           rl.question(prompt, (answer) => {
             clearTimeout(timer);
-            resolve(answer.trim());
+            resolve2(answer.trim());
           });
         });
       }
@@ -978,7 +1012,7 @@ var require_prompt = __commonJS({
        * Prompt user for sensitive input (hidden characters)
        */
       async questionHidden(prompt) {
-        return new Promise((resolve) => {
+        return new Promise((resolve2) => {
           const stdin = process.stdin;
           const stdout = process.stdout;
           stdout.write(prompt);
@@ -995,7 +1029,7 @@ var require_prompt = __commonJS({
                 stdin.removeListener("data", onData);
                 stdin.pause();
                 stdout.write("\n");
-                resolve(input);
+                resolve2(input);
                 break;
               case "":
                 process.exit(1);
@@ -1031,10 +1065,52 @@ var require_prompt = __commonJS({
         }
         return allCommands.filter((cmd) => cmd.toLowerCase().startsWith(input.toLowerCase())).slice(0, 10);
       }
+      /**
+       * Confirm action with user
+       */
+      async confirm(message, defaultValue = false) {
+        const suffix = defaultValue ? " (Y/n)" : " (y/N)";
+        const answer = await this.question(`${message}${suffix}: `);
+        if (!answer.trim()) {
+          return defaultValue;
+        }
+        return ["y", "yes", "si", "s\xED"].includes(answer.toLowerCase());
+      }
+      /**
+       * Select from multiple options
+       */
+      async select(message, options) {
+        console.log(`
+${message}`);
+        options.forEach((option, index2) => {
+          console.log(`  ${index2 + 1}. ${option}`);
+        });
+        const answer = await this.question("\nSelecciona una opci\xF3n (n\xFAmero): ");
+        const index = parseInt(answer.trim()) - 1;
+        if (index >= 0 && index < options.length) {
+          return options[index] || null;
+        }
+        return null;
+      }
+      /**
+       * Multi-line input
+       */
+      async multiline(prompt, endMarker = "END") {
+        console.log(`${prompt} (termina con '${endMarker}' en una l\xEDnea nueva):`);
+        const lines = [];
+        let line = "";
+        while (line !== endMarker) {
+          line = await this.question("> ");
+          if (line !== endMarker) {
+            lines.push(line);
+          }
+        }
+        return lines.join("\n");
+      }
     };
     __name(_PromptUtils, "PromptUtils");
-    var PromptUtils3 = _PromptUtils;
-    module.exports = PromptUtils3;
+    PromptUtils = _PromptUtils;
+    prompt_default = PromptUtils;
   }
 });
 
@@ -1178,7 +1254,7 @@ var require_help = __commonJS({
 var require_theme = __commonJS({
   "src/cli/commands/theme.js"(exports, module) {
     init_cjs_shims();
-    var { THEMES: THEMES3 } = require_themes();
+    var { THEMES: THEMES4 } = require_themes();
     var _ThemeCommand = class _ThemeCommand {
       constructor(logger) {
         this.logger = logger;
@@ -1189,8 +1265,8 @@ var require_theme = __commonJS({
           this.showAvailableThemes();
           return;
         }
-        if (!THEMES3[themeName]) {
-          this.logger.log(`\u{1F338} Tema "${themeName}" no existe~ Temas disponibles: ${Object.keys(THEMES3).join(", ")}`, "error");
+        if (!THEMES4[themeName]) {
+          this.logger.log(`\u{1F338} Tema "${themeName}" no existe~ Temas disponibles: ${Object.keys(THEMES4).join(", ")}`, "error");
           return;
         }
         await this.logger.showLoading(`\u{1F3A8} Cambiando a tema ${themeName}`, 1500);
@@ -1207,7 +1283,7 @@ var require_theme = __commonJS({
         this.showBanner();
         this.logger.log("\u{1F3A8} Temas disponibles:", "primary");
         console.log("");
-        Object.keys(THEMES3).forEach((theme) => {
+        Object.keys(THEMES4).forEach((theme) => {
           const isActive = theme === this.logger.theme;
           const indicator = isActive ? "\u25CF " : "\u25CB ";
           this.logger.log(`${indicator}${theme}`, isActive ? "accent" : "dim");
@@ -1295,18 +1371,18 @@ __export(celia_exports, {
   CeliaAssistant: () => CeliaAssistant,
   default: () => celia_default
 });
-var VERSION, NODE_MIN_VERSION, THEMES, BOTS, Logger, SystemDetector, SecurityUtils, PromptUtils, ListCommand, HelpCommand, ThemeCommand, StatusCommand, _CeliaAssistant, CeliaAssistant, celia_default;
+var VERSION, NODE_MIN_VERSION, THEMES2, BOTS, Logger2, SystemDetector, SecurityUtils, PromptUtils2, ListCommand, HelpCommand, ThemeCommand, StatusCommand, _CeliaAssistant, CeliaAssistant, celia_default;
 var init_celia = __esm({
   "src/cli/celia.ts"() {
     init_cjs_shims();
     init_router();
     ({ VERSION, NODE_MIN_VERSION } = require_constants());
-    ({ THEMES } = require_themes());
+    ({ THEMES: THEMES2 } = require_themes());
     ({ BOTS } = require_bots());
-    Logger = require_logger();
+    Logger2 = (init_logger(), __toCommonJS(logger_exports));
     SystemDetector = require_system();
     SecurityUtils = require_security();
-    PromptUtils = require_prompt();
+    PromptUtils2 = (init_prompt(), __toCommonJS(prompt_exports));
     ListCommand = require_list();
     HelpCommand = require_help();
     ThemeCommand = require_theme();
@@ -1314,9 +1390,9 @@ var init_celia = __esm({
     _CeliaAssistant = class _CeliaAssistant {
       constructor() {
         this.interactive = false;
-        this.logger = new Logger();
+        this.logger = new Logger2();
         this.system = new SystemDetector();
-        this.prompt = new PromptUtils();
+        this.prompt = new PromptUtils2();
         this.router = new CommandRouter();
         this.initializeCommands();
       }
@@ -1519,21 +1595,25 @@ var init_celia = __esm({
   }
 });
 
-// src/utils/fs.js
-var require_fs = __commonJS({
-  "src/utils/fs.js"(exports, module) {
+// src/utils/fs.ts
+var fs_exports = {};
+__export(fs_exports, {
+  FileSystemUtils: () => FileSystemUtils,
+  default: () => fs_default
+});
+var _FileSystemUtils, FileSystemUtils, fs_default;
+var init_fs = __esm({
+  "src/utils/fs.ts"() {
     init_cjs_shims();
-    var fs = __require("fs");
-    var path = __require("path");
-    var _FileSystemUtils = class _FileSystemUtils {
+    _FileSystemUtils = class _FileSystemUtils {
       /**
        * Cross-platform directory removal with ARM/Termux compatibility
        */
-      static removeDirectory(dirPath, system = null) {
-        if (!fs.existsSync(dirPath)) return;
+      static removeDirectory(dirPath, system) {
+        if (!fs__namespace.existsSync(dirPath)) return;
         try {
-          if (fs.rmSync) {
-            fs.rmSync(dirPath, { recursive: true, force: true });
+          if (fs__namespace.rmSync) {
+            fs__namespace.rmSync(dirPath, { recursive: true, force: true });
           } else {
             _FileSystemUtils.removeDirectoryRecursive(dirPath);
           }
@@ -1549,18 +1629,18 @@ var require_fs = __commonJS({
        * Recursive directory removal fallback
        */
       static removeDirectoryRecursive(dirPath) {
-        if (!fs.existsSync(dirPath)) return;
-        const files = fs.readdirSync(dirPath);
+        if (!fs__namespace.existsSync(dirPath)) return;
+        const files = fs__namespace.readdirSync(dirPath);
         files.forEach((file) => {
-          const filePath = path.join(dirPath, file);
-          const stat = fs.statSync(filePath);
+          const filePath = path__namespace.join(dirPath, file);
+          const stat = fs__namespace.statSync(filePath);
           if (stat.isDirectory()) {
             _FileSystemUtils.removeDirectoryRecursive(filePath);
           } else {
-            fs.unlinkSync(filePath);
+            fs__namespace.unlinkSync(filePath);
           }
         });
-        fs.rmdirSync(dirPath);
+        fs__namespace.rmdirSync(dirPath);
       }
       /**
        * System-specific directory removal
@@ -1593,8 +1673,8 @@ var require_fs = __commonJS({
        */
       static ensureDirectory(dirPath) {
         try {
-          if (!fs.existsSync(dirPath)) {
-            fs.mkdirSync(dirPath, { recursive: true });
+          if (!fs__namespace.existsSync(dirPath)) {
+            fs__namespace.mkdirSync(dirPath, { recursive: true });
           }
           return true;
         } catch (error) {
@@ -1606,7 +1686,7 @@ var require_fs = __commonJS({
        */
       static copyFile(src, dest) {
         try {
-          fs.copyFileSync(src, dest);
+          fs__namespace.copyFileSync(src, dest);
           return true;
         } catch (error) {
           return false;
@@ -1617,7 +1697,7 @@ var require_fs = __commonJS({
        */
       static readFile(filePath, encoding = "utf8") {
         try {
-          return fs.readFileSync(filePath, encoding);
+          return fs__namespace.readFileSync(filePath, encoding);
         } catch (error) {
           return null;
         }
@@ -1627,48 +1707,100 @@ var require_fs = __commonJS({
        */
       static writeFile(filePath, content, encoding = "utf8") {
         try {
-          fs.writeFileSync(filePath, content, encoding);
+          fs__namespace.writeFileSync(filePath, content, encoding);
           return true;
         } catch (error) {
           return false;
         }
       }
       /**
-       * Check if file exists and is readable
+       * Check if path exists
        */
-      static isReadable(filePath) {
-        try {
-          fs.accessSync(filePath, fs.constants.R_OK);
-          return true;
-        } catch (error) {
-          return false;
-        }
-      }
-      /**
-       * Check if file exists and is writable
-       */
-      static isWritable(filePath) {
-        try {
-          fs.accessSync(filePath, fs.constants.W_OK);
-          return true;
-        } catch (error) {
-          return false;
-        }
+      static exists(filePath) {
+        return fs__namespace.existsSync(filePath);
       }
       /**
        * Get file stats safely
        */
       static getStats(filePath) {
         try {
-          return fs.statSync(filePath);
+          return fs__namespace.statSync(filePath);
         } catch (error) {
           return null;
         }
       }
+      /**
+       * Check if path is directory
+       */
+      static isDirectory(dirPath) {
+        try {
+          const stat = fs__namespace.statSync(dirPath);
+          return stat.isDirectory();
+        } catch (error) {
+          return false;
+        }
+      }
+      /**
+       * Check if path is file
+       */
+      static isFile(filePath) {
+        try {
+          const stat = fs__namespace.statSync(filePath);
+          return stat.isFile();
+        } catch (error) {
+          return false;
+        }
+      }
+      /**
+       * Get directory contents safely
+       */
+      static readDirectory(dirPath) {
+        try {
+          return fs__namespace.readdirSync(dirPath);
+        } catch (error) {
+          return null;
+        }
+      }
+      /**
+       * Get file extension
+       */
+      static getExtension(filePath) {
+        return path__namespace.extname(filePath);
+      }
+      /**
+       * Get file name without extension
+       */
+      static getBaseName(filePath, ext) {
+        return path__namespace.basename(filePath, ext);
+      }
+      /**
+       * Get directory name
+       */
+      static getDirName(filePath) {
+        return path__namespace.dirname(filePath);
+      }
+      /**
+       * Join paths safely
+       */
+      static joinPath(...paths) {
+        return path__namespace.join(...paths);
+      }
+      /**
+       * Normalize path
+       */
+      static normalizePath(filePath) {
+        return path__namespace.normalize(filePath);
+      }
+      /**
+       * Get absolute path
+       */
+      static getAbsolutePath(filePath) {
+        return path__namespace.resolve(filePath);
+      }
     };
     __name(_FileSystemUtils, "FileSystemUtils");
-    var FileSystemUtils2 = _FileSystemUtils;
-    module.exports = FileSystemUtils2;
+    FileSystemUtils = _FileSystemUtils;
+    fs_default = FileSystemUtils;
   }
 });
 
@@ -1769,26 +1901,26 @@ var require_package = __commonJS({
 init_cjs_shims();
 var CeliaAssistant2 = (init_celia(), __toCommonJS(celia_exports));
 var SecurityUtils2 = require_security();
-var Logger2 = require_logger();
+var Logger3 = (init_logger(), __toCommonJS(logger_exports));
 var SystemDetector2 = require_system();
 var CommandRouter2 = (init_router(), __toCommonJS(router_exports));
-var { THEMES: THEMES2 } = require_themes();
+var { THEMES: THEMES3 } = require_themes();
 var { BOTS: BOTS2 } = require_bots();
 var { VERSION: VERSION2, NODE_MIN_VERSION: NODE_MIN_VERSION2 } = require_constants();
-var FileSystemUtils = require_fs();
-var PromptUtils2 = require_prompt();
+var FileSystemUtils2 = (init_fs(), __toCommonJS(fs_exports));
+var PromptUtils3 = (init_prompt(), __toCommonJS(prompt_exports));
 var version = require_package().version;
 
 exports.BOTS = BOTS2;
 exports.CeliaAssistant = CeliaAssistant2;
 exports.CommandRouter = CommandRouter2;
-exports.FileSystemUtils = FileSystemUtils;
-exports.Logger = Logger2;
+exports.FileSystemUtils = FileSystemUtils2;
+exports.Logger = Logger3;
 exports.NODE_MIN_VERSION = NODE_MIN_VERSION2;
-exports.PromptUtils = PromptUtils2;
+exports.PromptUtils = PromptUtils3;
 exports.SecurityUtils = SecurityUtils2;
 exports.SystemDetector = SystemDetector2;
-exports.THEMES = THEMES2;
+exports.THEMES = THEMES3;
 exports.VERSION = VERSION2;
 exports.version = version;
 //# sourceMappingURL=index.js.map
