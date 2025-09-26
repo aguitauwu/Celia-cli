@@ -2,21 +2,48 @@
   "name": "opceanaicli",
   "version": "2.0.0",
   "description": "¡Holi! Soy Celia, tu asistente celestial tierna que te ayuda a instalar y cuidar de mis hermanas bot de Discord~ ✨",
-  "main": "index.js",
+  "main": "src/cli/celia.js",
   "bin": {
-    "opceanaicli": "./index.js"
+    "opceanaicli": "./src/bin/cli.js",
+    "celia": "./src/bin/cli.js"
   },
   "scripts": {
-    "start": "node index.js",
-    "test": "node index.js --version"
+    "start": "node src/bin/cli.js",
+    "test": "node test/security.test.js && node test/logger.test.js && node test/system.test.js && node test/fs.test.js",
+    "test:security": "node test/security.test.js",
+    "test:logger": "node test/logger.test.js",
+    "test:system": "node test/system.test.js",
+    "test:fs": "node test/fs.test.js",
+    "test:all": "npm test",
+    "version": "node src/bin/cli.js --version",
+    "help": "node src/bin/cli.js --help",
+    "lint": "echo 'Linting will be added in TypeScript phase'",
+    "build": "echo 'Build will be added in TypeScript phase'"
   },
-  "keywords": ["discord", "bot", "installer", "cli", "opceanai", "nebula", "archan", "sakura", "lumina", "katu", "termux", "arm"],
-  "author": "guita",
+  "keywords": ["discord", "bot", "installer", "cli", "opceanai", "nebula", "archan", "sakura", "lumina", "katu", "termux", "arm", "typescript", "modular"],
+  "author": {
+    "name": "guita",
+    "email": "guita@example.com",
+    "url": "https://github.com/aguitauwu"
+  },
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0"
   },
   "os": ["win32", "linux", "darwin", "android"],
   "cpu": ["x64", "ia32", "arm", "arm64", "armv7l", "aarch64"],
-  "preferGlobal": true
+  "preferGlobal": true,
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aguitauwu/npm-OpceanAI.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aguitauwu/npm-OpceanAI/issues"
+  },
+  "homepage": "https://github.com/aguitauwu/npm-OpceanAI#readme"
 }
