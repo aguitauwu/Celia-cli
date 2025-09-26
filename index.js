@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 const os = require('os');
+const crypto = require('crypto');
 
 // 🌸 Celia's beautiful theme system~
 const THEMES = {
@@ -52,6 +53,164 @@ const THEMES = {
 // Default theme
 let currentTheme = 'celestial';
 const colors = THEMES[currentTheme];
+
+// 🛡️ Security utilities - Celia protege con amor~
+class SecurityUtils {
+  /**
+   * 🛡️ Sanitiza nombres de directorio para prevenir inyección
+   */
+  static sanitizeDirectoryName(dirName) {
+    if (!dirName || typeof dirName !== 'string') {
+      throw new Error('Nombre de directorio inválido');
+    }
+    
+    // Remover caracteres peligrosos
+    const sanitized = dirName
+      .replace(/[^a-zA-Z0-9_-]/g, '')
+      .replace(/^\.+/, '') // No empezar con puntos
+      .replace(/\.\.+/g, '') // No permitir ..
+      .substring(0, 100); // Limitar longitud
+    
+    if (!sanitized || sanitized.length === 0) {
+      throw new Error('Nombre de directorio resulta vacío después de sanitización');
+    }
+    
+    // Lista negra de nombres problemáticos
+    const blacklist = ['con', 'prn', 'aux', 'nul', 'com1', 'com2', 'com3', 'com4', 
+                      'com5', 'com6', 'com7', 'com8', 'com9', 'lpt1', 'lpt2', 
+                      'lpt3', 'lpt4', 'lpt5', 'lpt6', 'lpt7', 'lpt8', 'lpt9'];
+    
+    if (blacklist.includes(sanitized.toLowerCase())) {
+      throw new Error(`Nombre de directorio '${sanitized}' no está permitido`);
+    }
+    
+    return sanitized;
+  }
+  
+  /**
+   * 🛡️ Valida URLs de GitHub
+   */
+  static validateGitHubUrl(url) {
+    if (!url || typeof url !== 'string') {
+      return false;
+    }
+    
+    const githubRegex = /^https:\/\/github\.com\/[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+(\.git)?\/?$/;
+    return githubRegex.test(url);
+  }
+  
+  /**
+   * 🛡️ Ejecuta comandos de forma segura sin shell
+   */
+  static execSafe(command, args = [], options = {}) {
+    if (typeof command !== 'string') {
+      throw new Error('El comando debe ser una string');
+    }
+    
+    // Validar argumentos
+    const safeArgs = args.map(arg => {
+      if (typeof arg !== 'string') {
+        throw new Error('Todos los argumentos deben ser strings');
+      }
+      // Verificar que no contengan caracteres peligrosos
+      if (/[;&|`$\\]/.test(arg)) {
+        throw new Error(`Argumento contiene caracteres peligrosos: ${arg}`);
+      }
+      return arg;
+    });
+    
+    // Usar execFileSync para evitar shell injection
+    return execFileSync(command, safeArgs, {
+      stdio: 'inherit',
+      encoding: 'utf8',
+      ...options
+    });
+  }
+  
+  /**
+   * 🛡️ Ejecuta secuencia de comandos de forma segura
+   */
+  static runSequence(commands, options = {}) {
+    for (const { command, args } of commands) {
+      SecurityUtils.execSafe(command, args, options);
+    }
+  }
+  
+  /**
+   * 🛡️ Obtener pasos de instalación seguros por lenguaje
+   */
+  static getInstallSteps(language, targetDir) {
+    const steps = {
+      'Node.js': [
+        { command: 'npm', args: ['install', '--progress', 'false'] }
+      ],
+      'Python': [
+        { command: 'python', args: ['-m', 'pip', 'install', '-r', 'requirements.txt'] }
+      ],
+      'TypeScript': [
+        { command: 'npm', args: ['install', '--progress', 'false'] },
+        { command: 'npm', args: ['run', 'build'] }
+      ]
+    };
+    
+    return steps[language] || [];
+  }
+  
+  /**
+   * 🛡️ Valida que comandos necesarios estén disponibles
+   */
+  static checkPrerequisites() {
+    const required = ['git', 'node', 'npm'];
+    const missing = [];
+    
+    for (const cmd of required) {
+      try {
+        SecurityUtils.execSafe(cmd, ['--version'], { stdio: 'ignore' });
+      } catch (error) {
+        missing.push(cmd);
+      }
+    }
+    
+    return missing;
+  }
+  
+  /**
+   * 🛡️ Valida versión mínima de Node.js
+   */
+  static validateNodeVersion() {
+    const currentVersion = process.version;
+    const requiredVersion = '14.0.0';
+    
+    const current = currentVersion.slice(1).split('.').map(Number);
+    const required = requiredVersion.split('.').map(Number);
+    
+    for (let i = 0; i < 3; i++) {
+      if (current[i] > required[i]) return true;
+      if (current[i] < required[i]) return false;
+    }
+    return true;
+  }
+  
+  /**
+   * 🛡️ Sanitiza variables de entorno
+   */
+  static sanitizeEnvValue(value, sensitive = false) {
+    if (!value || typeof value !== 'string') {
+      return '';
+    }
+    
+    // Remover caracteres de control
+    let sanitized = value.replace(/[\x00-\x1F\x7F]/g, '');
+    
+    // Para valores sensibles, validar formato típico de tokens
+    if (sensitive) {
+      // Tokens típicos son alfanuméricos con algunos símbolos
+      sanitized = sanitized.replace(/[^a-zA-Z0-9._-]/g, '');
+    }
+    
+    return sanitized.trim();
+  }
+}
 
 // 🌸 Mis hermanas bot (¡Las cuido con mucho amor!) - Celia ✨
 const BOTS = {
@@ -131,6 +290,9 @@ const BOTS = {
 
 class CeliaAssistant {
   constructor() {
+    // 🛡️ Verificar prerrequisitos críticos primero
+    this.checkCriticalPrerequisites();
+    
     this.rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout
@@ -195,6 +357,35 @@ class CeliaAssistant {
     this.isPowerPC = this.architecture.family === 'PowerPC';
     this.is64Bit = this.architecture.bits === 64;
     this.isEmbedded = this.detectEmbeddedSystem();
+  }
+  
+  /**
+   * 🛡️ Verificar prerrequisitos críticos
+   */
+  checkCriticalPrerequisites() {
+    // Verificar versión de Node.js
+    if (!SecurityUtils.validateNodeVersion()) {
+      console.error('❌ Versión de Node.js muy antigua. Se requiere >= 14.0.0');
+      console.error(`Versión actual: ${process.version}`);
+      process.exit(1);
+    }
+  }
+  
+  /**
+   * 🛡️ Mostrar estado de prerrequisitos
+   */
+  showPrerequisiteStatus() {
+    const missing = SecurityUtils.checkPrerequisites();
+    
+    if (missing.length > 0) {
+      this.log('\n⚠️  Prerrequisitos faltantes:', 'warning');
+      missing.forEach(cmd => {
+        this.log(`   - ${cmd}`, 'red');
+      });
+      this.log('\n💡 Instala los comandos faltantes antes de continuar', 'info');
+    } else {
+      this.log('\n✅ Todos los prerrequisitos disponibles', 'dim');
+    }
   }
 
   /**
@@ -1139,7 +1330,7 @@ class CeliaAssistant {
       }
       
       try {
-        execSync(command);
+        // Comando de fallback - usar con precaución\n        const args = command.split(' ').slice(1);\n        const cmd = command.split(' ')[0];\n        SecurityUtils.execSafe(cmd, args);
       } catch (cmdError) {
         // Final fallback for ARM/mobile environments
         if (this.isARM || this.isTermux || this.isEmbedded) {
@@ -1427,36 +1618,57 @@ class CeliaAssistant {
       this.log(`\n🌸 ¡Trayendo a ${bot.name} a tu computadora!~`, 'blue');
       this.log(`🌙 Visitando su casita: ${bot.url}`, 'cyan');
       
+      // 🛡️ Validaciones de seguridad primero
+      if (!SecurityUtils.validateGitHubUrl(bot.url)) {
+        throw new Error(`URL de GitHub inválida: ${bot.url}`);
+      }
+      
+      const sanitizedDir = SecurityUtils.sanitizeDirectoryName(targetDir);
+      if (sanitizedDir !== targetDir) {
+        this.log(`🌸 Nombre de directorio sanitizado: ${targetDir} -> ${sanitizedDir}`, 'yellow');
+      }
+      
       // 🌸 Celia optimiza para tu sistema con amor~
       if (this.isARM || this.isTermux || this.isEmbedded || this.platform.isMobile) {
         const systemType = this.getSystemType();
         this.log(`🌸 Optimizando para ${systemType} con amor...`, 'yellow');
         try {
           // Prevent git from using system credential helpers that might not work on embedded systems
-          execSync('git config --global credential.helper ""', { stdio: 'ignore' });
+          SecurityUtils.execSafe('git', ['config', '--global', 'credential.helper', ''], { stdio: 'ignore' });
           
           // Set processor-specific git options
           if (this.isRISCV) {
-            execSync('git config --global pack.threads 1', { stdio: 'ignore' });
+            SecurityUtils.execSafe('git', ['config', '--global', 'pack.threads', '1'], { stdio: 'ignore' });
           }
         } catch (e) {
-          // Ignore if git config fails
+          this.log(`🌸 Configuración de git opcional falló (continuando...)`, 'dim');
         }
       }
       
-      execSync(`git clone ${bot.url} "${targetDir}"`, { stdio: 'inherit' });
+      // 🛡️ Usar comando seguro sin shell
+      this.log(`🔒 Clonando repositorio de forma segura...`, 'dim');
+      SecurityUtils.execSafe('git', ['clone', '--depth', '1', bot.url, sanitizedDir]);
       
       this.log(`✅ ¡${bot.name} ya está contigo! (¡qué felicidad!)`, 'green');
       return true;
     } catch (error) {
-      this.log(`🌸 Aww, algo salió mal: ${error.message} (¡no te preocupes!)`, 'red');
+      this.log(`🌸 Aww, algo salió mal: ${error.message}`, 'red');
       
-      // 🌸 Celia te ayuda con consejos para tu móvil~
-      if (this.isARM || this.isTermux) {
-        this.log('🌸 No te preocupes, ¡Celia te ayuda!:', 'cyan');
-        this.log('   - ¿Tienes git? Proba: apt install git (¡yo te espero!)', 'reset');
-        this.log('   - ¿Tu internet funciona bien?~ (¡revísalo por favor!)', 'reset');
-        this.log('   - A veces los móviles necesitan truquitos especiales', 'reset');
+      // 🌸 Diagnóstico mejorado de errores
+      if (error.message.includes('not found')) {
+        this.log('❌ Git no está instalado o no está en PATH', 'red');
+        this.log('💡 Instala git: apt install git (Linux) o brew install git (macOS)', 'cyan');
+      } else if (error.message.includes('Repository not found')) {
+        this.log('❌ Repositorio no encontrado o privado', 'red');
+        this.log('💡 Verifica que la URL del repositorio sea correcta', 'cyan');
+      } else if (error.message.includes('Permission denied')) {
+        this.log('❌ Sin permisos para escribir en este directorio', 'red');
+        this.log('💡 Ejecuta desde un directorio donde tengas permisos de escritura', 'cyan');
+      } else if (this.isARM || this.isTermux) {
+        this.log('🌸 Consejos para sistemas móviles/ARM:', 'cyan');
+        this.log('   - ¿Tienes git? Prueba: apt install git', 'reset');
+        this.log('   - ¿Tu internet funciona bien?', 'reset');
+        this.log('   - Verifica el espacio disponible en disco', 'reset');
       }
       
       return false;
@@ -1490,6 +1702,27 @@ class CeliaAssistant {
             value = await this.questionHidden('🔐 Valor (oculto): ');
           } else {
             value = await this.question('📋 Valor: ');
+          }
+          
+          // 🛡️ Sanitizar valor de entrada
+          if (value) {
+            const originalValue = value;
+            value = SecurityUtils.sanitizeEnvValue(value, envVar.sensitive);
+            
+            // Validaciones adicionales para tokens sensibles
+            if (envVar.sensitive && value.length < 10) {
+              this.log('   ⚠️ Ese token parece muy corto. ¿Estás seguro?', 'yellow');
+              const confirm = await this.question('   ¿Continuar con este valor? (y/N): ');
+              if (confirm.toLowerCase() !== 'y') {
+                value = '';
+                continue;
+              }
+            }
+            
+            // Informar si el valor fue modificado por seguridad
+            if (originalValue !== value && originalValue.length !== value.length) {
+              this.log('   🛡️ Valor sanitizado por seguridad', 'dim');
+            }
           }
           
           if (!value) {
@@ -1533,7 +1766,9 @@ class CeliaAssistant {
           }
           
           if (value) {
-            envVars[envVar.name] = value;
+            // 🛡️ Sanitizar valor opcional también
+            const sanitizedValue = SecurityUtils.sanitizeEnvValue(value, envVar.sensitive);
+            envVars[envVar.name] = sanitizedValue;
             this.log(`   ✅ ${envVar.name} configurado`, 'green');
           }
         }
@@ -1850,57 +2085,105 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
   }
 
   async installNodeDeps(targetDir) {
-    if (!fs.existsSync(path.join(targetDir, 'package.json'))) {
+    const sanitizedDir = SecurityUtils.sanitizeDirectoryName(targetDir);
+    const packagePath = path.join(sanitizedDir, 'package.json');
+    
+    if (!fs.existsSync(packagePath)) {
       this.log('ℹ️  No hay package.json', 'yellow');
       return true;
     }
     
-    const optimizedCommand = this.getOptimizedInstallCommand('Node.js', targetDir);
-    this.log(`🚀 Ejecutando: ${optimizedCommand}`, 'info');
-    execSync(optimizedCommand, { stdio: 'inherit', cwd: targetDir });
-    this.log('✅ Dependencias Node.js instaladas', 'green');
-    return true;
+    try {
+      const optimizedCommand = this.getOptimizedInstallCommand('Node.js', sanitizedDir);
+      this.log(`🚀 Instalando dependencias Node.js...`, 'info');
+      
+      // 🛡️ Usar pasos seguros sin shell
+      this.log(`🔒 Ejecutando instalación segura de Node.js...`, 'dim');
+      const steps = SecurityUtils.getInstallSteps('Node.js', sanitizedDir);
+      SecurityUtils.runSequence(steps, { cwd: sanitizedDir });
+      this.log('✅ Dependencias Node.js instaladas correctamente', 'green');
+      return true;
+    } catch (error) {
+      this.log(`❌ Error instalando dependencias Node.js: ${error.message}`, 'red');
+      this.log('💡 Verifica que npm esté instalado y funcionando', 'cyan');
+      return false;
+    }
   }
 
   async installPythonDeps(targetDir) {
-    const reqFile = path.join(targetDir, 'requirements.txt');
-    if (fs.existsSync(reqFile)) {
-      const optimizedCommand = this.getOptimizedInstallCommand('Python', targetDir);
-      this.log(`🚀 Ejecutando: ${optimizedCommand}`, 'info');
-      execSync(optimizedCommand, { stdio: 'inherit', cwd: targetDir });
-      this.log('✅ Dependencias Python instaladas', 'green');
-    } else {
+    const sanitizedDir = SecurityUtils.sanitizeDirectoryName(targetDir);
+    const reqFile = path.join(sanitizedDir, 'requirements.txt');
+    
+    if (!fs.existsSync(reqFile)) {
       this.log('ℹ️  No hay requirements.txt', 'yellow');
+      return true;
     }
-    return true;
+    
+    try {
+      const optimizedCommand = this.getOptimizedInstallCommand('Python', sanitizedDir);
+      this.log(`🚀 Instalando dependencias Python...`, 'info');
+      
+      this.log(`🔒 Ejecutando instalación segura de Python...`, 'dim');
+      const steps = SecurityUtils.getInstallSteps('Python', sanitizedDir);
+      SecurityUtils.runSequence(steps, { cwd: sanitizedDir });
+      this.log('✅ Dependencias Python instaladas correctamente', 'green');
+      return true;
+    } catch (error) {
+      this.log(`❌ Error instalando dependencias Python: ${error.message}`, 'red');
+      if (error.message.includes('pip')) {
+        this.log('💡 Verifica que Python y pip estén instalados', 'cyan');
+      }
+      return false;
+    }
   }
 
   async installTypescriptDeps(targetDir) {
-    if (!fs.existsSync(path.join(targetDir, 'package.json'))) {
+    const sanitizedDir = SecurityUtils.sanitizeDirectoryName(targetDir);
+    const packagePath = path.join(sanitizedDir, 'package.json');
+    
+    if (!fs.existsSync(packagePath)) {
       this.log('ℹ️  No hay package.json', 'yellow');
       return true;
     }
     
-    const optimizedCommand = this.getOptimizedInstallCommand('TypeScript', targetDir);
-    this.log(`🚀 Ejecutando: ${optimizedCommand}`, 'info');
-    
-    // Split install and build commands for better error handling
-    const installCommand = optimizedCommand.split(' && ')[0];
-    const buildCommand = optimizedCommand.split(' && ')[1];
-    
-    execSync(installCommand, { stdio: 'inherit', cwd: targetDir });
-    
-    if (buildCommand) {
-      try {
-        execSync(buildCommand, { stdio: 'inherit', cwd: targetDir });
-        this.log('✅ TypeScript compilado', 'green');
-      } catch {
-        this.log('⚠️  No se pudo compilar automáticamente', 'yellow');
+    try {
+      const optimizedCommand = this.getOptimizedInstallCommand('TypeScript', sanitizedDir);
+      this.log(`🚀 Instalando dependencias TypeScript...`, 'info');
+      
+      // Separar comandos de instalación y build para mejor manejo de errores
+      const commands = optimizedCommand.split(' && ');
+      const installCommand = commands[0];
+      const buildCommand = commands[1];
+      
+      // Instalar dependencias
+      this.log(`🔒 Ejecutando instalación segura de TypeScript...`, 'dim');
+      const steps = SecurityUtils.getInstallSteps('TypeScript', sanitizedDir);
+      
+      // Ejecutar cada paso por separado con manejo de errores individual
+      for (const step of steps) {
+        try {
+          SecurityUtils.execSafe(step.command, step.args, { cwd: sanitizedDir });
+          if (step.args.includes('install')) {
+            this.log('✅ Dependencias instaladas', 'green');
+          } else if (step.args.includes('build')) {
+            this.log('✅ TypeScript compilado correctamente', 'green');
+          }
+        } catch (error) {
+          if (step.args.includes('build')) {
+            this.log('⚠️  No se pudo compilar automáticamente', 'yellow');
+            this.log('💡 Podrás compilar manualmente con: npm run build', 'cyan');
+          } else {
+            throw error; // Re-lanzar errores de instalación
+          }
+        }
       }
+      
+      return true;
+    } catch (error) {
+      this.log(`❌ Error instalando dependencias TypeScript: ${error.message}`, 'red');
+      this.log('💡 Verifica que npm y Node.js estén instalados', 'cyan');
+      return false;
     }
-    
-    this.log('✅ Dependencias TypeScript instaladas', 'green');
-    return true;
   }
 
   /**
@@ -1993,6 +2276,23 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
   
 
   /**
+   * 🛡️ Sistema de rollback - limpia archivos parciales si algo falla
+   */
+  async rollbackInstallation(targetDir, reason) {
+    this.log(`\n🔄 Limpiando instalación parcial: ${reason}`, 'yellow');
+    
+    try {
+      if (fs.existsSync(targetDir)) {
+        this.log('🧹 Eliminando archivos parciales...', 'cyan');
+        this.removeDirectory(targetDir);
+        this.log('✅ Rollback completado', 'green');
+      }
+    } catch (error) {
+      this.log(`⚠️ No se pudo completar el rollback: ${error.message}`, 'yellow');
+    }
+  }
+
+  /**
    * Install specified bot
    */
   async installBot(botName) {
@@ -2012,9 +2312,11 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
     let targetDir = await this.question(`📁 Directorio (${defaultDir}): `);
     if (!targetDir) targetDir = defaultDir;
     
-    // Validate directory name
-    if (!/^[a-zA-Z0-9_-]+$/.test(targetDir)) {
-      this.log('❌ Nombre de directorio inválido', 'red');
+    // 🛡️ Sanitizar y validar nombre de directorio
+    try {
+      targetDir = SecurityUtils.sanitizeDirectoryName(targetDir);
+    } catch (error) {
+      this.log(`❌ ${error.message}`, 'red');
       this.rl.close();
       return;
     }
@@ -2036,27 +2338,58 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
       }
     }
     
-    // Clone repository
-    if (!(await this.cloneRepository(bot, targetDir))) {
+    let installationStarted = false;
+    let cleanupRequired = false;
+    
+    try {
+      // 🛡️ Validaciones de seguridad OBLIGATORIAS antes de cualquier operación
+      if (!SecurityUtils.validateGitHubUrl(bot.url)) {
+        throw new Error(`URL de repositorio no válida: ${bot.url}`);
+      }
+      
+      // Clone repository de forma transaccional
+      if (!(await this.cloneRepository(bot, targetDir))) {
+        this.rl.close();
+        return;
+      }
+      installationStarted = true;
+      cleanupRequired = true;
+      
+      // Configure environment variables
+      const envVars = await this.configureEnvironment(bot);
+      
+      // Create .env files
+      if (Object.keys(envVars).length > 0) {
+        this.createEnvFile(envVars, targetDir, bot);
+      }
+      
+      // Install dependencies
+      const depsSuccess = await this.installDependencies(targetDir, bot);
+      if (!depsSuccess) {
+        await this.rollbackInstallation(targetDir, 'Error instalando dependencias');
+        this.rl.close();
+        return;
+      }
+      
+      // 🛡️ Verificación post-instalación
+      const isInstallationValid = await this.verifyInstallation(targetDir, bot);
+      if (!isInstallationValid) {
+        await this.rollbackInstallation(targetDir, 'Instalación no válida');
+        this.rl.close();
+        return;
+      }
+      
+      // Show final instructions
+      this.showInstructions(bot, targetDir);
+      
+    } catch (error) {
+      this.log(`❌ Error durante la instalación: ${error.message}`, 'red');
+      if (cleanupRequired) {
+        await this.rollbackInstallation(targetDir, `Error: ${error.message}`);
+      }
+    } finally {
       this.rl.close();
-      return;
     }
-    
-    // Configure environment variables
-    const envVars = await this.configureEnvironment(bot);
-    
-    // Create .env files
-    if (Object.keys(envVars).length > 0) {
-      this.createEnvFile(envVars, targetDir, bot);
-    }
-    
-    // Install dependencies
-    await this.installDependencies(targetDir, bot);
-    
-    // Show final instructions
-    this.showInstructions(bot, targetDir);
-    
-    this.rl.close();
   }
 
   /**
@@ -2078,6 +2411,7 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
         this.gradientLog('Celia v2.0.0 💖', ['primary', 'secondary']);
         console.log('');
         this.log('Tu asistente celestial tierna~', 'dim');
+        this.showPrerequisiteStatus();
         console.log('');
         return;
       }
@@ -2587,6 +2921,44 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
       '💫 Con mucho amor de OpceanAI'
     ], 'accent', 2);
     console.log('');
+  }
+  
+  /**
+   * 🛡️ Parser seguro para comandos de instalación
+   */
+  parseInstallCommand(command) {
+    if (!command || typeof command !== 'string') {
+      return [];
+    }
+    
+    // Remover prefijos comunes y dividir por espacios de forma segura
+    const cleaned = command
+      .replace(/^(npm|pip|pip3)\s+/, '')
+      .trim();
+    
+    // Dividir argumentos de forma segura
+    const args = cleaned.split(/\s+/).filter(arg => {
+      // Filtrar argumentos vacíos y potencialmente peligrosos
+      return arg && 
+             arg.length > 0 && 
+             !/[;&|`$]/.test(arg) && // No metacaracteres peligrosos
+             arg.length < 100; // Límite razonable de longitud
+    });
+    
+    return args;
+  }
+  
+  /**
+   * 🛡️ Obtener archivos críticos según el lenguaje
+   */
+  getCriticalFiles(language) {
+    const files = {
+      'Node.js': ['package.json'],
+      'Python': ['requirements.txt'],
+      'TypeScript': ['package.json', 'tsconfig.json']
+    };
+    
+    return files[language] || ['README.md'];
   }
 }
 
