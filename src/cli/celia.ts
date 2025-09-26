@@ -2,6 +2,7 @@
  * 🌸 Celia - Main CLI Application Class
  */
 
+// Import configurations using require (will be migrated to imports later)
 const { VERSION, NODE_MIN_VERSION } = require('../config/constants');
 const { THEMES } = require('../config/themes');
 const { BOTS } = require('../config/bots');
@@ -9,22 +10,27 @@ const Logger = require('../utils/logger');
 const SystemDetector = require('../services/system');
 const SecurityUtils = require('../security/security');
 const PromptUtils = require('../utils/prompt');
-const CommandRouter = require('./router');
+import { CommandRouter } from './router';
+
+// Import command classes (these will be TypeScript later)
 const ListCommand = require('./commands/list');
 const HelpCommand = require('./commands/help');
 const ThemeCommand = require('./commands/theme');
 const StatusCommand = require('./commands/status');
 
-class CeliaAssistant {
+export class CeliaAssistant {
+  public logger: any; // Will be properly typed when logger is migrated
+  public system: any; // Will be properly typed when system is migrated
+  public prompt: any; // Will be properly typed when prompt is migrated
+  public router: CommandRouter;
+  public interactive: boolean = false;
+
   constructor() {
     // Initialize core components
     this.logger = new Logger();
     this.system = new SystemDetector();
     this.prompt = new PromptUtils();
     this.router = new CommandRouter();
-    
-    // Initialize state
-    this.interactive = false;
     
     // 🌙 Initialize Celia's beautiful commands~
     this.initializeCommands();
@@ -33,7 +39,7 @@ class CeliaAssistant {
   /**
    * 🛡️ Verificar prerrequisitos críticos
    */
-  static checkCriticalPrerequisites() {
+  static checkCriticalPrerequisites(): void {
     // Verificar versión de Node.js
     if (!SecurityUtils.validateNodeVersion(NODE_MIN_VERSION)) {
       throw new Error(`Versión de Node.js muy antigua. Se requiere >= ${NODE_MIN_VERSION}. Versión actual: ${process.version}`);
@@ -43,12 +49,12 @@ class CeliaAssistant {
   /**
    * 🛡️ Mostrar estado de prerrequisitos
    */
-  showPrerequisiteStatus() {
+  showPrerequisiteStatus(): void {
     const missing = SecurityUtils.checkPrerequisites();
     
     if (missing.length > 0) {
       this.logger.log('\n⚠️  Prerrequisitos faltantes:', 'warning');
-      missing.forEach(cmd => {
+      missing.forEach((cmd: string) => {
         this.logger.log(`   - ${cmd}`, 'error');
       });
       this.logger.log('\n💡 Instala los comandos faltantes antes de continuar', 'info');
@@ -60,7 +66,7 @@ class CeliaAssistant {
   /**
    * 🌸 Initialize Celia's modern command system~
    */
-  initializeCommands() {
+  initializeCommands(): void {
     // Initialize command instances
     const listCommand = new ListCommand(this.logger);
     const helpCommand = new HelpCommand(this.logger, this.router);
@@ -72,28 +78,28 @@ class CeliaAssistant {
       aliases: ['list', 'hermanas'],
       description: '🌸 Conoce a todas mis hermanas bot',
       usage: 'celia sisters',
-      action: (args) => listCommand.execute(args)
+      action: (args?: string[]) => listCommand.execute(args)
     });
     
     this.router.register('help', {
       aliases: ['h', 'ayuda'],
       description: '💫 Obtén ayuda de Celia',
       usage: 'celia help [comando]',
-      action: (args) => helpCommand.execute(args)
+      action: (args?: string[]) => helpCommand.execute(args)
     });
     
     this.router.register('theme', {
       aliases: ['themes', 'style'],
       description: '🎨 Cambia mi apariencia visual',
       usage: 'celia theme [celestial|kawaii|dreamy]',
-      action: async (args) => await themeCommand.execute(args)
+      action: async (args?: string[]) => await themeCommand.execute(args)
     });
     
     this.router.register('status', {
       aliases: ['info', 'system'],
       description: '🔧 Información del sistema y entorno',
       usage: 'celia status',
-      action: (args) => statusCommand.execute(args)
+      action: (args?: string[]) => statusCommand.execute(args)
     });
     
     // Placeholder commands for now
@@ -101,21 +107,21 @@ class CeliaAssistant {
       aliases: ['add', 'setup'],
       description: '💖 Instala a una de mis hermanas con mucho amor',
       usage: 'celia install <hermana>',
-      action: (args) => this.modernInstall(args[0])
+      action: (args?: string[]) => this.modernInstall(args?.[0])
     });
     
     this.router.register('quick', {
       aliases: ['fast', 'rapido'],
       description: '⚡ Instalación súper rápida',
       usage: 'celia quick <hermana>',
-      action: (args) => this.quickInstallBot(args[0])
+      action: (args?: string[]) => this.quickInstallBot(args?.[0])
     });
   }
   
   /**
    * 🌟 Modern CLI entry point with beautiful parsing~
    */
-  async run() {
+  async run(): Promise<void> {
     const args = process.argv.slice(2);
     
     try {
@@ -132,7 +138,7 @@ class CeliaAssistant {
       }
       
       // Parse modern command structure
-      const command = args[0];
+      const command = args[0] || '';
       const commandArgs = args.slice(1);
       
       // Handle legacy commands for compatibility
@@ -150,7 +156,8 @@ class CeliaAssistant {
       await this.router.execute(command, commandArgs);
       
     } catch (error) {
-      this.logger.log(`🌸 Aww, algo salió mal: ${error.message}`, 'error');
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.log(`🌸 Aww, algo salió mal: ${message}`, 'error');
       console.log('');
       this.logger.log('💡 Intenta "celia help" para ver los comandos disponibles~', 'info');
     } finally {
@@ -161,7 +168,7 @@ class CeliaAssistant {
   /**
    * Show version information
    */
-  showVersion() {
+  showVersion(): void {
     this.showBanner();
     this.logger.gradientLog(`Celia v${VERSION} 💖`, ['primary', 'secondary']);
     console.log('');
@@ -173,7 +180,7 @@ class CeliaAssistant {
   /**
    * 🌸 Celia's beautiful modern banner~
    */
-  showBanner() {
+  showBanner(): void {
     console.clear();
     console.log('');
     
@@ -210,7 +217,7 @@ class CeliaAssistant {
   /**
    * 💬 Enhanced interactive mode~
    */
-  async startInteractiveMode() {
+  async startInteractiveMode(): Promise<void> {
     this.interactive = true;
     this.showBanner();
     
@@ -243,18 +250,19 @@ class CeliaAssistant {
         
         // Parse and execute command
         const args = input.trim().split(' ');
-        const command = args[0];
+        const command = args[0] || '';
         const commandArgs = args.slice(1);
         
         await this.router.execute(command, commandArgs);
         console.log('');
         
-      } catch (error) {
+      } catch (error: any) {
         if (error.code === 'SIGINT') {
           this.logger.log('\n🌸 ¡Hasta luego! ¡Que tengas un día celestial!~', 'primary');
           break;
         }
-        this.logger.log(`🌸 Error: ${error.message}`, 'error');
+        const message = error instanceof Error ? error.message : String(error);
+        this.logger.log(`🌸 Error: ${message}`, 'error');
         console.log('');
       }
     }
@@ -263,15 +271,15 @@ class CeliaAssistant {
   }
   
   // Placeholder methods for install commands (to be implemented later)
-  async modernInstall(botName) {
+  async modernInstall(botName?: string): Promise<void> {
     this.logger.log('🚧 Función de instalación en desarrollo...', 'warning');
-    this.logger.log(`Instalando: ${botName}`, 'info');
+    this.logger.log(`Instalando: ${botName || 'bot no especificado'}`, 'info');
   }
   
-  async quickInstallBot(botName) {
+  async quickInstallBot(botName?: string): Promise<void> {
     this.logger.log('🚧 Función de instalación rápida en desarrollo...', 'warning');
-    this.logger.log(`Instalación rápida: ${botName}`, 'info');
+    this.logger.log(`Instalación rápida: ${botName || 'bot no especificado'}`, 'info');
   }
 }
 
-module.exports = CeliaAssistant;
+export default CeliaAssistant;

@@ -1,7 +1,9 @@
 'use strict';
 
 var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
   get: (a, b) => (typeof require !== "undefined" ? require : a)[b]
@@ -15,10 +17,118 @@ var __esm = (fn, res) => function __init() {
 var __commonJS = (cb, mod) => function __require2() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // node_modules/tsup/assets/cjs_shims.js
 var init_cjs_shims = __esm({
   "node_modules/tsup/assets/cjs_shims.js"() {
+  }
+});
+
+// src/cli/router.ts
+var router_exports = {};
+__export(router_exports, {
+  CommandRouter: () => CommandRouter,
+  default: () => router_default
+});
+var _CommandRouter, CommandRouter, router_default;
+var init_router = __esm({
+  "src/cli/router.ts"() {
+    init_cjs_shims();
+    _CommandRouter = class _CommandRouter {
+      constructor() {
+        this.commands = /* @__PURE__ */ new Map();
+      }
+      /**
+       * Register a command
+       */
+      register(name, config) {
+        if (!name || !config || typeof config.action !== "function") {
+          throw new Error("Invalid command configuration");
+        }
+        this.commands.set(name, {
+          aliases: config.aliases || [],
+          description: config.description || "",
+          usage: config.usage || `celia ${name}`,
+          action: config.action
+        });
+      }
+      /**
+       * Get command by name or alias
+       */
+      getCommand(name) {
+        if (this.commands.has(name)) {
+          const config = this.commands.get(name);
+          if (config) {
+            return { name, config };
+          }
+        }
+        for (const [cmdName, config] of this.commands.entries()) {
+          if (config.aliases && config.aliases.includes(name)) {
+            return { name: cmdName, config };
+          }
+        }
+        return null;
+      }
+      /**
+       * Execute command
+       */
+      async execute(commandName, args = []) {
+        const command = this.getCommand(commandName);
+        if (!command) {
+          throw new Error(`Unknown command: ${commandName}`);
+        }
+        try {
+          await command.config.action(args);
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          throw new Error(`Error executing ${command.name}: ${message}`);
+        }
+      }
+      /**
+       * Get all commands
+       */
+      getCommands() {
+        return this.commands;
+      }
+      /**
+       * Get command suggestions for autocompletion
+       */
+      getSuggestions(input) {
+        if (!input) return [];
+        const allCommands = [];
+        for (const [name] of this.commands) {
+          allCommands.push(name);
+        }
+        for (const [, config] of this.commands) {
+          if (config.aliases) {
+            allCommands.push(...config.aliases);
+          }
+        }
+        return allCommands.filter((cmd) => cmd.toLowerCase().startsWith(input.toLowerCase())).slice(0, 10);
+      }
+      /**
+       * Check if command exists
+       */
+      hasCommand(name) {
+        return this.getCommand(name) !== null;
+      }
+    };
+    __name(_CommandRouter, "CommandRouter");
+    CommandRouter = _CommandRouter;
+    router_default = CommandRouter;
   }
 });
 
@@ -79,7 +189,7 @@ var require_constants = __commonJS({
 var require_themes = __commonJS({
   "src/config/themes.js"(exports, module) {
     init_cjs_shims();
-    var THEMES2 = {
+    var THEMES3 = {
       celestial: {
         primary: "\x1B[38;5;147m",
         // Light purple
@@ -151,7 +261,7 @@ var require_themes = __commonJS({
       }
     };
     module.exports = {
-      THEMES: THEMES2,
+      THEMES: THEMES3,
       DEFAULT_THEME: "celestial"
     };
   }
@@ -161,7 +271,7 @@ var require_themes = __commonJS({
 var require_bots = __commonJS({
   "src/config/bots.js"(exports, module) {
     init_cjs_shims();
-    var BOTS2 = {
+    var BOTS3 = {
       nebula: {
         name: "Nebula",
         url: "https://github.com/OpceanAI/Nebula-Open-source",
@@ -236,7 +346,7 @@ var require_bots = __commonJS({
       }
     };
     module.exports = {
-      BOTS: BOTS2
+      BOTS: BOTS3
     };
   }
 });
@@ -245,7 +355,7 @@ var require_bots = __commonJS({
 var require_logger = __commonJS({
   "src/utils/logger.js"(exports, module) {
     init_cjs_shims();
-    var { THEMES: THEMES2, DEFAULT_THEME } = require_themes();
+    var { THEMES: THEMES3, DEFAULT_THEME } = require_themes();
     var _Logger = class _Logger {
       constructor(theme = DEFAULT_THEME) {
         this.theme = theme;
@@ -254,7 +364,7 @@ var require_logger = __commonJS({
        * Set current theme
        */
       setTheme(theme) {
-        if (THEMES2[theme]) {
+        if (THEMES3[theme]) {
           this.theme = theme;
         }
       }
@@ -262,7 +372,7 @@ var require_logger = __commonJS({
        * Get current theme colors
        */
       getTheme() {
-        return THEMES2[this.theme];
+        return THEMES3[this.theme];
       }
       /**
        * 🌙 Celia's beautiful theming system~
@@ -417,8 +527,8 @@ var require_logger = __commonJS({
       }
     };
     __name(_Logger, "Logger");
-    var Logger2 = _Logger;
-    module.exports = Logger2;
+    var Logger3 = _Logger;
+    module.exports = Logger3;
   }
 });
 
@@ -636,8 +746,8 @@ var require_system = __commonJS({
       }
     };
     __name(_SystemDetector, "SystemDetector");
-    var SystemDetector2 = _SystemDetector;
-    module.exports = SystemDetector2;
+    var SystemDetector3 = _SystemDetector;
+    module.exports = SystemDetector3;
   }
 });
 
@@ -813,8 +923,8 @@ var require_security = __commonJS({
       }
     };
     __name(_SecurityUtils, "SecurityUtils");
-    var SecurityUtils2 = _SecurityUtils;
-    module.exports = SecurityUtils2;
+    var SecurityUtils3 = _SecurityUtils;
+    module.exports = SecurityUtils3;
   }
 });
 
@@ -923,91 +1033,8 @@ var require_prompt = __commonJS({
       }
     };
     __name(_PromptUtils, "PromptUtils");
-    var PromptUtils2 = _PromptUtils;
-    module.exports = PromptUtils2;
-  }
-});
-
-// src/cli/router.js
-var require_router = __commonJS({
-  "src/cli/router.js"(exports, module) {
-    init_cjs_shims();
-    var _CommandRouter = class _CommandRouter {
-      constructor() {
-        this.commands = /* @__PURE__ */ new Map();
-      }
-      /**
-       * Register a command
-       */
-      register(name, config) {
-        if (!name || !config || typeof config.action !== "function") {
-          throw new Error("Invalid command configuration");
-        }
-        this.commands.set(name, {
-          aliases: config.aliases || [],
-          description: config.description || "",
-          usage: config.usage || `celia ${name}`,
-          action: config.action
-        });
-      }
-      /**
-       * Get command by name or alias
-       */
-      getCommand(name) {
-        if (this.commands.has(name)) {
-          return { name, config: this.commands.get(name) };
-        }
-        for (const [cmdName, config] of this.commands.entries()) {
-          if (config.aliases.includes(name)) {
-            return { name: cmdName, config };
-          }
-        }
-        return null;
-      }
-      /**
-       * Execute command
-       */
-      async execute(commandName, args = []) {
-        const command = this.getCommand(commandName);
-        if (!command) {
-          throw new Error(`Unknown command: ${commandName}`);
-        }
-        try {
-          await command.config.action(args);
-        } catch (error) {
-          throw new Error(`Error executing ${command.name}: ${error.message}`);
-        }
-      }
-      /**
-       * Get all commands
-       */
-      getCommands() {
-        return this.commands;
-      }
-      /**
-       * Get command suggestions for autocompletion
-       */
-      getSuggestions(input) {
-        if (!input) return [];
-        const allCommands = [];
-        for (const [name] of this.commands) {
-          allCommands.push(name);
-        }
-        for (const [, config] of this.commands) {
-          allCommands.push(...config.aliases);
-        }
-        return allCommands.filter((cmd) => cmd.toLowerCase().startsWith(input.toLowerCase())).slice(0, 10);
-      }
-      /**
-       * Check if command exists
-       */
-      hasCommand(name) {
-        return this.getCommand(name) !== null;
-      }
-    };
-    __name(_CommandRouter, "CommandRouter");
-    var CommandRouter2 = _CommandRouter;
-    module.exports = CommandRouter2;
+    var PromptUtils3 = _PromptUtils;
+    module.exports = PromptUtils3;
   }
 });
 
@@ -1015,7 +1042,7 @@ var require_router = __commonJS({
 var require_list = __commonJS({
   "src/cli/commands/list.js"(exports, module) {
     init_cjs_shims();
-    var { BOTS: BOTS2 } = require_bots();
+    var { BOTS: BOTS3 } = require_bots();
     var _ListCommand = class _ListCommand {
       constructor(logger) {
         this.logger = logger;
@@ -1025,7 +1052,7 @@ var require_list = __commonJS({
         this.logger.gradientLog("\u{1F338} \xA1Mis Hermanas Bot! \u{1F338}", ["primary", "secondary", "accent"]);
         console.log("");
         const categories = {};
-        Object.entries(BOTS2).forEach(([key, bot]) => {
+        Object.entries(BOTS3).forEach(([key, bot]) => {
           if (!categories[bot.category]) {
             categories[bot.category] = [];
           }
@@ -1065,8 +1092,8 @@ var require_list = __commonJS({
       }
     };
     __name(_ListCommand, "ListCommand");
-    var ListCommand = _ListCommand;
-    module.exports = ListCommand;
+    var ListCommand2 = _ListCommand;
+    module.exports = ListCommand2;
   }
 });
 
@@ -1142,8 +1169,8 @@ var require_help = __commonJS({
       }
     };
     __name(_HelpCommand, "HelpCommand");
-    var HelpCommand = _HelpCommand;
-    module.exports = HelpCommand;
+    var HelpCommand2 = _HelpCommand;
+    module.exports = HelpCommand2;
   }
 });
 
@@ -1151,7 +1178,7 @@ var require_help = __commonJS({
 var require_theme = __commonJS({
   "src/cli/commands/theme.js"(exports, module) {
     init_cjs_shims();
-    var { THEMES: THEMES2 } = require_themes();
+    var { THEMES: THEMES3 } = require_themes();
     var _ThemeCommand = class _ThemeCommand {
       constructor(logger) {
         this.logger = logger;
@@ -1162,8 +1189,8 @@ var require_theme = __commonJS({
           this.showAvailableThemes();
           return;
         }
-        if (!THEMES2[themeName]) {
-          this.logger.log(`\u{1F338} Tema "${themeName}" no existe~ Temas disponibles: ${Object.keys(THEMES2).join(", ")}`, "error");
+        if (!THEMES3[themeName]) {
+          this.logger.log(`\u{1F338} Tema "${themeName}" no existe~ Temas disponibles: ${Object.keys(THEMES3).join(", ")}`, "error");
           return;
         }
         await this.logger.showLoading(`\u{1F3A8} Cambiando a tema ${themeName}`, 1500);
@@ -1180,7 +1207,7 @@ var require_theme = __commonJS({
         this.showBanner();
         this.logger.log("\u{1F3A8} Temas disponibles:", "primary");
         console.log("");
-        Object.keys(THEMES2).forEach((theme) => {
+        Object.keys(THEMES3).forEach((theme) => {
           const isActive = theme === this.logger.theme;
           const indicator = isActive ? "\u25CF " : "\u25CB ";
           this.logger.log(`${indicator}${theme}`, isActive ? "accent" : "dim");
@@ -1204,8 +1231,8 @@ var require_theme = __commonJS({
       }
     };
     __name(_ThemeCommand, "ThemeCommand");
-    var ThemeCommand = _ThemeCommand;
-    module.exports = ThemeCommand;
+    var ThemeCommand2 = _ThemeCommand;
+    module.exports = ThemeCommand2;
   }
 });
 
@@ -1257,49 +1284,55 @@ var require_status = __commonJS({
       }
     };
     __name(_StatusCommand, "StatusCommand");
-    var StatusCommand = _StatusCommand;
-    module.exports = StatusCommand;
+    var StatusCommand2 = _StatusCommand;
+    module.exports = StatusCommand2;
   }
 });
 
-// src/cli/celia.js
-var require_celia = __commonJS({
-  "src/cli/celia.js"(exports, module) {
+// src/cli/celia.ts
+var celia_exports = {};
+__export(celia_exports, {
+  CeliaAssistant: () => CeliaAssistant,
+  default: () => celia_default
+});
+var VERSION, NODE_MIN_VERSION, THEMES, BOTS, Logger, SystemDetector, SecurityUtils, PromptUtils, ListCommand, HelpCommand, ThemeCommand, StatusCommand, _CeliaAssistant, CeliaAssistant, celia_default;
+var init_celia = __esm({
+  "src/cli/celia.ts"() {
     init_cjs_shims();
-    var { VERSION: VERSION2, NODE_MIN_VERSION: NODE_MIN_VERSION2 } = require_constants();
-    var { THEMES: THEMES2 } = require_themes();
-    var { BOTS: BOTS2 } = require_bots();
-    var Logger2 = require_logger();
-    var SystemDetector2 = require_system();
-    var SecurityUtils2 = require_security();
-    var PromptUtils2 = require_prompt();
-    var CommandRouter2 = require_router();
-    var ListCommand = require_list();
-    var HelpCommand = require_help();
-    var ThemeCommand = require_theme();
-    var StatusCommand = require_status();
-    var _CeliaAssistant = class _CeliaAssistant {
+    init_router();
+    ({ VERSION, NODE_MIN_VERSION } = require_constants());
+    ({ THEMES } = require_themes());
+    ({ BOTS } = require_bots());
+    Logger = require_logger();
+    SystemDetector = require_system();
+    SecurityUtils = require_security();
+    PromptUtils = require_prompt();
+    ListCommand = require_list();
+    HelpCommand = require_help();
+    ThemeCommand = require_theme();
+    StatusCommand = require_status();
+    _CeliaAssistant = class _CeliaAssistant {
       constructor() {
-        this.logger = new Logger2();
-        this.system = new SystemDetector2();
-        this.prompt = new PromptUtils2();
-        this.router = new CommandRouter2();
         this.interactive = false;
+        this.logger = new Logger();
+        this.system = new SystemDetector();
+        this.prompt = new PromptUtils();
+        this.router = new CommandRouter();
         this.initializeCommands();
       }
       /**
        * 🛡️ Verificar prerrequisitos críticos
        */
       static checkCriticalPrerequisites() {
-        if (!SecurityUtils2.validateNodeVersion(NODE_MIN_VERSION2)) {
-          throw new Error(`Versi\xF3n de Node.js muy antigua. Se requiere >= ${NODE_MIN_VERSION2}. Versi\xF3n actual: ${process.version}`);
+        if (!SecurityUtils.validateNodeVersion(NODE_MIN_VERSION)) {
+          throw new Error(`Versi\xF3n de Node.js muy antigua. Se requiere >= ${NODE_MIN_VERSION}. Versi\xF3n actual: ${process.version}`);
         }
       }
       /**
        * 🛡️ Mostrar estado de prerrequisitos
        */
       showPrerequisiteStatus() {
-        const missing = SecurityUtils2.checkPrerequisites();
+        const missing = SecurityUtils.checkPrerequisites();
         if (missing.length > 0) {
           this.logger.log("\n\u26A0\uFE0F  Prerrequisitos faltantes:", "warning");
           missing.forEach((cmd) => {
@@ -1346,13 +1379,13 @@ var require_celia = __commonJS({
           aliases: ["add", "setup"],
           description: "\u{1F496} Instala a una de mis hermanas con mucho amor",
           usage: "celia install <hermana>",
-          action: /* @__PURE__ */ __name((args) => this.modernInstall(args[0]), "action")
+          action: /* @__PURE__ */ __name((args) => this.modernInstall(args == null ? void 0 : args[0]), "action")
         });
         this.router.register("quick", {
           aliases: ["fast", "rapido"],
           description: "\u26A1 Instalaci\xF3n s\xFAper r\xE1pida",
           usage: "celia quick <hermana>",
-          action: /* @__PURE__ */ __name((args) => this.quickInstallBot(args[0]), "action")
+          action: /* @__PURE__ */ __name((args) => this.quickInstallBot(args == null ? void 0 : args[0]), "action")
         });
       }
       /**
@@ -1369,7 +1402,7 @@ var require_celia = __commonJS({
             this.showVersion();
             return;
           }
-          const command = args[0];
+          const command = args[0] || "";
           const commandArgs = args.slice(1);
           if (command === "list") {
             await this.router.execute("sisters", []);
@@ -1381,7 +1414,8 @@ var require_celia = __commonJS({
           }
           await this.router.execute(command, commandArgs);
         } catch (error) {
-          this.logger.log(`\u{1F338} Aww, algo sali\xF3 mal: ${error.message}`, "error");
+          const message = error instanceof Error ? error.message : String(error);
+          this.logger.log(`\u{1F338} Aww, algo sali\xF3 mal: ${message}`, "error");
           console.log("");
           this.logger.log('\u{1F4A1} Intenta "celia help" para ver los comandos disponibles~', "info");
         } finally {
@@ -1393,7 +1427,7 @@ var require_celia = __commonJS({
        */
       showVersion() {
         this.showBanner();
-        this.logger.gradientLog(`Celia v${VERSION2} \u{1F496}`, ["primary", "secondary"]);
+        this.logger.gradientLog(`Celia v${VERSION} \u{1F496}`, ["primary", "secondary"]);
         console.log("");
         this.logger.log("Tu asistente celestial tierna~", "dim");
         this.showPrerequisiteStatus();
@@ -1453,7 +1487,7 @@ var require_celia = __commonJS({
               break;
             }
             const args = input.trim().split(" ");
-            const command = args[0];
+            const command = args[0] || "";
             const commandArgs = args.slice(1);
             await this.router.execute(command, commandArgs);
             console.log("");
@@ -1462,7 +1496,8 @@ var require_celia = __commonJS({
               this.logger.log("\n\u{1F338} \xA1Hasta luego! \xA1Que tengas un d\xEDa celestial!~", "primary");
               break;
             }
-            this.logger.log(`\u{1F338} Error: ${error.message}`, "error");
+            const message = error instanceof Error ? error.message : String(error);
+            this.logger.log(`\u{1F338} Error: ${message}`, "error");
             console.log("");
           }
         }
@@ -1471,16 +1506,16 @@ var require_celia = __commonJS({
       // Placeholder methods for install commands (to be implemented later)
       async modernInstall(botName) {
         this.logger.log("\u{1F6A7} Funci\xF3n de instalaci\xF3n en desarrollo...", "warning");
-        this.logger.log(`Instalando: ${botName}`, "info");
+        this.logger.log(`Instalando: ${botName || "bot no especificado"}`, "info");
       }
       async quickInstallBot(botName) {
         this.logger.log("\u{1F6A7} Funci\xF3n de instalaci\xF3n r\xE1pida en desarrollo...", "warning");
-        this.logger.log(`Instalaci\xF3n r\xE1pida: ${botName}`, "info");
+        this.logger.log(`Instalaci\xF3n r\xE1pida: ${botName || "bot no especificado"}`, "info");
       }
     };
     __name(_CeliaAssistant, "CeliaAssistant");
-    var CeliaAssistant2 = _CeliaAssistant;
-    module.exports = CeliaAssistant2;
+    CeliaAssistant = _CeliaAssistant;
+    celia_default = CeliaAssistant;
   }
 });
 
@@ -1531,18 +1566,18 @@ var require_fs = __commonJS({
        * System-specific directory removal
        */
       static removeDirectoryWithSystem(dirPath, system) {
-        const SecurityUtils2 = require_security();
+        const SecurityUtils3 = require_security();
         try {
           if (system.platform.isWindows) {
-            SecurityUtils2.execSafe("rmdir", ["/s", "/q", dirPath]);
+            SecurityUtils3.execSafe("rmdir", ["/s", "/q", dirPath]);
           } else if (system.isTermux) {
             try {
-              SecurityUtils2.execSafe("rm", ["-rf", dirPath]);
+              SecurityUtils3.execSafe("rm", ["-rf", dirPath]);
             } catch (termuxError) {
-              SecurityUtils2.execSafe("rm", ["-r", dirPath]);
+              SecurityUtils3.execSafe("rm", ["-r", dirPath]);
             }
           } else {
-            SecurityUtils2.execSafe("rm", ["-rf", dirPath]);
+            SecurityUtils3.execSafe("rm", ["-rf", dirPath]);
           }
         } catch (cmdError) {
           if (system.isARM || system.isTermux || system.isEmbedded) {
@@ -1721,7 +1756,7 @@ var require_package = __commonJS({
         url: "https://github.com/aguitauwu/npm-OpceanAI/issues"
       },
       homepage: "https://github.com/aguitauwu/npm-OpceanAI#readme",
-      dependencies: {
+      devDependencies: {
         "@types/node": "^24.5.2",
         tsup: "^8.5.0",
         typescript: "^5.9.2"
@@ -1732,29 +1767,29 @@ var require_package = __commonJS({
 
 // src/index.ts
 init_cjs_shims();
-var CeliaAssistant = require_celia();
-var SecurityUtils = require_security();
-var Logger = require_logger();
-var SystemDetector = require_system();
-var CommandRouter = require_router();
-var { THEMES } = require_themes();
-var { BOTS } = require_bots();
-var { VERSION, NODE_MIN_VERSION } = require_constants();
+var CeliaAssistant2 = (init_celia(), __toCommonJS(celia_exports));
+var SecurityUtils2 = require_security();
+var Logger2 = require_logger();
+var SystemDetector2 = require_system();
+var CommandRouter2 = (init_router(), __toCommonJS(router_exports));
+var { THEMES: THEMES2 } = require_themes();
+var { BOTS: BOTS2 } = require_bots();
+var { VERSION: VERSION2, NODE_MIN_VERSION: NODE_MIN_VERSION2 } = require_constants();
 var FileSystemUtils = require_fs();
-var PromptUtils = require_prompt();
+var PromptUtils2 = require_prompt();
 var version = require_package().version;
 
-exports.BOTS = BOTS;
-exports.CeliaAssistant = CeliaAssistant;
-exports.CommandRouter = CommandRouter;
+exports.BOTS = BOTS2;
+exports.CeliaAssistant = CeliaAssistant2;
+exports.CommandRouter = CommandRouter2;
 exports.FileSystemUtils = FileSystemUtils;
-exports.Logger = Logger;
-exports.NODE_MIN_VERSION = NODE_MIN_VERSION;
-exports.PromptUtils = PromptUtils;
-exports.SecurityUtils = SecurityUtils;
-exports.SystemDetector = SystemDetector;
-exports.THEMES = THEMES;
-exports.VERSION = VERSION;
+exports.Logger = Logger2;
+exports.NODE_MIN_VERSION = NODE_MIN_VERSION2;
+exports.PromptUtils = PromptUtils2;
+exports.SecurityUtils = SecurityUtils2;
+exports.SystemDetector = SystemDetector2;
+exports.THEMES = THEMES2;
+exports.VERSION = VERSION2;
 exports.version = version;
 //# sourceMappingURL=index.js.map
 //# sourceMappingURL=index.js.map

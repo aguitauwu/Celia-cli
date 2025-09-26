@@ -2,15 +2,19 @@
  * 🌸 Celia's command router
  */
 
-class CommandRouter {
+import { ICommand, ICommandDefinition, ICommandRouter } from '../types/command';
+
+export class CommandRouter implements ICommandRouter {
+  public commands: Map<string, ICommandDefinition>;
+
   constructor() {
-    this.commands = new Map();
+    this.commands = new Map<string, ICommandDefinition>();
   }
   
   /**
    * Register a command
    */
-  register(name, config) {
+  register(name: string, config: ICommandDefinition): void {
     if (!name || !config || typeof config.action !== 'function') {
       throw new Error('Invalid command configuration');
     }
@@ -26,14 +30,17 @@ class CommandRouter {
   /**
    * Get command by name or alias
    */
-  getCommand(name) {
+  getCommand(name: string): ICommand | null {
     if (this.commands.has(name)) {
-      return { name, config: this.commands.get(name) };
+      const config = this.commands.get(name);
+      if (config) {
+        return { name, config };
+      }
     }
     
     // Search by alias
     for (const [cmdName, config] of this.commands.entries()) {
-      if (config.aliases.includes(name)) {
+      if (config.aliases && config.aliases.includes(name)) {
         return { name: cmdName, config };
       }
     }
@@ -44,7 +51,7 @@ class CommandRouter {
   /**
    * Execute command
    */
-  async execute(commandName, args = []) {
+  async execute(commandName: string, args: string[] = []): Promise<void> {
     const command = this.getCommand(commandName);
     
     if (!command) {
@@ -54,24 +61,25 @@ class CommandRouter {
     try {
       await command.config.action(args);
     } catch (error) {
-      throw new Error(`Error executing ${command.name}: ${error.message}`);
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(`Error executing ${command.name}: ${message}`);
     }
   }
   
   /**
    * Get all commands
    */
-  getCommands() {
+  getCommands(): Map<string, ICommandDefinition> {
     return this.commands;
   }
   
   /**
    * Get command suggestions for autocompletion
    */
-  getSuggestions(input) {
+  getSuggestions(input: string): string[] {
     if (!input) return [];
     
-    const allCommands = [];
+    const allCommands: string[] = [];
     
     // Add command names
     for (const [name] of this.commands) {
@@ -80,7 +88,9 @@ class CommandRouter {
     
     // Add aliases
     for (const [, config] of this.commands) {
-      allCommands.push(...config.aliases);
+      if (config.aliases) {
+        allCommands.push(...config.aliases);
+      }
     }
     
     return allCommands
@@ -91,9 +101,9 @@ class CommandRouter {
   /**
    * Check if command exists
    */
-  hasCommand(name) {
+  hasCommand(name: string): boolean {
     return this.getCommand(name) !== null;
   }
 }
 
-module.exports = CommandRouter;
+export default CommandRouter;
