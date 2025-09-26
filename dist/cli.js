@@ -2,9 +2,11 @@
 'use strict';
 
 var os = require('os');
-var fs = require('fs');
+var fs3 = require('fs');
 var child_process = require('child_process');
 var readline = require('readline');
+var path2 = require('path');
+var crypto = require('crypto');
 
 function _interopNamespace(e) {
   if (e && e.__esModule) return e;
@@ -25,8 +27,10 @@ function _interopNamespace(e) {
 }
 
 var os__namespace = /*#__PURE__*/_interopNamespace(os);
-var fs__namespace = /*#__PURE__*/_interopNamespace(fs);
+var fs3__namespace = /*#__PURE__*/_interopNamespace(fs3);
 var readline__namespace = /*#__PURE__*/_interopNamespace(readline);
+var path2__namespace = /*#__PURE__*/_interopNamespace(path2);
+var crypto__namespace = /*#__PURE__*/_interopNamespace(crypto);
 
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -522,7 +526,7 @@ var _SystemDetector = class _SystemDetector {
    */
   detectContainerEnvironment() {
     try {
-      return !!(process.env.container || process.env.DOCKER_CONTAINER || process.env.KUBERNETES_SERVICE_HOST || fs__namespace.existsSync("/.dockerenv") || fs__namespace.existsSync("/proc/1/cgroup") && fs__namespace.readFileSync("/proc/1/cgroup", "utf8").includes("docker"));
+      return !!(process.env.container || process.env.DOCKER_CONTAINER || process.env.KUBERNETES_SERVICE_HOST || fs3__namespace.existsSync("/.dockerenv") || fs3__namespace.existsSync("/proc/1/cgroup") && fs3__namespace.readFileSync("/proc/1/cgroup", "utf8").includes("docker"));
     } catch (error) {
       return false;
     }
@@ -547,8 +551,8 @@ var _SystemDetector = class _SystemDetector {
   detectCpuFeatures() {
     const features = [];
     try {
-      if (this.platform.raw === "linux" && fs__namespace.existsSync("/proc/cpuinfo")) {
-        const cpuinfo = fs__namespace.readFileSync("/proc/cpuinfo", "utf8");
+      if (this.platform.raw === "linux" && fs3__namespace.existsSync("/proc/cpuinfo")) {
+        const cpuinfo = fs3__namespace.readFileSync("/proc/cpuinfo", "utf8");
         if (cpuinfo.includes("sse")) features.push("SSE");
         if (cpuinfo.includes("sse2")) features.push("SSE2");
         if (cpuinfo.includes("avx")) features.push("AVX");
@@ -791,10 +795,10 @@ var _SecurityUtils = class _SecurityUtils {
       return false;
     }
     try {
-      const path = __require("path");
-      const resolved = path.resolve(filePath);
-      const allowed = path.resolve(allowedDir);
-      return resolved.startsWith(allowed + path.sep) || resolved === allowed;
+      const path4 = __require("path");
+      const resolved = path4.resolve(filePath);
+      const allowed = path4.resolve(allowedDir);
+      return resolved.startsWith(allowed + path4.sep) || resolved === allowed;
     } catch (error) {
       return false;
     }
@@ -803,8 +807,8 @@ var _SecurityUtils = class _SecurityUtils {
    * 🛡️ Genera hash seguro para identificación
    */
   static generateSafeHash(input) {
-    const crypto = __require("crypto");
-    return crypto.createHash("sha256").update(input).digest("hex").substring(0, 16);
+    const crypto2 = __require("crypto");
+    return crypto2.createHash("sha256").update(input).digest("hex").substring(0, 16);
   }
   /**
    * 🛡️ Valida formato de email básico
@@ -1426,6 +1430,1550 @@ var _StatusCommand = class _StatusCommand {
 __name(_StatusCommand, "StatusCommand");
 var StatusCommand = _StatusCommand;
 
+// src/cli/commands/monitor.ts
+init_cjs_shims();
+
+// src/services/monitor.ts
+init_cjs_shims();
+var _BotMonitor = class _BotMonitor {
+  constructor(logger, config) {
+    this.isRunning = false;
+    this.botStatuses = /* @__PURE__ */ new Map();
+    this.logger = logger;
+    this.config = {
+      refreshInterval: 5e3,
+      // 5 segundos
+      maxLogLines: 50,
+      enableNotifications: true,
+      watchPaths: [],
+      ...config
+    };
+  }
+  /**
+   * 🚀 Iniciar monitoreo en tiempo real
+   */
+  async startMonitoring() {
+    if (this.isRunning) {
+      this.logger.warning("El monitor ya est\xE1 en ejecuci\xF3n");
+      return;
+    }
+    this.isRunning = true;
+    this.logger.success("\u{1F50D} Iniciando monitor de hermanas bot...");
+    await this.showMonitorBanner();
+    await this.initializeBotStatuses();
+    this.startMonitorLoop();
+    await this.displayDashboard();
+    this.logger.info("\u2705 Monitor en tiempo real activo");
+  }
+  /**
+   * ⏹️ Detener monitoreo
+   */
+  stopMonitoring() {
+    if (!this.isRunning) return;
+    this.isRunning = false;
+    if (this.monitorInterval) {
+      clearInterval(this.monitorInterval);
+    }
+    this.logger.info("\u{1F6D1} Monitor detenido");
+  }
+  /**
+   * 🔄 Loop principal de monitoreo
+   */
+  startMonitorLoop() {
+    this.monitorInterval = setInterval(async () => {
+      if (!this.isRunning) return;
+      await this.updateBotStatuses();
+      await this.displayDashboard();
+      this.checkAlerts();
+    }, this.config.refreshInterval);
+  }
+  /**
+   * 📊 Mostrar dashboard en tiempo real
+   */
+  async displayDashboard() {
+    console.clear();
+    this.logger.gradientLog("\u{1F50D} Monitor en Tiempo Real de Hermanas Bot", ["primary", "accent"]);
+    console.log("");
+    const timestamp = (/* @__PURE__ */ new Date()).toLocaleTimeString();
+    this.logger.log(`\u23F0 \xDAltima actualizaci\xF3n: ${timestamp}`, "dim");
+    console.log("");
+    await this.showGeneralStats();
+    await this.showBotStatuses();
+    this.showMonitorCommands();
+  }
+  /**
+   * 📈 Mostrar estadísticas generales
+   */
+  async showGeneralStats() {
+    const totalBots = this.botStatuses.size;
+    const runningBots = Array.from(this.botStatuses.values()).filter((b) => b.status === "running").length;
+    const stoppedBots = Array.from(this.botStatuses.values()).filter((b) => b.status === "stopped").length;
+    const errorBots = Array.from(this.botStatuses.values()).filter((b) => b.status === "error").length;
+    const stats = [
+      `\u{1F4CA} Total de Hermanas: ${totalBots}`,
+      `\u{1F7E2} Activas: ${runningBots}`,
+      `\u{1F534} Detenidas: ${stoppedBots}`,
+      `\u26A0\uFE0F  Con Errores: ${errorBots}`,
+      `\u{1F4E1} Intervalo: ${this.config.refreshInterval / 1e3}s`
+    ];
+    this.logger.createBox(stats, "info", 1);
+    console.log("");
+  }
+  /**
+   * 🤖 Mostrar estado de cada hermana bot
+   */
+  async showBotStatuses() {
+    this.logger.log("\u{1F338} Estado de las Hermanas:", "accent");
+    console.log("");
+    for (const [botKey, status] of this.botStatuses.entries()) {
+      const bot = BOTS[botKey];
+      if (!bot) continue;
+      const statusIcon = this.getStatusIcon(status.status);
+      const statusColor = this.getStatusColor(status.status);
+      const uptime = status.uptime ? this.formatUptime(status.uptime) : "N/A";
+      const memory = status.memory ? `${(status.memory / 1024 / 1024).toFixed(1)}MB` : "N/A";
+      const statusInfo = [
+        `${statusIcon} ${bot.name} (${bot.language})`,
+        `   Estado: ${status.status}`,
+        `   Tiempo activo: ${uptime}`,
+        `   Memoria: ${memory}`,
+        `   \xDAltima verificaci\xF3n: ${status.lastCheck.toLocaleTimeString()}`
+      ];
+      if (status.errors && status.errors.length > 0) {
+        statusInfo.push(`   \u26A0\uFE0F \xDAltimos errores: ${status.errors.slice(-2).join(", ")}`);
+      }
+      this.logger.createBox(statusInfo, statusColor, 1);
+      console.log("");
+    }
+  }
+  /**
+   * ⌨️ Mostrar comandos disponibles del monitor
+   */
+  showMonitorCommands() {
+    const commands = [
+      "\u2328\uFE0F  Comandos disponibles:",
+      "   [q] Salir del monitor",
+      "   [r] Refrescar manualmente",
+      "   [c] Configurar intervalo",
+      "   [l] Ver logs detallados",
+      "   [s] Iniciar/detener hermana"
+    ];
+    this.logger.createBox(commands, "warning", 1);
+  }
+  /**
+   * 🔄 Actualizar estados de los bots
+   */
+  async updateBotStatuses() {
+    for (const botKey of Object.keys(BOTS)) {
+      try {
+        const status = await this.checkBotStatus(botKey);
+        this.botStatuses.set(botKey, status);
+      } catch (error) {
+        const currentStatus = this.botStatuses.get(botKey);
+        if (currentStatus) {
+          currentStatus.status = "error";
+          currentStatus.lastCheck = /* @__PURE__ */ new Date();
+          if (!currentStatus.errors) currentStatus.errors = [];
+          currentStatus.errors.push(error instanceof Error ? error.message : String(error));
+          currentStatus.errors = currentStatus.errors.slice(-5);
+        }
+      }
+    }
+  }
+  /**
+   * 🔍 Verificar estado de un bot específico
+   */
+  async checkBotStatus(botKey) {
+    const bot = BOTS[botKey];
+    if (!bot) {
+      throw new Error(`Bot ${botKey} no encontrado`);
+    }
+    const possiblePaths = [
+      `./${bot.name.toLowerCase()}-bot`,
+      `./${botKey}-bot`,
+      `./${bot.name.toLowerCase()}`,
+      `./${botKey}`
+    ];
+    let botPath = null;
+    for (const pathCandidate of possiblePaths) {
+      if (fs3__namespace.existsSync(pathCandidate)) {
+        botPath = pathCandidate;
+        break;
+      }
+    }
+    const status = {
+      name: bot.name,
+      status: "unknown",
+      lastCheck: /* @__PURE__ */ new Date(),
+      logs: [],
+      errors: []
+    };
+    if (!botPath) {
+      status.status = "stopped";
+      status.errors = ["Directorio del bot no encontrado"];
+      return status;
+    }
+    const packageJsonPath = path2__namespace.join(botPath, "package.json");
+    const hasPackageJson = fs3__namespace.existsSync(packageJsonPath);
+    if (hasPackageJson) {
+      const nodeModulesPath = path2__namespace.join(botPath, "node_modules");
+      const hasNodeModules = fs3__namespace.existsSync(nodeModulesPath);
+      if (!hasNodeModules) {
+        status.status = "stopped";
+        status.errors = ["Dependencias no instaladas"];
+        return status;
+      }
+      const envPath = path2__namespace.join(botPath, ".env");
+      const hasEnv = fs3__namespace.existsSync(envPath);
+      if (!hasEnv) {
+        status.status = "stopped";
+        status.errors = ["Archivo .env no encontrado"];
+        return status;
+      }
+      try {
+        const envContent = fs3__namespace.readFileSync(envPath, "utf8");
+        const requiredVars = bot.envVars.filter((v) => v.required).map((v) => v.name);
+        const missingVars = requiredVars.filter((varName) => !envContent.includes(`${varName}=`));
+        if (missingVars.length > 0) {
+          status.status = "error";
+          status.errors = [`Variables faltantes: ${missingVars.join(", ")}`];
+          return status;
+        }
+      } catch (error) {
+        status.status = "error";
+        status.errors = ["Error leyendo .env"];
+        return status;
+      }
+      status.status = "stopped";
+    } else {
+      status.status = "stopped";
+      status.errors = ["package.json no encontrado"];
+    }
+    return status;
+  }
+  /**
+   * ⚠️ Verificar alertas y notificar
+   */
+  checkAlerts() {
+    if (!this.config.enableNotifications) return;
+    for (const [botKey, status] of this.botStatuses.entries()) {
+      if (status.status === "error" && status.errors && status.errors.length > 0) {
+        this.logger.fireLog(`\u26A0\uFE0F ${status.name} tiene errores: ${status.errors[status.errors.length - 1]}`, "error");
+      }
+    }
+  }
+  /**
+   * 🔧 Inicializar estados de los bots
+   */
+  async initializeBotStatuses() {
+    for (const botKey of Object.keys(BOTS)) {
+      const bot = BOTS[botKey];
+      if (!bot) continue;
+      this.botStatuses.set(botKey, {
+        name: bot.name,
+        status: "unknown",
+        lastCheck: /* @__PURE__ */ new Date(),
+        logs: [],
+        errors: []
+      });
+    }
+  }
+  /**
+   * 🎨 Banner del monitor
+   */
+  async showMonitorBanner() {
+    this.logger.gradientLog("\u{1F50D} Monitor de Hermanas Bot", ["primary", "secondary"]);
+    await this.logger.typeText("Iniciando sistemas de monitoreo...", "info", 30);
+    await this.logger.showLoading("Preparando dashboard", 1500);
+  }
+  /**
+   * 🎯 Obtener icono de estado
+   */
+  getStatusIcon(status) {
+    const icons = {
+      running: "\u{1F7E2}",
+      stopped: "\u{1F534}",
+      error: "\u26A0\uFE0F",
+      unknown: "\u26AB"
+    };
+    return icons[status] || icons.unknown;
+  }
+  /**
+   * 🎨 Obtener color de estado
+   */
+  getStatusColor(status) {
+    const colors = {
+      running: "success",
+      stopped: "dim",
+      error: "error",
+      unknown: "warning"
+    };
+    return colors[status] || colors.unknown;
+  }
+  /**
+   * ⏰ Formatear tiempo de actividad
+   */
+  formatUptime(uptimeMs) {
+    const seconds = Math.floor(uptimeMs / 1e3);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    if (days > 0) return `${days}d ${hours % 24}h`;
+    if (hours > 0) return `${hours}h ${minutes % 60}m`;
+    if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
+    return `${seconds}s`;
+  }
+  /**
+   * 📊 Obtener estadísticas del monitor
+   */
+  getStats() {
+    const statuses = Array.from(this.botStatuses.values());
+    return {
+      total: statuses.length,
+      running: statuses.filter((s) => s.status === "running").length,
+      stopped: statuses.filter((s) => s.status === "stopped").length,
+      errors: statuses.filter((s) => s.status === "error").length
+    };
+  }
+};
+__name(_BotMonitor, "BotMonitor");
+var BotMonitor = _BotMonitor;
+
+// src/cli/commands/monitor.ts
+var _MonitorCommand = class _MonitorCommand {
+  constructor(logger, system, prompt) {
+    this.logger = logger;
+    this.system = system;
+    this.prompt = prompt;
+  }
+  async execute(args) {
+    const action = (args == null ? void 0 : args[0]) || "start";
+    switch (action.toLowerCase()) {
+      case "start":
+        await this.startMonitor();
+        break;
+      case "stop":
+        await this.stopMonitor();
+        break;
+      case "status":
+        await this.showMonitorStatus();
+        break;
+      case "config":
+        await this.configureMonitor();
+        break;
+      default:
+        this.showUsage();
+    }
+  }
+  async startMonitor() {
+    if (this.monitor) {
+      this.logger.warning("El monitor ya est\xE1 en ejecuci\xF3n");
+      return;
+    }
+    this.monitor = new BotMonitor(this.logger);
+    try {
+      await this.monitor.startMonitoring();
+      await this.handleMonitorInteraction();
+    } catch (error) {
+      this.logger.error(`Error iniciando monitor: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+  async stopMonitor() {
+    if (!this.monitor) {
+      this.logger.warning("El monitor no est\xE1 en ejecuci\xF3n");
+      return;
+    }
+    this.monitor.stopMonitoring();
+    this.monitor = void 0;
+    this.logger.success("Monitor detenido");
+  }
+  async showMonitorStatus() {
+    if (!this.monitor) {
+      this.logger.warning("El monitor no est\xE1 en ejecuci\xF3n");
+      return;
+    }
+    const stats = this.monitor.getStats();
+    const statusInfo = [
+      "\u{1F4CA} Estado del Monitor:",
+      "",
+      `\u{1F916} Total de hermanas: ${stats.total}`,
+      `\u{1F7E2} Activas: ${stats.running}`,
+      `\u{1F534} Detenidas: ${stats.stopped}`,
+      `\u26A0\uFE0F Con errores: ${stats.errors}`
+    ];
+    this.logger.createBox(statusInfo, "info", 1);
+  }
+  async configureMonitor() {
+    this.logger.info("\u{1F527} Configuraci\xF3n del monitor");
+    console.log("");
+    this.logger.log("Opciones disponibles:", "accent");
+    this.logger.log("  1. Cambiar intervalo de actualizaci\xF3n", "dim");
+    this.logger.log("  2. Activar/desactivar notificaciones", "dim");
+    this.logger.log("  3. Configurar rutas de monitoreo", "dim");
+    this.logger.info("\u{1F4A1} Configuraci\xF3n avanzada disponible pr\xF3ximamente");
+  }
+  async handleMonitorInteraction() {
+    this.logger.info("\u{1F4A1} Presiona [q] para salir del monitor...");
+    while (true) {
+      try {
+        const input = await this.prompt.question("");
+        if (input.toLowerCase() === "q" || input.toLowerCase() === "quit") {
+          await this.stopMonitor();
+          break;
+        }
+        if (input.toLowerCase() === "r" || input.toLowerCase() === "refresh") {
+          this.logger.info("\u{1F504} Actualizando monitor...");
+          continue;
+        }
+      } catch (error) {
+        break;
+      }
+    }
+  }
+  showUsage() {
+    this.logger.createBox([
+      "\u{1F50D} Comando Monitor - Monitoreo en tiempo real",
+      "",
+      "Uso:",
+      "  celia monitor [comando]",
+      "",
+      "Comandos disponibles:",
+      "  start    - Iniciar monitor en tiempo real",
+      "  stop     - Detener monitor",
+      "  status   - Ver estado del monitor",
+      "  config   - Configurar monitor",
+      "",
+      "Ejemplo:",
+      "  celia monitor start"
+    ], "primary", 1);
+  }
+};
+__name(_MonitorCommand, "MonitorCommand");
+var MonitorCommand = _MonitorCommand;
+
+// src/cli/commands/backup.ts
+init_cjs_shims();
+
+// src/services/backup.ts
+init_cjs_shims();
+var _BackupManager = class _BackupManager {
+  constructor(logger, backupDir = "./celia-backups") {
+    this.logger = logger;
+    this.backupDir = backupDir;
+    this.metadataFile = path2__namespace.join(backupDir, "backup-metadata.json");
+    this.ensureBackupDirectory();
+  }
+  /**
+   * 💾 Crear backup completo de todas las configuraciones
+   */
+  async createFullBackup(name, description) {
+    const backupName = name || `backup_${(/* @__PURE__ */ new Date()).toISOString().replace(/[:.]/g, "-")}`;
+    this.logger.gradientLog("\u{1F4BE} Creando backup completo...", ["primary", "accent"]);
+    await this.logger.showLoading("Recopilando configuraciones", 2e3);
+    const backup = {
+      name: backupName,
+      timestamp: /* @__PURE__ */ new Date(),
+      botConfigs: [],
+      metadata: {
+        version: "1.0.0",
+        celiaVersion: "2.0.0",
+        systemInfo: this.getSystemInfo()
+      }
+    };
+    for (const [botKey, bot] of Object.entries(BOTS)) {
+      try {
+        const botBackup = await this.backupBot(botKey, bot);
+        if (botBackup) {
+          backup.botConfigs.push(botBackup);
+        }
+      } catch (error) {
+        this.logger.warning(`\u26A0\uFE0F No se pudo respaldar ${bot.name}: ${error instanceof Error ? error.message : error}`);
+      }
+    }
+    const backupId = this.generateBackupId();
+    const backupFilePath = path2__namespace.join(this.backupDir, `${backupId}.json`);
+    await fs3__namespace.promises.writeFile(backupFilePath, JSON.stringify(backup, null, 2), "utf8");
+    await this.updateBackupMetadata({
+      id: backupId,
+      name: backupName,
+      timestamp: backup.timestamp,
+      size: (await fs3__namespace.promises.stat(backupFilePath)).size,
+      botCount: backup.botConfigs.length,
+      description
+    });
+    this.logger.success(`\u2705 Backup creado exitosamente: ${backupId}`);
+    this.logger.info(`\u{1F4C1} Ubicaci\xF3n: ${backupFilePath}`);
+    this.logger.info(`\u{1F916} Hermanas respaldadas: ${backup.botConfigs.length}`);
+    return backupId;
+  }
+  /**
+   * 🔄 Restaurar backup completo
+   */
+  async restoreBackup(backupId, restoreOptions) {
+    const options = {
+      overwriteExisting: false,
+      createBackupBeforeRestore: true,
+      ...restoreOptions
+    };
+    this.logger.gradientLog("\u{1F504} Restaurando backup...", ["accent", "primary"]);
+    if (options.createBackupBeforeRestore) {
+      this.logger.info("\u{1F4DD} Creando backup de respaldo antes de restaurar...");
+      await this.createFullBackup(`pre_restore_${Date.now()}`, "Backup autom\xE1tico antes de restaurar");
+    }
+    const backupFilePath = path2__namespace.join(this.backupDir, `${backupId}.json`);
+    if (!fs3__namespace.existsSync(backupFilePath)) {
+      throw new Error(`Backup ${backupId} no encontrado`);
+    }
+    const backupContent = await fs3__namespace.promises.readFile(backupFilePath, "utf8");
+    const backup = JSON.parse(backupContent);
+    this.logger.info(`\u{1F4C5} Backup del: ${backup.timestamp}`);
+    this.logger.info(`\u{1F916} Hermanas a restaurar: ${backup.botConfigs.length}`);
+    await this.logger.showLoading("Restaurando configuraciones", 1500);
+    for (const botBackup of backup.botConfigs) {
+      if (options.selectiveBots && !options.selectiveBots.includes(botBackup.botKey)) {
+        continue;
+      }
+      try {
+        await this.restoreBot(botBackup, options.overwriteExisting);
+        this.logger.success(`\u2705 ${botBackup.botName} restaurado`);
+      } catch (error) {
+        this.logger.error(`\u274C Error restaurando ${botBackup.botName}: ${error instanceof Error ? error.message : error}`);
+      }
+    }
+    this.logger.sparkleLog("\u{1F389} Restauraci\xF3n completada!", "success");
+  }
+  /**
+   * 📋 Listar todos los backups disponibles
+   */
+  async listBackups() {
+    if (!fs3__namespace.existsSync(this.metadataFile)) {
+      return [];
+    }
+    const metadataContent = await fs3__namespace.promises.readFile(this.metadataFile, "utf8");
+    const metadata = JSON.parse(metadataContent);
+    return metadata.backups || [];
+  }
+  /**
+   * 🗑️ Eliminar backup
+   */
+  async deleteBackup(backupId) {
+    const backupFilePath = path2__namespace.join(this.backupDir, `${backupId}.json`);
+    if (!fs3__namespace.existsSync(backupFilePath)) {
+      throw new Error(`Backup ${backupId} no encontrado`);
+    }
+    await fs3__namespace.promises.unlink(backupFilePath);
+    const backups = await this.listBackups();
+    const filteredBackups = backups.filter((b) => b.id !== backupId);
+    await this.saveBackupMetadata(filteredBackups);
+    this.logger.success(`\u{1F5D1}\uFE0F Backup ${backupId} eliminado`);
+  }
+  /**
+   * 📊 Mostrar dashboard de backups
+   */
+  async showBackupDashboard() {
+    var _a;
+    console.clear();
+    this.logger.gradientLog("\u{1F5C4}\uFE0F Sistema de Backup de Celia", ["primary", "secondary"]);
+    console.log("");
+    const backups = await this.listBackups();
+    if (backups.length === 0) {
+      this.logger.warning("\u{1F4ED} No hay backups disponibles");
+      this.logger.info("\u{1F4A1} Crea tu primer backup con: celia backup create");
+      return;
+    }
+    const totalSize = backups.reduce((sum, backup) => sum + backup.size, 0);
+    const stats = [
+      `\u{1F4CA} Total de Backups: ${backups.length}`,
+      `\u{1F4BE} Espacio usado: ${this.formatFileSize(totalSize)}`,
+      `\u{1F4C5} \xDAltimo backup: ${((_a = backups[0]) == null ? void 0 : _a.timestamp) ? new Date(backups[0].timestamp).toLocaleString() : "N/A"}`,
+      `\u{1F4CD} Directorio: ${this.backupDir}`
+    ];
+    this.logger.createBox(stats, "info", 1);
+    console.log("");
+    this.logger.log("\u{1F4CB} Backups Disponibles:", "accent");
+    console.log("");
+    const sortedBackups = backups.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    for (const backup of sortedBackups.slice(0, 10)) {
+      const age = this.getTimeAgo(new Date(backup.timestamp));
+      const backupInfo = [
+        `\u{1F194} ID: ${backup.id}`,
+        `\u{1F4DD} Nombre: ${backup.name}`,
+        `\u{1F4C5} Fecha: ${new Date(backup.timestamp).toLocaleString()}`,
+        `\u23F0 Antig\xFCedad: ${age}`,
+        `\u{1F916} Hermanas: ${backup.botCount}`,
+        `\u{1F4BE} Tama\xF1o: ${this.formatFileSize(backup.size)}`,
+        ...backup.description ? [`\u{1F4C4} Descripci\xF3n: ${backup.description}`] : []
+      ];
+      this.logger.createBox(backupInfo, "primary", 1);
+      console.log("");
+    }
+    if (sortedBackups.length > 10) {
+      this.logger.log(`... y ${sortedBackups.length - 10} backups m\xE1s`, "dim");
+      console.log("");
+    }
+    const commands = [
+      "\u2328\uFE0F  Comandos disponibles:",
+      "   celia backup create [nombre] - Crear nuevo backup",
+      "   celia backup restore <id> - Restaurar backup",
+      "   celia backup list - Ver todos los backups",
+      "   celia backup delete <id> - Eliminar backup",
+      "   celia backup info <id> - Ver detalles de backup"
+    ];
+    this.logger.createBox(commands, "warning", 1);
+  }
+  /**
+   * 🤖 Respaldar configuración de una hermana específica
+   */
+  async backupBot(botKey, bot) {
+    const possiblePaths = [
+      `./${bot.name.toLowerCase()}-bot`,
+      `./${botKey}-bot`,
+      `./${bot.name.toLowerCase()}`,
+      `./${botKey}`
+    ];
+    let botPath = null;
+    for (const pathCandidate of possiblePaths) {
+      if (fs3__namespace.existsSync(pathCandidate)) {
+        botPath = pathCandidate;
+        break;
+      }
+    }
+    if (!botPath) {
+      this.logger.warning(`\u{1F4C1} Directorio no encontrado para ${bot.name}`);
+      return null;
+    }
+    const backup = {
+      botKey,
+      botName: bot.name,
+      envVars: {},
+      configFiles: []
+    };
+    const envPath = path2__namespace.join(botPath, ".env");
+    if (fs3__namespace.existsSync(envPath)) {
+      const envContent = await fs3__namespace.promises.readFile(envPath, "utf8");
+      const envVars = this.parseEnvFile(envContent);
+      backup.envVars = envVars;
+    }
+    const configFiles = [".env", ".env.example", "config.json", "config.js", "config.ts"];
+    for (const filename of configFiles) {
+      const filePath = path2__namespace.join(botPath, filename);
+      if (fs3__namespace.existsSync(filePath)) {
+        const content = await fs3__namespace.promises.readFile(filePath, "utf8");
+        const checksum = crypto__namespace.createHash("md5").update(content).digest("hex");
+        backup.configFiles.push({
+          filename,
+          content,
+          checksum
+        });
+      }
+    }
+    const packageJsonPath = path2__namespace.join(botPath, "package.json");
+    if (fs3__namespace.existsSync(packageJsonPath)) {
+      const packageContent = await fs3__namespace.promises.readFile(packageJsonPath, "utf8");
+      backup.installedDependencies = JSON.parse(packageContent);
+    }
+    return backup;
+  }
+  /**
+   * 🔄 Restaurar configuración de una hermana específica
+   */
+  async restoreBot(botBackup, overwriteExisting) {
+    const bot = BOTS[botBackup.botKey];
+    if (!bot) {
+      throw new Error(`Configuraci\xF3n del bot ${botBackup.botKey} no encontrada`);
+    }
+    const botDirName = `${bot.name.toLowerCase()}-bot`;
+    const botPath = `./${botDirName}`;
+    if (!fs3__namespace.existsSync(botPath)) {
+      this.logger.info(`\u{1F4C1} Creando directorio para ${bot.name}...`);
+      await fs3__namespace.promises.mkdir(botPath, { recursive: true });
+    }
+    for (const fileBackup of botBackup.configFiles) {
+      const filePath = path2__namespace.join(botPath, fileBackup.filename);
+      if (fs3__namespace.existsSync(filePath) && !overwriteExisting) {
+        this.logger.warning(`\u26A0\uFE0F Archivo ${fileBackup.filename} ya existe, saltando...`);
+        continue;
+      }
+      const expectedChecksum = crypto__namespace.createHash("md5").update(fileBackup.content).digest("hex");
+      if (expectedChecksum !== fileBackup.checksum) {
+        this.logger.error(`\u274C Checksum inv\xE1lido para ${fileBackup.filename}`);
+        continue;
+      }
+      await fs3__namespace.promises.writeFile(filePath, fileBackup.content, "utf8");
+      this.logger.info(`\u2705 Restaurado: ${fileBackup.filename}`);
+    }
+    this.logger.success(`\u{1F389} ${botBackup.botName} restaurado exitosamente`);
+  }
+  /**
+   * 🔧 Utilidades privadas
+   */
+  ensureBackupDirectory() {
+    if (!fs3__namespace.existsSync(this.backupDir)) {
+      fs3__namespace.mkdirSync(this.backupDir, { recursive: true });
+    }
+  }
+  generateBackupId() {
+    return `backup_${Date.now()}_${crypto__namespace.randomBytes(4).toString("hex")}`;
+  }
+  getSystemInfo() {
+    return {
+      platform: process.platform,
+      arch: process.arch,
+      nodeVersion: process.version,
+      timestamp: (/* @__PURE__ */ new Date()).toISOString()
+    };
+  }
+  parseEnvFile(content) {
+    const envVars = {};
+    const lines = content.split("\n");
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (trimmed && !trimmed.startsWith("#")) {
+        const [key, ...valueParts] = trimmed.split("=");
+        if (key && valueParts.length > 0) {
+          envVars[key.trim()] = valueParts.join("=").trim();
+        }
+      }
+    }
+    return envVars;
+  }
+  async updateBackupMetadata(metadata) {
+    const backups = await this.listBackups();
+    backups.unshift(metadata);
+    await this.saveBackupMetadata(backups);
+  }
+  async saveBackupMetadata(backups) {
+    const metadata = { backups };
+    await fs3__namespace.promises.writeFile(this.metadataFile, JSON.stringify(metadata, null, 2), "utf8");
+  }
+  formatFileSize(bytes) {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+  }
+  getTimeAgo(date) {
+    const now = /* @__PURE__ */ new Date();
+    const diff = now.getTime() - date.getTime();
+    const minutes = Math.floor(diff / 6e4);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    if (days > 0) return `hace ${days} d\xEDa${days > 1 ? "s" : ""}`;
+    if (hours > 0) return `hace ${hours} hora${hours > 1 ? "s" : ""}`;
+    if (minutes > 0) return `hace ${minutes} minuto${minutes > 1 ? "s" : ""}`;
+    return "hace menos de un minuto";
+  }
+};
+__name(_BackupManager, "BackupManager");
+var BackupManager = _BackupManager;
+
+// src/cli/commands/backup.ts
+var _BackupCommand = class _BackupCommand {
+  constructor(logger, prompt) {
+    this.logger = logger;
+    this.prompt = prompt;
+    this.backupManager = new BackupManager(logger);
+  }
+  async execute(args) {
+    const action = (args == null ? void 0 : args[0]) || "dashboard";
+    const param = args == null ? void 0 : args[1];
+    switch (action.toLowerCase()) {
+      case "create":
+        await this.createBackup(param, args == null ? void 0 : args[2]);
+        break;
+      case "restore":
+        await this.restoreBackup(param);
+        break;
+      case "list":
+        await this.listBackups();
+        break;
+      case "delete":
+        await this.deleteBackup(param);
+        break;
+      case "info":
+        await this.showBackupInfo(param);
+        break;
+      case "dashboard":
+      default:
+        await this.showDashboard();
+        break;
+    }
+  }
+  async createBackup(name, description) {
+    try {
+      if (!name) {
+        name = await this.prompt.question("\u{1F3F7}\uFE0F Nombre del backup (opcional): ");
+      }
+      if (!description) {
+        description = await this.prompt.question("\u{1F4DD} Descripci\xF3n (opcional): ");
+      }
+      const backupId = await this.backupManager.createFullBackup(
+        name || void 0,
+        description || void 0
+      );
+      console.log("");
+      this.logger.sparkleLog(`\u{1F389} Backup creado exitosamente: ${backupId}`, "success");
+    } catch (error) {
+      this.logger.error(`\u274C Error creando backup: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+  async restoreBackup(backupId) {
+    try {
+      if (!backupId) {
+        const backups = await this.backupManager.listBackups();
+        if (backups.length === 0) {
+          this.logger.warning("\u{1F4ED} No hay backups disponibles");
+          return;
+        }
+        this.logger.log("\u{1F4CB} Backups disponibles:", "accent");
+        backups.slice(0, 5).forEach((backup, index) => {
+          this.logger.log(`  ${index + 1}. ${backup.name} (${backup.id})`, "dim");
+        });
+        backupId = await this.prompt.question("\u{1F194} ID del backup a restaurar: ");
+      }
+      if (!backupId) {
+        this.logger.warning("\u26A0\uFE0F ID de backup requerido");
+        return;
+      }
+      const confirm = await this.prompt.confirm(
+        "\u26A0\uFE0F \xBFEst\xE1s seguro de que deseas restaurar este backup? Esto puede sobrescribir configuraciones actuales",
+        false
+      );
+      if (!confirm) {
+        this.logger.info("Restauraci\xF3n cancelada");
+        return;
+      }
+      await this.backupManager.restoreBackup(backupId, {
+        overwriteExisting: true,
+        createBackupBeforeRestore: true
+      });
+    } catch (error) {
+      this.logger.error(`\u274C Error restaurando backup: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+  async listBackups() {
+    try {
+      const backups = await this.backupManager.listBackups();
+      if (backups.length === 0) {
+        this.logger.warning("\u{1F4ED} No hay backups disponibles");
+        this.logger.info("\u{1F4A1} Crea tu primer backup con: celia backup create");
+        return;
+      }
+      this.logger.gradientLog("\u{1F4CB} Lista de Backups", ["primary", "accent"]);
+      console.log("");
+      backups.forEach((backup, index) => {
+        const backupInfo = [
+          `\u{1F4E6} ${backup.name}`,
+          `\u{1F194} ID: ${backup.id}`,
+          `\u{1F4C5} Fecha: ${new Date(backup.timestamp).toLocaleString()}`,
+          `\u{1F916} Hermanas: ${backup.botCount}`,
+          `\u{1F4BE} Tama\xF1o: ${this.formatFileSize(backup.size)}`,
+          ...backup.description ? [`\u{1F4C4} ${backup.description}`] : []
+        ];
+        this.logger.createBox(backupInfo, index === 0 ? "success" : "primary", 1);
+        console.log("");
+      });
+    } catch (error) {
+      this.logger.error(`\u274C Error listando backups: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+  async deleteBackup(backupId) {
+    try {
+      if (!backupId) {
+        backupId = await this.prompt.question("\u{1F194} ID del backup a eliminar: ");
+      }
+      if (!backupId) {
+        this.logger.warning("\u26A0\uFE0F ID de backup requerido");
+        return;
+      }
+      const confirm = await this.prompt.confirm(
+        `\u26A0\uFE0F \xBFEst\xE1s seguro de que deseas eliminar el backup ${backupId}?`,
+        false
+      );
+      if (!confirm) {
+        this.logger.info("Eliminaci\xF3n cancelada");
+        return;
+      }
+      await this.backupManager.deleteBackup(backupId);
+    } catch (error) {
+      this.logger.error(`\u274C Error eliminando backup: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+  async showBackupInfo(backupId) {
+    if (!backupId) {
+      backupId = await this.prompt.question("\u{1F194} ID del backup: ");
+    }
+    if (!backupId) {
+      this.logger.warning("\u26A0\uFE0F ID de backup requerido");
+      return;
+    }
+    this.logger.info(`\u2139\uFE0F Informaci\xF3n detallada de backup ${backupId} pr\xF3ximamente`);
+  }
+  async showDashboard() {
+    await this.backupManager.showBackupDashboard();
+  }
+  formatFileSize(bytes) {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+  }
+  showUsage() {
+    this.logger.createBox([
+      "\u{1F5C4}\uFE0F Comando Backup - Gesti\xF3n de respaldos",
+      "",
+      "Uso:",
+      "  celia backup [comando] [par\xE1metros]",
+      "",
+      "Comandos disponibles:",
+      "  dashboard        - Ver dashboard de backups",
+      "  create [nombre]  - Crear nuevo backup",
+      "  restore <id>     - Restaurar backup",
+      "  list             - Listar todos los backups",
+      "  delete <id>      - Eliminar backup",
+      "  info <id>        - Ver informaci\xF3n de backup",
+      "",
+      "Ejemplos:",
+      '  celia backup create "mi_backup"',
+      "  celia backup restore backup_123",
+      "  celia backup list"
+    ], "primary", 1);
+  }
+};
+__name(_BackupCommand, "BackupCommand");
+var BackupCommand = _BackupCommand;
+
+// src/cli/commands/dependencies.ts
+init_cjs_shims();
+
+// src/services/dependency-installer.ts
+init_cjs_shims();
+var _DependencyInstaller = class _DependencyInstaller {
+  constructor(logger, system) {
+    this.logger = logger;
+    this.system = system;
+    this.SYSTEM_DEPENDENCIES = this.initializeSystemDependencies();
+  }
+  /**
+   * 🚀 Instalar todas las dependencias del sistema automáticamente
+   */
+  async installSystemDependencies(interactive = true) {
+    this.logger.gradientLog("\u{1F527} Instalador Autom\xE1tico de Dependencias", ["primary", "accent"]);
+    console.log("");
+    await this.logger.showLoading("Detectando sistema operativo", 1500);
+    this.showSystemInfo();
+    const missingDeps = await this.checkSystemDependencies();
+    if (missingDeps.length === 0) {
+      this.logger.sparkleLog("\u2705 Todas las dependencias est\xE1n instaladas!", "success");
+      return true;
+    }
+    this.logger.warning(`\u26A0\uFE0F Dependencias faltantes: ${missingDeps.length}`);
+    console.log("");
+    this.showMissingDependencies(missingDeps);
+    if (interactive) {
+      console.log("");
+      this.logger.info("\u{1F914} \xBFDeseas que instale las dependencias autom\xE1ticamente?");
+      this.logger.log("   [Y] S\xED, instalar todo autom\xE1ticamente", "success");
+      this.logger.log("   [S] S\xED, pero seleccionar qu\xE9 instalar", "warning");
+      this.logger.log("   [N] No, mostrar instrucciones manuales", "dim");
+    }
+    return await this.performInstallation(missingDeps);
+  }
+  /**
+   * 🔍 Verificar dependencias del sistema
+   */
+  async checkSystemDependencies() {
+    const missing = [];
+    for (const [depName, requirement] of Object.entries(this.SYSTEM_DEPENDENCIES)) {
+      if (!requirement.required) continue;
+      const isInstalled = await this.isDependencyInstalled(depName, requirement);
+      if (!isInstalled) {
+        missing.push(depName);
+      }
+    }
+    return missing;
+  }
+  /**
+   * 🛠️ Realizar instalación de dependencias
+   */
+  async performInstallation(missingDeps) {
+    this.logger.info("\u{1F680} Iniciando instalaci\xF3n autom\xE1tica...");
+    console.log("");
+    let successCount = 0;
+    let failCount = 0;
+    for (const depName of missingDeps) {
+      const requirement = this.SYSTEM_DEPENDENCIES[depName];
+      if (!requirement) continue;
+      try {
+        this.logger.info(`\u{1F4E6} Instalando ${depName}...`);
+        const success = await this.installSingleDependency(depName, requirement);
+        if (success) {
+          this.logger.success(`\u2705 ${depName} instalado correctamente`);
+          successCount++;
+        } else {
+          this.logger.error(`\u274C Fall\xF3 la instalaci\xF3n de ${depName}`);
+          failCount++;
+        }
+      } catch (error) {
+        this.logger.error(`\u274C Error instalando ${depName}: ${error instanceof Error ? error.message : error}`);
+        failCount++;
+      }
+      console.log("");
+    }
+    this.showInstallationSummary(successCount, failCount);
+    return failCount === 0;
+  }
+  /**
+   * 📦 Instalar una dependencia específica
+   */
+  async installSingleDependency(depName, requirement) {
+    const method = this.getInstallMethodForCurrentSystem(requirement);
+    if (!method) {
+      this.logger.error(`No hay m\xE9todo de instalaci\xF3n disponible para ${depName} en ${this.system.platform.name}`);
+      return false;
+    }
+    try {
+      if (method.preInstall) {
+        for (const cmd of method.preInstall) {
+          await this.executeCommand(cmd);
+        }
+      }
+      for (const cmd of method.commands) {
+        await this.executeCommand(cmd);
+      }
+      if (method.postInstall) {
+        for (const cmd of method.postInstall) {
+          await this.executeCommand(cmd);
+        }
+      }
+      if (method.validateCommand) {
+        return await this.validateInstallation(method.validateCommand);
+      }
+      return true;
+    } catch (error) {
+      this.logger.error(`Error ejecutando instalaci\xF3n: ${error instanceof Error ? error.message : error}`);
+      return false;
+    }
+  }
+  /**
+   * ✅ Verificar si una dependencia está instalada
+   */
+  async isDependencyInstalled(depName, requirement) {
+    const method = this.getInstallMethodForCurrentSystem(requirement);
+    if (!method || !method.validateCommand) {
+      try {
+        await SecurityUtils.execSafe(depName, ["--version"], { stdio: "ignore" });
+        return true;
+      } catch {
+        return false;
+      }
+    }
+    return await this.validateInstallation(method.validateCommand);
+  }
+  /**
+   * ✅ Validar que la instalación funcionó
+   */
+  async validateInstallation(validateCommand) {
+    try {
+      const parts = validateCommand.split(" ");
+      const command = parts[0];
+      const args = parts.slice(1);
+      await SecurityUtils.execSafe(command || "", args, { stdio: "ignore" });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+  /**
+   * 🎯 Obtener método de instalación para el sistema actual
+   */
+  getInstallMethodForCurrentSystem(requirement) {
+    const platformName = this.system.platform.name.toLowerCase();
+    const method = requirement.installMethods.find(
+      (m) => m.platform.toLowerCase() === platformName || m.platform === "all"
+    );
+    return method || null;
+  }
+  /**
+   * 🖥️ Mostrar información del sistema
+   */
+  showSystemInfo() {
+    const systemInfo = [
+      `\u{1F5A5}\uFE0F Sistema: ${this.system.platform.name} ${this.system.platform.release}`,
+      `\u2699\uFE0F Arquitectura: ${this.system.architecture.family} ${this.system.architecture.bits}-bit`,
+      `\u{1F527} Procesador: ${this.system.cpu.vendor} (${this.system.cpu.count} cores)`,
+      `\u{1F4F1} Entorno: ${this.getEnvironmentType()}`
+    ];
+    this.logger.createBox(systemInfo, "info", 1);
+    console.log("");
+  }
+  /**
+   * 📋 Mostrar dependencias faltantes
+   */
+  showMissingDependencies(missingDeps) {
+    this.logger.log("\u{1F4CB} Dependencias faltantes:", "error");
+    console.log("");
+    for (const depName of missingDeps) {
+      const requirement = this.SYSTEM_DEPENDENCIES[depName];
+      if (!requirement) continue;
+      const method = this.getInstallMethodForCurrentSystem(requirement);
+      const installCmd = method ? method.commands.join(" && ") : "No disponible para este sistema";
+      const depInfo = [
+        `\u{1F4E6} ${requirement.name}`,
+        `   Requerido: ${requirement.required ? "S\xED" : "No"}`,
+        `   Comando: ${installCmd}`,
+        ...requirement.version ? [`   Versi\xF3n: ${requirement.version}`] : []
+      ];
+      this.logger.createBox(depInfo, "warning", 1);
+      console.log("");
+    }
+  }
+  /**
+   * 📊 Mostrar resumen de instalación
+   */
+  showInstallationSummary(successCount, failCount) {
+    console.log("");
+    this.logger.gradientLog("\u{1F4CA} Resumen de Instalaci\xF3n", ["primary", "secondary"]);
+    const summary = [
+      `\u2705 Instalaciones exitosas: ${successCount}`,
+      `\u274C Instalaciones fallidas: ${failCount}`,
+      `\u{1F4C8} Tasa de \xE9xito: ${Math.round(successCount / (successCount + failCount) * 100)}%`
+    ];
+    const boxStyle = failCount === 0 ? "success" : failCount > successCount ? "error" : "warning";
+    this.logger.createBox(summary, boxStyle, 1);
+    if (failCount > 0) {
+      console.log("");
+      this.logger.warning("\u{1F4A1} Para las dependencias que fallaron, intenta instalarlas manualmente");
+      this.logger.info("\u{1F527} O ejecuta: celia dependencies --manual para ver instrucciones");
+    }
+  }
+  /**
+   * 🏃‍♂️ Ejecutar comando de instalación
+   */
+  async executeCommand(command) {
+    const parts = command.split(" ");
+    const cmd = parts[0];
+    const args = parts.slice(1);
+    if (!cmd) throw new Error("Comando vac\xEDo");
+    await this.logger.showLoading(`Ejecutando: ${command}`, 1e3);
+    try {
+      SecurityUtils.execSafe(cmd, args, { stdio: "inherit" });
+    } catch (error) {
+      throw new Error(`Comando fall\xF3: ${command}`);
+    }
+  }
+  /**
+   * 🌍 Obtener tipo de entorno
+   */
+  getEnvironmentType() {
+    if (this.system.isTermux) return "Termux Android";
+    if (this.system.platform.isMobile) return "M\xF3vil";
+    if (this.system.isEmbedded) return "Sistema embebido";
+    if (this.system.platform.isContainer) return "Contenedor";
+    return "Desktop";
+  }
+  /**
+   * 🔧 Inicializar definiciones de dependencias del sistema
+   */
+  initializeSystemDependencies() {
+    return {
+      git: {
+        name: "Git",
+        required: true,
+        platforms: ["linux", "darwin", "win32"],
+        installMethods: [
+          {
+            platform: "linux",
+            packageManager: "apt",
+            commands: ["sudo apt update", "sudo apt install -y git"],
+            validateCommand: "git --version"
+          },
+          {
+            platform: "darwin",
+            packageManager: "brew",
+            commands: ["brew install git"],
+            validateCommand: "git --version"
+          },
+          {
+            platform: "win32",
+            packageManager: "manual",
+            commands: ['echo "Descarga Git desde https://git-scm.com/download/win"'],
+            validateCommand: "git --version"
+          }
+        ]
+      },
+      nodejs: {
+        name: "Node.js",
+        version: ">=14.0.0",
+        required: true,
+        platforms: ["linux", "darwin", "win32"],
+        installMethods: [
+          {
+            platform: "linux",
+            packageManager: "curl",
+            commands: [
+              "curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -",
+              "sudo apt-get install -y nodejs"
+            ],
+            validateCommand: "node --version"
+          },
+          {
+            platform: "darwin",
+            packageManager: "brew",
+            commands: ["brew install node"],
+            validateCommand: "node --version"
+          },
+          {
+            platform: "win32",
+            packageManager: "manual",
+            commands: ['echo "Descarga Node.js desde https://nodejs.org"'],
+            validateCommand: "node --version"
+          }
+        ]
+      },
+      npm: {
+        name: "NPM",
+        required: true,
+        platforms: ["linux", "darwin", "win32"],
+        installMethods: [
+          {
+            platform: "all",
+            packageManager: "nodejs",
+            commands: ['echo "NPM viene incluido con Node.js"'],
+            validateCommand: "npm --version"
+          }
+        ]
+      },
+      python: {
+        name: "Python",
+        version: ">=3.7",
+        required: false,
+        platforms: ["linux", "darwin", "win32"],
+        installMethods: [
+          {
+            platform: "linux",
+            packageManager: "apt",
+            commands: ["sudo apt update", "sudo apt install -y python3 python3-pip"],
+            validateCommand: "python3 --version"
+          },
+          {
+            platform: "darwin",
+            packageManager: "brew",
+            commands: ["brew install python"],
+            validateCommand: "python3 --version"
+          },
+          {
+            platform: "win32",
+            packageManager: "manual",
+            commands: ['echo "Descarga Python desde https://python.org"'],
+            validateCommand: "python --version"
+          }
+        ]
+      },
+      pip: {
+        name: "Pip",
+        required: false,
+        platforms: ["linux", "darwin", "win32"],
+        installMethods: [
+          {
+            platform: "all",
+            packageManager: "python",
+            commands: ['echo "Pip viene incluido con Python 3.7+"'],
+            validateCommand: "pip --version"
+          }
+        ]
+      }
+    };
+  }
+  /**
+   * 📱 Instalar dependencias específicas para bot
+   */
+  async installBotDependencies(bot, botPath) {
+    this.logger.info(`\u{1F4E6} Instalando dependencias para ${bot.name}...`);
+    try {
+      switch (bot.language) {
+        case "Node.js":
+        case "TypeScript":
+          return await this.installNodeDependencies(botPath);
+        case "Python":
+          return await this.installPythonDependencies(botPath);
+        default:
+          this.logger.warning(`Lenguaje ${bot.language} no soportado para instalaci\xF3n autom\xE1tica`);
+          return false;
+      }
+    } catch (error) {
+      this.logger.error(`Error instalando dependencias: ${error instanceof Error ? error.message : error}`);
+      return false;
+    }
+  }
+  /**
+   * 📦 Instalar dependencias de Node.js
+   */
+  async installNodeDependencies(botPath) {
+    const packageJsonPath = path2__namespace.join(botPath, "package.json");
+    if (!fs3__namespace.existsSync(packageJsonPath)) {
+      this.logger.warning("package.json no encontrado");
+      return false;
+    }
+    const optimizedArgs = this.system.isARM || this.system.isEmbedded ? ["install", "--maxsockets", "1", "--progress", "false"] : ["install", "--progress", "false"];
+    try {
+      SecurityUtils.execSafe("npm", optimizedArgs, { cwd: botPath, stdio: "inherit" });
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+  /**
+   * 🐍 Instalar dependencias de Python
+   */
+  async installPythonDependencies(botPath) {
+    const requirementsPath = path2__namespace.join(botPath, "requirements.txt");
+    if (!fs3__namespace.existsSync(requirementsPath)) {
+      this.logger.warning("requirements.txt no encontrado");
+      return false;
+    }
+    const optimizedArgs = this.system.cpu.count === 1 ? ["-m", "pip", "install", "-r", "requirements.txt", "--no-cache-dir"] : ["-m", "pip", "install", "-r", "requirements.txt"];
+    try {
+      SecurityUtils.execSafe("python3", optimizedArgs, { cwd: botPath, stdio: "inherit" });
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+};
+__name(_DependencyInstaller, "DependencyInstaller");
+var DependencyInstaller = _DependencyInstaller;
+
+// src/cli/commands/dependencies.ts
+var _DependenciesCommand = class _DependenciesCommand {
+  constructor(logger, system, prompt) {
+    this.logger = logger;
+    this.system = system;
+    this.prompt = prompt;
+    this.installer = new DependencyInstaller(logger, system);
+  }
+  async execute(args) {
+    const action = (args == null ? void 0 : args[0]) || "check";
+    switch (action.toLowerCase()) {
+      case "install":
+        await this.installDependencies();
+        break;
+      case "check":
+        await this.checkDependencies();
+        break;
+      case "manual":
+        await this.showManualInstructions();
+        break;
+      case "system":
+        await this.showSystemInfo();
+        break;
+      default:
+        this.showUsage();
+    }
+  }
+  async installDependencies() {
+    try {
+      this.logger.gradientLog("\u{1F527} Instalaci\xF3n Autom\xE1tica de Dependencias", ["primary", "accent"]);
+      console.log("");
+      const success = await this.installer.installSystemDependencies(true);
+      if (success) {
+        this.logger.sparkleLog("\u{1F389} Todas las dependencias instaladas correctamente!", "success");
+        console.log("");
+        this.logger.info("\u2705 Tu sistema est\xE1 listo para usar Celia y sus hermanas");
+      } else {
+        this.logger.warning("\u26A0\uFE0F Algunas dependencias no se pudieron instalar autom\xE1ticamente");
+        console.log("");
+        this.logger.info('\u{1F4A1} Ejecuta "celia dependencies manual" para ver instrucciones');
+      }
+    } catch (error) {
+      this.logger.error(`\u274C Error en instalaci\xF3n: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+  async checkDependencies() {
+    this.logger.gradientLog("\u{1F50D} Verificando Dependencias del Sistema", ["primary", "secondary"]);
+    console.log("");
+    try {
+      const missing = await this.installer.checkSystemDependencies();
+      if (missing.length === 0) {
+        this.logger.sparkleLog("\u2705 Todas las dependencias est\xE1n instaladas!", "success");
+        this.showSystemSummary();
+      } else {
+        this.logger.warning(`\u26A0\uFE0F Faltan ${missing.length} dependencias:`);
+        console.log("");
+        missing.forEach((dep) => {
+          this.logger.log(`\u274C ${dep}`, "error");
+        });
+        console.log("");
+        this.logger.info('\u{1F4A1} Ejecuta "celia dependencies install" para instalar autom\xE1ticamente');
+      }
+    } catch (error) {
+      this.logger.error(`\u274C Error verificando dependencias: ${error instanceof Error ? error.message : error}`);
+    }
+  }
+  async showManualInstructions() {
+    this.logger.gradientLog("\u{1F4D6} Instrucciones Manuales de Instalaci\xF3n", ["accent", "primary"]);
+    console.log("");
+    const platform2 = this.system.platform.name;
+    this.logger.createBox([
+      `\u{1F4F1} Sistema detectado: ${platform2} ${this.system.architecture.family}`,
+      "",
+      "Dependencias requeridas y c\xF3mo instalarlas:"
+    ], "info", 1);
+    console.log("");
+    this.showManualInstallInstructions("Git", this.getGitInstructions(platform2));
+    this.showManualInstallInstructions("Node.js", this.getNodeInstructions(platform2));
+    this.showManualInstallInstructions("Python (opcional)", this.getPythonInstructions(platform2));
+    console.log("");
+    this.logger.info('\u{1F504} Despu\xE9s de instalar, ejecuta "celia dependencies check" para verificar');
+  }
+  showManualInstallInstructions(title, instructions) {
+    this.logger.log(`\u{1F527} ${title}:`, "accent");
+    instructions.forEach((instruction) => {
+      this.logger.log(`   ${instruction}`, "dim");
+    });
+    console.log("");
+  }
+  getGitInstructions(platform2) {
+    const instructions = {
+      "Linux": [
+        "sudo apt update",
+        "sudo apt install git",
+        "git --version  # verificar instalaci\xF3n"
+      ],
+      "macOS": [
+        "brew install git",
+        "git --version  # verificar instalaci\xF3n"
+      ],
+      "Windows": [
+        "Descargar desde: https://git-scm.com/download/win",
+        "Ejecutar instalador y seguir instrucciones",
+        "git --version  # verificar en cmd/powershell"
+      ]
+    };
+    return instructions[platform2] || instructions["Linux"] || [];
+  }
+  getNodeInstructions(platform2) {
+    const instructions = {
+      "Linux": [
+        "curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -",
+        "sudo apt-get install -y nodejs",
+        "node --version && npm --version  # verificar"
+      ],
+      "macOS": [
+        "brew install node",
+        "node --version && npm --version  # verificar"
+      ],
+      "Windows": [
+        "Descargar desde: https://nodejs.org",
+        "Ejecutar instalador LTS",
+        "node --version && npm --version  # verificar en cmd"
+      ]
+    };
+    return instructions[platform2] || instructions["Linux"] || [];
+  }
+  getPythonInstructions(platform2) {
+    const instructions = {
+      "Linux": [
+        "sudo apt update",
+        "sudo apt install python3 python3-pip",
+        "python3 --version && pip3 --version  # verificar"
+      ],
+      "macOS": [
+        "brew install python",
+        "python3 --version && pip3 --version  # verificar"
+      ],
+      "Windows": [
+        "Descargar desde: https://python.org",
+        'Ejecutar instalador (marcar "Add to PATH")',
+        "python --version && pip --version  # verificar en cmd"
+      ]
+    };
+    return instructions[platform2] || instructions["Linux"] || [];
+  }
+  async showSystemInfo() {
+    this.logger.gradientLog("\u{1F5A5}\uFE0F Informaci\xF3n del Sistema", ["primary", "secondary"]);
+    console.log("");
+    const systemInfo = [
+      `\u{1F5A5}\uFE0F Sistema Operativo: ${this.system.platform.name} ${this.system.platform.release}`,
+      `\u2699\uFE0F Arquitectura: ${this.system.architecture.family} ${this.system.architecture.bits}-bit`,
+      `\u{1F527} Procesador: ${this.system.cpu.vendor} ${this.system.cpu.model}`,
+      `\u{1F9EE} N\xFAcleos de CPU: ${this.system.cpu.count}`,
+      `\u{1F4F1} Entorno: ${this.getEnvironmentInfo()}`,
+      `\u{1F3F7}\uFE0F Endianness: ${this.system.architecture.endianness}`
+    ];
+    this.logger.createBox(systemInfo, "info", 1);
+    const recommendations = this.getSystemRecommendations();
+    if (recommendations.length > 0) {
+      console.log("");
+      this.logger.createBox([
+        "\u{1F4A1} Recomendaciones del Sistema:",
+        "",
+        ...recommendations
+      ], "warning", 1);
+    }
+  }
+  showSystemSummary() {
+    console.log("");
+    const summary = [
+      "\u{1F389} Sistema listo para Celia!",
+      "",
+      "\u2705 Git instalado",
+      "\u2705 Node.js instalado",
+      "\u2705 NPM disponible",
+      "",
+      "\u{1F680} Puedes instalar hermanas bot sin problemas"
+    ];
+    this.logger.createBox(summary, "success", 1);
+  }
+  getEnvironmentInfo() {
+    if (this.system.isTermux) return "Termux Android";
+    if (this.system.platform.isMobile) return "Dispositivo m\xF3vil";
+    if (this.system.isEmbedded) return "Sistema embebido";
+    if (this.system.platform.isContainer) return "Contenedor Docker/LXC";
+    return "Escritorio/Servidor";
+  }
+  getSystemRecommendations() {
+    const recommendations = [];
+    if (this.system.isARM) {
+      recommendations.push("\u{1F527} ARM detectado: Las compilaciones pueden tomar m\xE1s tiempo");
+    }
+    if (this.system.isTermux) {
+      recommendations.push('\u{1F4F1} Termux: Instala dependencias con "pkg install git nodejs python"');
+    }
+    if (this.system.isEmbedded) {
+      recommendations.push("\u{1F916} Sistema embebido: Funciones optimizadas autom\xE1ticamente");
+    }
+    if (this.system.cpu.count === 1) {
+      recommendations.push("\u{1F40C} Un solo n\xFAcleo: Instalaciones ser\xE1n m\xE1s lentas");
+    }
+    if (this.system.isRISCV) {
+      recommendations.push("\u2699\uFE0F RISC-V: Usa instalaciones r\xE1pidas para mejor compatibilidad");
+    }
+    return recommendations;
+  }
+  showUsage() {
+    this.logger.createBox([
+      "\u{1F527} Comando Dependencies - Gesti\xF3n de dependencias",
+      "",
+      "Uso:",
+      "  celia dependencies [comando]",
+      "",
+      "Comandos disponibles:",
+      "  check    - Verificar dependencias instaladas",
+      "  install  - Instalar dependencias autom\xE1ticamente",
+      "  manual   - Ver instrucciones manuales",
+      "  system   - Mostrar informaci\xF3n del sistema",
+      "",
+      "Ejemplos:",
+      "  celia dependencies check",
+      "  celia dependencies install",
+      "  celia dependencies manual"
+    ], "primary", 1);
+  }
+};
+__name(_DependenciesCommand, "DependenciesCommand");
+var DependenciesCommand = _DependenciesCommand;
+
 // src/cli/celia.ts
 var _CeliaAssistant = class _CeliaAssistant {
   constructor() {
@@ -1467,6 +3015,9 @@ var _CeliaAssistant = class _CeliaAssistant {
     const helpCommand = new HelpCommand(this.logger, this.router);
     const themeCommand = new ThemeCommand(this.logger);
     const statusCommand = new StatusCommand(this.logger, this.system);
+    const monitorCommand = new MonitorCommand(this.logger, this.system, this.prompt);
+    const backupCommand = new BackupCommand(this.logger, this.prompt);
+    const dependenciesCommand = new DependenciesCommand(this.logger, this.system, this.prompt);
     this.router.register("sisters", {
       aliases: ["list", "hermanas"],
       description: "\u{1F338} Conoce a todas mis hermanas bot",
@@ -1502,6 +3053,24 @@ var _CeliaAssistant = class _CeliaAssistant {
       description: "\u26A1 Instalaci\xF3n s\xFAper r\xE1pida",
       usage: "celia quick <hermana>",
       action: /* @__PURE__ */ __name((args) => this.quickInstallBot(args == null ? void 0 : args[0]), "action")
+    });
+    this.router.register("monitor", {
+      aliases: ["watch", "observe"],
+      description: "\u{1F50D} Monitor en tiempo real de las hermanas",
+      usage: "celia monitor [start|stop|status]",
+      action: /* @__PURE__ */ __name(async (args) => await monitorCommand.execute(args), "action")
+    });
+    this.router.register("backup", {
+      aliases: ["save", "restore"],
+      description: "\u{1F5C4}\uFE0F Sistema de backup de configuraciones",
+      usage: "celia backup [create|restore|list]",
+      action: /* @__PURE__ */ __name(async (args) => await backupCommand.execute(args), "action")
+    });
+    this.router.register("dependencies", {
+      aliases: ["deps", "install-deps"],
+      description: "\u{1F527} Instalador autom\xE1tico de dependencias",
+      usage: "celia dependencies [check|install|manual]",
+      action: /* @__PURE__ */ __name(async (args) => await dependenciesCommand.execute(args), "action")
     });
   }
   /**

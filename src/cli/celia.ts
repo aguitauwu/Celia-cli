@@ -17,6 +17,9 @@ import { ListCommand } from './commands/list';
 import { HelpCommand } from './commands/help';
 import { ThemeCommand } from './commands/theme';
 import { StatusCommand } from './commands/status';
+import { MonitorCommand } from './commands/monitor';
+import { BackupCommand } from './commands/backup';
+import { DependenciesCommand } from './commands/dependencies';
 
 export class CeliaAssistant {
   public logger: Logger;
@@ -72,6 +75,9 @@ export class CeliaAssistant {
     const helpCommand = new HelpCommand(this.logger, this.router);
     const themeCommand = new ThemeCommand(this.logger);
     const statusCommand = new StatusCommand(this.logger, this.system);
+    const monitorCommand = new MonitorCommand(this.logger, this.system, this.prompt);
+    const backupCommand = new BackupCommand(this.logger, this.prompt);
+    const dependenciesCommand = new DependenciesCommand(this.logger, this.system, this.prompt);
     
     // Register commands
     this.router.register('sisters', {
@@ -115,6 +121,28 @@ export class CeliaAssistant {
       description: '⚡ Instalación súper rápida',
       usage: 'celia quick <hermana>',
       action: (args?: string[]) => this.quickInstallBot(args?.[0])
+    });
+    
+    // Register new advanced commands
+    this.router.register('monitor', {
+      aliases: ['watch', 'observe'],
+      description: '🔍 Monitor en tiempo real de las hermanas',
+      usage: 'celia monitor [start|stop|status]',
+      action: async (args?: string[]) => await monitorCommand.execute(args)
+    });
+    
+    this.router.register('backup', {
+      aliases: ['save', 'restore'],
+      description: '🗄️ Sistema de backup de configuraciones',
+      usage: 'celia backup [create|restore|list]',
+      action: async (args?: string[]) => await backupCommand.execute(args)
+    });
+    
+    this.router.register('dependencies', {
+      aliases: ['deps', 'install-deps'],
+      description: '🔧 Instalador automático de dependencias',
+      usage: 'celia dependencies [check|install|manual]',
+      action: async (args?: string[]) => await dependenciesCommand.execute(args)
     });
   }
   
