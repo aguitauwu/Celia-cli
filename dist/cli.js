@@ -65,170 +65,13 @@ var init_cjs_shims = __esm({
   }
 });
 
-// src/cli/router.ts
-var _CommandRouter, CommandRouter;
-var init_router = __esm({
-  "src/cli/router.ts"() {
-    init_cjs_shims();
-    _CommandRouter = class _CommandRouter {
-      constructor() {
-        this.commands = /* @__PURE__ */ new Map();
-      }
-      /**
-       * Register a command
-       */
-      register(name, config) {
-        if (!name || !config || typeof config.action !== "function") {
-          throw new Error("Invalid command configuration");
-        }
-        this.commands.set(name, {
-          aliases: config.aliases || [],
-          description: config.description || "",
-          usage: config.usage || `celia ${name}`,
-          action: config.action
-        });
-      }
-      /**
-       * Get command by name or alias
-       */
-      getCommand(name) {
-        if (this.commands.has(name)) {
-          const config = this.commands.get(name);
-          if (config) {
-            return { name, config };
-          }
-        }
-        for (const [cmdName, config] of this.commands.entries()) {
-          if (config.aliases && config.aliases.includes(name)) {
-            return { name: cmdName, config };
-          }
-        }
-        return null;
-      }
-      /**
-       * Execute command
-       */
-      async execute(commandName, args = []) {
-        const command = this.getCommand(commandName);
-        if (!command) {
-          throw new Error(`Unknown command: ${commandName}`);
-        }
-        try {
-          await command.config.action(args);
-        } catch (error) {
-          const message = error instanceof Error ? error.message : String(error);
-          throw new Error(`Error executing ${command.name}: ${message}`);
-        }
-      }
-      /**
-       * Get all commands
-       */
-      getCommands() {
-        return this.commands;
-      }
-      /**
-       * Get command suggestions for autocompletion
-       */
-      getSuggestions(input) {
-        if (!input) return [];
-        const allCommands = [];
-        for (const [name] of this.commands) {
-          allCommands.push(name);
-        }
-        for (const [, config] of this.commands) {
-          if (config.aliases) {
-            allCommands.push(...config.aliases);
-          }
-        }
-        return allCommands.filter((cmd) => cmd.toLowerCase().startsWith(input.toLowerCase())).slice(0, 10);
-      }
-      /**
-       * Check if command exists
-       */
-      hasCommand(name) {
-        return this.getCommand(name) !== null;
-      }
-    };
-    __name(_CommandRouter, "CommandRouter");
-    CommandRouter = _CommandRouter;
-  }
-});
-
 // src/config/constants.ts
-var constants_exports = {};
-__export(constants_exports, {
-  CLI_NAME: () => CLI_NAME,
-  CONSTANTS: () => CONSTANTS,
-  DEFAULT_TIMEOUT: () => DEFAULT_TIMEOUT,
-  GIT_TIMEOUT: () => GIT_TIMEOUT,
-  INSTALL_TIMEOUT: () => INSTALL_TIMEOUT,
-  MAX_ARGUMENT_LENGTH: () => MAX_ARGUMENT_LENGTH,
-  MAX_FILENAME_LENGTH: () => MAX_FILENAME_LENGTH,
-  NODE_MIN_VERSION: () => NODE_MIN_VERSION,
-  PACKAGE_MANAGERS: () => PACKAGE_MANAGERS,
-  SUPPORTED_ARCHITECTURES: () => SUPPORTED_ARCHITECTURES,
-  SUPPORTED_PLATFORMS: () => SUPPORTED_PLATFORMS,
-  VERSION: () => VERSION,
-  default: () => constants_default
-});
-var CLI_NAME, VERSION, NODE_MIN_VERSION, DEFAULT_TIMEOUT, GIT_TIMEOUT, INSTALL_TIMEOUT, MAX_FILENAME_LENGTH, MAX_ARGUMENT_LENGTH, SUPPORTED_PLATFORMS, SUPPORTED_ARCHITECTURES, PACKAGE_MANAGERS, CONSTANTS, constants_default;
+var VERSION, NODE_MIN_VERSION;
 var init_constants = __esm({
   "src/config/constants.ts"() {
     init_cjs_shims();
-    CLI_NAME = "opceanaicli";
     VERSION = "2.0.0";
     NODE_MIN_VERSION = "14.0.0";
-    DEFAULT_TIMEOUT = 3e4;
-    GIT_TIMEOUT = 6e4;
-    INSTALL_TIMEOUT = 18e4;
-    MAX_FILENAME_LENGTH = 100;
-    MAX_ARGUMENT_LENGTH = 1e3;
-    SUPPORTED_PLATFORMS = ["win32", "linux", "darwin", "android"];
-    SUPPORTED_ARCHITECTURES = ["x64", "ia32", "arm", "arm64", "armv7l", "aarch64"];
-    PACKAGE_MANAGERS = {
-      npm: {
-        name: "npm",
-        lockFile: "package-lock.json",
-        installCommand: ["install"],
-        addCommand: ["install"],
-        runCommand: ["run"]
-      },
-      pnpm: {
-        name: "pnpm",
-        lockFile: "pnpm-lock.yaml",
-        installCommand: ["install"],
-        addCommand: ["add"],
-        runCommand: ["run"]
-      },
-      yarn: {
-        name: "yarn",
-        lockFile: "yarn.lock",
-        installCommand: ["install"],
-        addCommand: ["add"],
-        runCommand: ["run"]
-      },
-      bun: {
-        name: "bun",
-        lockFile: "bun.lockb",
-        installCommand: ["install"],
-        addCommand: ["add"],
-        runCommand: ["run"]
-      }
-    };
-    CONSTANTS = {
-      CLI_NAME,
-      VERSION,
-      NODE_MIN_VERSION,
-      DEFAULT_TIMEOUT,
-      GIT_TIMEOUT,
-      INSTALL_TIMEOUT,
-      MAX_FILENAME_LENGTH,
-      MAX_ARGUMENT_LENGTH,
-      SUPPORTED_PLATFORMS,
-      SUPPORTED_ARCHITECTURES,
-      PACKAGE_MANAGERS
-    };
-    constants_default = CONSTANTS;
   }
 });
 
@@ -343,101 +186,8 @@ var init_themes = __esm({
   }
 });
 
-// src/config/bots.ts
-var bots_exports = {};
-__export(bots_exports, {
-  BOTS: () => BOTS,
-  default: () => bots_default
-});
-var BOTS, bots_default;
-var init_bots = __esm({
-  "src/config/bots.ts"() {
-    init_cjs_shims();
-    BOTS = {
-      nebula: {
-        name: "Nebula",
-        url: "https://github.com/OpceanAI/Nebula-Open-source",
-        description: "Mi hermana musical s\xFAper responsable~ \xA1Toca m\xFAsica y modera servidores!",
-        language: "Node.js",
-        category: "\u{1F3B5} M\xFAsica & Moderaci\xF3n",
-        envVars: [
-          { name: "BOT_TOKEN", description: "Discord Bot Token", required: true, sensitive: true },
-          { name: "CLIENT_ID", description: "Discord Client ID", required: true, sensitive: false },
-          { name: "OWNER_ID", description: "Discord Owner ID", required: true, sensitive: false },
-          { name: "MONGO_CONNECTION", description: "MongoDB Connection URL", required: true, sensitive: true },
-          { name: "LAVALINK_HOST", description: "Lavalink Host", required: false, default: "localhost", sensitive: false },
-          { name: "LAVALINK_PORT", description: "Lavalink Port", required: false, default: "2333", sensitive: false },
-          { name: "LAVALINK_PASSWORD", description: "Lavalink Password", required: false, default: "youshallnotpass", sensitive: true },
-          { name: "WEATHER_API_KEY", description: "Weather API Key", required: false, sensitive: true },
-          { name: "TRANSLATE_API_KEY", description: "Translation API Key", required: false, sensitive: true }
-        ]
-      },
-      archan: {
-        name: "Archan",
-        url: "https://github.com/OpceanAI/Archan-Open-source",
-        description: "Mi hermana s\xFAper inteligente~ \xA1Habla usando Google Gemini!",
-        language: "Node.js",
-        category: "\u{1F916} Inteligencia Artificial",
-        envVars: [
-          { name: "ARCHAN_BOT_TOKEN", description: "Discord Bot Token para Archan", required: true, sensitive: true },
-          { name: "ARCHAN_CLIENT_ID", description: "Discord Client ID para Archan", required: true, sensitive: false },
-          { name: "GEMINI_API_KEY", description: "Google Gemini AI API Key", required: true, sensitive: true }
-        ]
-      },
-      sakura: {
-        name: "Sakura",
-        url: "https://github.com/OpceanAI/Sakura-Open-source",
-        description: "Mi hermana kawaii~ \xA1Somos muy parecidas! Adorable con IA y m\xFAsica",
-        language: "Python",
-        category: "\u{1F338} Kawaii & IA",
-        envVars: [
-          { name: "BOT_TOKEN", description: "Discord Bot Token", required: true, sensitive: true },
-          { name: "CLIENT_ID", description: "Discord Client ID", required: true, sensitive: false },
-          { name: "GEMINI_API_KEY", description: "Google Gemini AI API Key", required: true, sensitive: true },
-          { name: "POSTGRESQL_URL", description: "PostgreSQL Database URL", required: false, sensitive: true },
-          { name: "WEATHER_API_KEY", description: "API Key para servicio de clima", required: false, sensitive: true },
-          { name: "NEWS_API_KEY", description: "API Key para noticias", required: false, sensitive: true },
-          { name: "DEEPSEEK_API_KEY", description: "DeepSeek AI API Key (alternativo)", required: false, sensitive: true }
-        ]
-      },
-      lumina: {
-        name: "Lumina",
-        url: "https://github.com/aguitauwu/Lumina",
-        description: "Mi hermana organizadora~ \xA1Mantiene todo ordenadito en los servidores!",
-        language: "TypeScript",
-        category: "\u26A1 Gesti\xF3n de Servidor",
-        envVars: [
-          { name: "DISCORD_TOKEN", description: "Discord Bot Token", required: true, sensitive: true },
-          { name: "DISCORD_CLIENT_ID", description: "Discord Application ID", required: true, sensitive: false },
-          { name: "DATABASE_URL", description: "PostgreSQL Database URL (opcional)", required: false, sensitive: true },
-          { name: "MONGODB_URI", description: "MongoDB Connection URI (alternativo)", required: false, sensitive: true }
-        ]
-      },
-      katu: {
-        name: "Katu",
-        url: "https://github.com/aguitauwu/Katu-bot",
-        description: "Mi hermana estad\xEDstica~ \xA1Cuenta mensajes y hace rankings s\xFAper cool!",
-        language: "TypeScript",
-        category: "\u{1F4CA} Estad\xEDsticas & IA",
-        envVars: [
-          { name: "DISCORD_TOKEN", description: "Discord Bot Token", required: true, sensitive: true },
-          { name: "GEMINI_API_KEY", description: "Google Gemini AI API Key", required: true, sensitive: true },
-          { name: "MONGODB_URI", description: "MongoDB Connection URI (recomendado)", required: false, sensitive: true },
-          { name: "DATABASE_URL", description: "PostgreSQL Database URL (alternativo)", required: false, sensitive: true }
-        ]
-      }
-    };
-    bots_default = BOTS;
-  }
-});
-
 // src/utils/logger.ts
-var logger_exports = {};
-__export(logger_exports, {
-  Logger: () => Logger,
-  default: () => logger_default
-});
-var THEMES2, DEFAULT_THEME2, _Logger, Logger, logger_default;
+var THEMES2, DEFAULT_THEME2, _Logger, Logger;
 var init_logger = __esm({
   "src/utils/logger.ts"() {
     init_cjs_shims();
@@ -662,17 +412,9 @@ var init_logger = __esm({
     };
     __name(_Logger, "Logger");
     Logger = _Logger;
-    logger_default = Logger;
   }
 });
-
-// src/services/system.ts
-var system_exports = {};
-__export(system_exports, {
-  SystemDetector: () => SystemDetector,
-  default: () => system_default
-});
-var _SystemDetector, SystemDetector, system_default;
+var _SystemDetector, SystemDetector;
 var init_system = __esm({
   "src/services/system.ts"() {
     init_cjs_shims();
@@ -877,17 +619,9 @@ var init_system = __esm({
     };
     __name(_SystemDetector, "SystemDetector");
     SystemDetector = _SystemDetector;
-    system_default = SystemDetector;
   }
 });
-
-// src/security/security.ts
-var security_exports = {};
-__export(security_exports, {
-  SecurityUtils: () => SecurityUtils,
-  default: () => security_default
-});
-var _SecurityUtils, SecurityUtils, security_default;
+var _SecurityUtils, SecurityUtils;
 var init_security = __esm({
   "src/security/security.ts"() {
     init_cjs_shims();
@@ -1102,17 +836,9 @@ var init_security = __esm({
     };
     __name(_SecurityUtils, "SecurityUtils");
     SecurityUtils = _SecurityUtils;
-    security_default = SecurityUtils;
   }
 });
-
-// src/utils/prompt.ts
-var prompt_exports = {};
-__export(prompt_exports, {
-  PromptUtils: () => PromptUtils,
-  default: () => prompt_default
-});
-var _PromptUtils, PromptUtils, prompt_default;
+var _PromptUtils, PromptUtils;
 var init_prompt = __esm({
   "src/utils/prompt.ts"() {
     init_cjs_shims();
@@ -1259,17 +985,182 @@ ${message}`);
     };
     __name(_PromptUtils, "PromptUtils");
     PromptUtils = _PromptUtils;
-    prompt_default = PromptUtils;
+  }
+});
+
+// src/cli/router.ts
+var _CommandRouter, CommandRouter;
+var init_router = __esm({
+  "src/cli/router.ts"() {
+    init_cjs_shims();
+    _CommandRouter = class _CommandRouter {
+      constructor() {
+        this.commands = /* @__PURE__ */ new Map();
+      }
+      /**
+       * Register a command
+       */
+      register(name, config) {
+        if (!name || !config || typeof config.action !== "function") {
+          throw new Error("Invalid command configuration");
+        }
+        this.commands.set(name, {
+          aliases: config.aliases || [],
+          description: config.description || "",
+          usage: config.usage || `celia ${name}`,
+          action: config.action
+        });
+      }
+      /**
+       * Get command by name or alias
+       */
+      getCommand(name) {
+        if (this.commands.has(name)) {
+          const config = this.commands.get(name);
+          if (config) {
+            return { name, config };
+          }
+        }
+        for (const [cmdName, config] of this.commands.entries()) {
+          if (config.aliases && config.aliases.includes(name)) {
+            return { name: cmdName, config };
+          }
+        }
+        return null;
+      }
+      /**
+       * Execute command
+       */
+      async execute(commandName, args = []) {
+        const command = this.getCommand(commandName);
+        if (!command) {
+          throw new Error(`Unknown command: ${commandName}`);
+        }
+        try {
+          await command.config.action(args);
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          throw new Error(`Error executing ${command.name}: ${message}`);
+        }
+      }
+      /**
+       * Get all commands
+       */
+      getCommands() {
+        return this.commands;
+      }
+      /**
+       * Get command suggestions for autocompletion
+       */
+      getSuggestions(input) {
+        if (!input) return [];
+        const allCommands = [];
+        for (const [name] of this.commands) {
+          allCommands.push(name);
+        }
+        for (const [, config] of this.commands) {
+          if (config.aliases) {
+            allCommands.push(...config.aliases);
+          }
+        }
+        return allCommands.filter((cmd) => cmd.toLowerCase().startsWith(input.toLowerCase())).slice(0, 10);
+      }
+      /**
+       * Check if command exists
+       */
+      hasCommand(name) {
+        return this.getCommand(name) !== null;
+      }
+    };
+    __name(_CommandRouter, "CommandRouter");
+    CommandRouter = _CommandRouter;
+  }
+});
+
+// src/config/bots.ts
+var BOTS;
+var init_bots = __esm({
+  "src/config/bots.ts"() {
+    init_cjs_shims();
+    BOTS = {
+      nebula: {
+        name: "Nebula",
+        url: "https://github.com/OpceanAI/Nebula-Open-source",
+        description: "Mi hermana musical s\xFAper responsable~ \xA1Toca m\xFAsica y modera servidores!",
+        language: "Node.js",
+        category: "\u{1F3B5} M\xFAsica & Moderaci\xF3n",
+        envVars: [
+          { name: "BOT_TOKEN", description: "Discord Bot Token", required: true, sensitive: true },
+          { name: "CLIENT_ID", description: "Discord Client ID", required: true, sensitive: false },
+          { name: "OWNER_ID", description: "Discord Owner ID", required: true, sensitive: false },
+          { name: "MONGO_CONNECTION", description: "MongoDB Connection URL", required: true, sensitive: true },
+          { name: "LAVALINK_HOST", description: "Lavalink Host", required: false, default: "localhost", sensitive: false },
+          { name: "LAVALINK_PORT", description: "Lavalink Port", required: false, default: "2333", sensitive: false },
+          { name: "LAVALINK_PASSWORD", description: "Lavalink Password", required: false, default: "youshallnotpass", sensitive: true },
+          { name: "WEATHER_API_KEY", description: "Weather API Key", required: false, sensitive: true },
+          { name: "TRANSLATE_API_KEY", description: "Translation API Key", required: false, sensitive: true }
+        ]
+      },
+      archan: {
+        name: "Archan",
+        url: "https://github.com/OpceanAI/Archan-Open-source",
+        description: "Mi hermana s\xFAper inteligente~ \xA1Habla usando Google Gemini!",
+        language: "Node.js",
+        category: "\u{1F916} Inteligencia Artificial",
+        envVars: [
+          { name: "ARCHAN_BOT_TOKEN", description: "Discord Bot Token para Archan", required: true, sensitive: true },
+          { name: "ARCHAN_CLIENT_ID", description: "Discord Client ID para Archan", required: true, sensitive: false },
+          { name: "GEMINI_API_KEY", description: "Google Gemini AI API Key", required: true, sensitive: true }
+        ]
+      },
+      sakura: {
+        name: "Sakura",
+        url: "https://github.com/OpceanAI/Sakura-Open-source",
+        description: "Mi hermana kawaii~ \xA1Somos muy parecidas! Adorable con IA y m\xFAsica",
+        language: "Python",
+        category: "\u{1F338} Kawaii & IA",
+        envVars: [
+          { name: "BOT_TOKEN", description: "Discord Bot Token", required: true, sensitive: true },
+          { name: "CLIENT_ID", description: "Discord Client ID", required: true, sensitive: false },
+          { name: "GEMINI_API_KEY", description: "Google Gemini AI API Key", required: true, sensitive: true },
+          { name: "POSTGRESQL_URL", description: "PostgreSQL Database URL", required: false, sensitive: true },
+          { name: "WEATHER_API_KEY", description: "API Key para servicio de clima", required: false, sensitive: true },
+          { name: "NEWS_API_KEY", description: "API Key para noticias", required: false, sensitive: true },
+          { name: "DEEPSEEK_API_KEY", description: "DeepSeek AI API Key (alternativo)", required: false, sensitive: true }
+        ]
+      },
+      lumina: {
+        name: "Lumina",
+        url: "https://github.com/aguitauwu/Lumina",
+        description: "Mi hermana organizadora~ \xA1Mantiene todo ordenadito en los servidores!",
+        language: "TypeScript",
+        category: "\u26A1 Gesti\xF3n de Servidor",
+        envVars: [
+          { name: "DISCORD_TOKEN", description: "Discord Bot Token", required: true, sensitive: true },
+          { name: "DISCORD_CLIENT_ID", description: "Discord Application ID", required: true, sensitive: false },
+          { name: "DATABASE_URL", description: "PostgreSQL Database URL (opcional)", required: false, sensitive: true },
+          { name: "MONGODB_URI", description: "MongoDB Connection URI (alternativo)", required: false, sensitive: true }
+        ]
+      },
+      katu: {
+        name: "Katu",
+        url: "https://github.com/aguitauwu/Katu-bot",
+        description: "Mi hermana estad\xEDstica~ \xA1Cuenta mensajes y hace rankings s\xFAper cool!",
+        language: "TypeScript",
+        category: "\u{1F4CA} Estad\xEDsticas & IA",
+        envVars: [
+          { name: "DISCORD_TOKEN", description: "Discord Bot Token", required: true, sensitive: true },
+          { name: "GEMINI_API_KEY", description: "Google Gemini AI API Key", required: true, sensitive: true },
+          { name: "MONGODB_URI", description: "MongoDB Connection URI (recomendado)", required: false, sensitive: true },
+          { name: "DATABASE_URL", description: "PostgreSQL Database URL (alternativo)", required: false, sensitive: true }
+        ]
+      }
+    };
   }
 });
 
 // src/cli/commands/list.ts
-var list_exports = {};
-__export(list_exports, {
-  ListCommand: () => ListCommand,
-  default: () => list_default
-});
-var _ListCommand, ListCommand, list_default;
+var _ListCommand, ListCommand;
 var init_list = __esm({
   "src/cli/commands/list.ts"() {
     init_cjs_shims();
@@ -1296,9 +1187,7 @@ var init_list = __esm({
           if (!categories[category]) {
             categories[category] = [];
           }
-          categories[category] = categories[category] || [];
           categories[category].push({ key, ...bot });
-          categories[bot.category].push({ key, ...bot });
         });
         Object.entries(categories).forEach(([category, bots]) => {
           this.logger.log(`${category}`, "accent");
@@ -1335,17 +1224,11 @@ var init_list = __esm({
     };
     __name(_ListCommand, "ListCommand");
     ListCommand = _ListCommand;
-    list_default = ListCommand;
   }
 });
 
 // src/cli/commands/help.ts
-var help_exports = {};
-__export(help_exports, {
-  HelpCommand: () => HelpCommand,
-  default: () => help_default
-});
-var _HelpCommand, HelpCommand, help_default;
+var _HelpCommand, HelpCommand;
 var init_help = __esm({
   "src/cli/commands/help.ts"() {
     init_cjs_shims();
@@ -1431,17 +1314,11 @@ var init_help = __esm({
     };
     __name(_HelpCommand, "HelpCommand");
     HelpCommand = _HelpCommand;
-    help_default = HelpCommand;
   }
 });
 
 // src/cli/commands/theme.ts
-var theme_exports = {};
-__export(theme_exports, {
-  ThemeCommand: () => ThemeCommand,
-  default: () => theme_default
-});
-var _ThemeCommand, ThemeCommand, theme_default;
+var _ThemeCommand, ThemeCommand;
 var init_theme = __esm({
   "src/cli/commands/theme.ts"() {
     init_cjs_shims();
@@ -1514,17 +1391,11 @@ var init_theme = __esm({
     };
     __name(_ThemeCommand, "ThemeCommand");
     ThemeCommand = _ThemeCommand;
-    theme_default = ThemeCommand;
   }
 });
 
 // src/cli/commands/status.ts
-var status_exports = {};
-__export(status_exports, {
-  StatusCommand: () => StatusCommand,
-  default: () => status_default
-});
-var _StatusCommand, StatusCommand, status_default;
+var _StatusCommand, StatusCommand;
 var init_status = __esm({
   "src/cli/commands/status.ts"() {
     init_cjs_shims();
@@ -1597,7 +1468,6 @@ var init_status = __esm({
     };
     __name(_StatusCommand, "StatusCommand");
     StatusCommand = _StatusCommand;
-    status_default = StatusCommand;
   }
 });
 
@@ -1607,28 +1477,26 @@ __export(celia_exports, {
   CeliaAssistant: () => CeliaAssistant,
   default: () => celia_default
 });
-var VERSION2, NODE_MIN_VERSION2, THEMES3, BOTS2, Logger2, SystemDetector2, SecurityUtils2, PromptUtils2, ListCommand2, HelpCommand2, ThemeCommand2, StatusCommand2, _CeliaAssistant, CeliaAssistant, celia_default;
+var _CeliaAssistant, CeliaAssistant, celia_default;
 var init_celia = __esm({
   "src/cli/celia.ts"() {
     init_cjs_shims();
+    init_constants();
+    init_logger();
+    init_system();
+    init_security();
+    init_prompt();
     init_router();
-    ({ VERSION: VERSION2, NODE_MIN_VERSION: NODE_MIN_VERSION2 } = (init_constants(), __toCommonJS(constants_exports)));
-    ({ THEMES: THEMES3 } = (init_themes(), __toCommonJS(themes_exports)));
-    ({ BOTS: BOTS2 } = (init_bots(), __toCommonJS(bots_exports)));
-    Logger2 = (init_logger(), __toCommonJS(logger_exports));
-    SystemDetector2 = (init_system(), __toCommonJS(system_exports));
-    SecurityUtils2 = (init_security(), __toCommonJS(security_exports));
-    PromptUtils2 = (init_prompt(), __toCommonJS(prompt_exports));
-    ListCommand2 = (init_list(), __toCommonJS(list_exports));
-    HelpCommand2 = (init_help(), __toCommonJS(help_exports));
-    ThemeCommand2 = (init_theme(), __toCommonJS(theme_exports));
-    StatusCommand2 = (init_status(), __toCommonJS(status_exports));
+    init_list();
+    init_help();
+    init_theme();
+    init_status();
     _CeliaAssistant = class _CeliaAssistant {
       constructor() {
         this.interactive = false;
-        this.logger = new Logger2();
-        this.system = new SystemDetector2();
-        this.prompt = new PromptUtils2();
+        this.logger = new Logger();
+        this.system = new SystemDetector();
+        this.prompt = new PromptUtils();
         this.router = new CommandRouter();
         this.initializeCommands();
       }
@@ -1636,15 +1504,15 @@ var init_celia = __esm({
        * 🛡️ Verificar prerrequisitos críticos
        */
       static checkCriticalPrerequisites() {
-        if (!SecurityUtils2.validateNodeVersion(NODE_MIN_VERSION2)) {
-          throw new Error(`Versi\xF3n de Node.js muy antigua. Se requiere >= ${NODE_MIN_VERSION2}. Versi\xF3n actual: ${process.version}`);
+        if (!SecurityUtils.validateNodeVersion(NODE_MIN_VERSION)) {
+          throw new Error(`Versi\xF3n de Node.js muy antigua. Se requiere >= ${NODE_MIN_VERSION}. Versi\xF3n actual: ${process.version}`);
         }
       }
       /**
        * 🛡️ Mostrar estado de prerrequisitos
        */
       showPrerequisiteStatus() {
-        const missing = SecurityUtils2.checkPrerequisites();
+        const missing = SecurityUtils.checkPrerequisites();
         if (missing.length > 0) {
           this.logger.log("\n\u26A0\uFE0F  Prerrequisitos faltantes:", "warning");
           missing.forEach((cmd) => {
@@ -1659,10 +1527,10 @@ var init_celia = __esm({
        * 🌸 Initialize Celia's modern command system~
        */
       initializeCommands() {
-        const listCommand = new ListCommand2(this.logger);
-        const helpCommand = new HelpCommand2(this.logger, this.router);
-        const themeCommand = new ThemeCommand2(this.logger);
-        const statusCommand = new StatusCommand2(this.logger, this.system);
+        const listCommand = new ListCommand(this.logger);
+        const helpCommand = new HelpCommand(this.logger, this.router);
+        const themeCommand = new ThemeCommand(this.logger);
+        const statusCommand = new StatusCommand(this.logger, this.system);
         this.router.register("sisters", {
           aliases: ["list", "hermanas"],
           description: "\u{1F338} Conoce a todas mis hermanas bot",
@@ -1739,7 +1607,7 @@ var init_celia = __esm({
        */
       showVersion() {
         this.showBanner();
-        this.logger.gradientLog(`Celia v${VERSION2} \u{1F496}`, ["primary", "secondary"]);
+        this.logger.gradientLog(`Celia v${VERSION} \u{1F496}`, ["primary", "secondary"]);
         console.log("");
         this.logger.log("Tu asistente celestial tierna~", "dim");
         this.showPrerequisiteStatus();

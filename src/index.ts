@@ -5,31 +5,100 @@
  * for users who want to integrate it into their own applications.
  */
 
-// Re-export main classes and interfaces using CommonJS for now
-const CeliaAssistant = require('./cli/celia');
-const SecurityUtils = require('./security/security');
-const Logger = require('./utils/logger');
-const SystemDetector = require('./services/system');
-const CommandRouter = require('./cli/router');
+// Import main classes using proper TypeScript imports
+import { CeliaAssistant } from './cli/celia';
+import { SecurityUtils } from './security/security';
+import { Logger } from './utils/logger';
+import { SystemDetector } from './services/system';
+import { CommandRouter } from './cli/router';
+import { FileSystemUtils } from './utils/fs';
+import { PromptUtils } from './utils/prompt';
 
-// Re-export configurations
-const { THEMES } = require('./config/themes');
-const { BOTS } = require('./config/bots');
-const { VERSION, NODE_MIN_VERSION } = require('./config/constants');
+// Import configurations
+import { THEMES } from './config/themes';
+import { BOTS } from './config/bots';
+import { VERSION, NODE_MIN_VERSION } from './config/constants';
 
-// Re-export utility functions
-const FileSystemUtils = require('./utils/fs');
-const PromptUtils = require('./utils/prompt');
-
-// Export types
-export type { 
-  ICommand, 
-  ICommandArgs, 
-  ICommandDefinition, 
-  ICommandRouter 
+// Export all types
+export type {
+  // Command types
+  ICommand,
+  ICommandArgs,
+  ICommandDefinition,
+  ICommandRouter
 } from './types/command';
 
-// Export classes
+export type {
+  // Theme types
+  ITheme,
+  IThemes,
+  ThemeStyle,
+  ThemeName
+} from './types/theme';
+
+export type {
+  // System types
+  ISystemArchitecture,
+  ISystemPlatform,
+  ISystemCPU,
+  ISystemDetector
+} from './types/system';
+
+export type {
+  // Security types
+  ICommandStep,
+  IExecOptions,
+  IInstallSteps,
+  SupportedLanguage
+} from './types/security';
+
+export type {
+  // Bot types
+  IEnvVar,
+  IBotConfig,
+  IBots,
+  BotLanguage,
+  BotKey
+} from './types/bots';
+
+export type {
+  // Constants types
+  IPackageManagerConfig,
+  IPackageManagers,
+  IConstants,
+  PackageManagerName,
+  SupportedPlatform,
+  SupportedArchitecture
+} from './types/constants';
+
+export type {
+  // Logger types
+  ILogger,
+  ILoggerConstructor
+} from './types/logger';
+
+export type {
+  // File system types
+  IFileSystemUtils,
+  IFileSystemConstructor
+} from './types/fs';
+
+export type {
+  // Prompt types
+  IPromptOptions,
+  IConfirmOptions,
+  ISelectOptions,
+  IPromptUtils,
+  IPromptConstructor
+} from './types/prompt';
+
+export type {
+  // Export types
+  ICeliaAssistantConfig,
+  ICeliaAssistant
+} from './types/exports';
+
+// Export main classes
 export {
   CeliaAssistant,
   SecurityUtils,
@@ -49,4 +118,4 @@ export {
 };
 
 // Version info for programmatic usage
-export const version: string = require('../package.json').version;
+export const version: string = VERSION;

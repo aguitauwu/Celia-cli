@@ -2,26 +2,26 @@
  * 🌸 Celia - Main CLI Application Class
  */
 
-// Import configurations using require (will be migrated to imports later)
-const { VERSION, NODE_MIN_VERSION } = require('../config/constants');
-const { THEMES } = require('../config/themes');
-const { BOTS } = require('../config/bots');
-const Logger = require('../utils/logger');
-const SystemDetector = require('../services/system');
-const SecurityUtils = require('../security/security');
-const PromptUtils = require('../utils/prompt');
+// Import configurations and classes
+import { VERSION, NODE_MIN_VERSION } from '../config/constants';
+import { THEMES } from '../config/themes';
+import { BOTS } from '../config/bots';
+import { Logger } from '../utils/logger';
+import { SystemDetector } from '../services/system';
+import { SecurityUtils } from '../security/security';
+import { PromptUtils } from '../utils/prompt';
 import { CommandRouter } from './router';
 
-// Import command classes (these will be TypeScript later)
-const ListCommand = require('./commands/list');
-const HelpCommand = require('./commands/help');
-const ThemeCommand = require('./commands/theme');
-const StatusCommand = require('./commands/status');
+// Import command classes
+import { ListCommand } from './commands/list';
+import { HelpCommand } from './commands/help';
+import { ThemeCommand } from './commands/theme';
+import { StatusCommand } from './commands/status';
 
 export class CeliaAssistant {
-  public logger: any; // Will be properly typed when logger is migrated
-  public system: any; // Will be properly typed when system is migrated
-  public prompt: any; // Will be properly typed when prompt is migrated
+  public logger: Logger;
+  public system: SystemDetector;
+  public prompt: PromptUtils
   public router: CommandRouter;
   public interactive: boolean = false;
 
