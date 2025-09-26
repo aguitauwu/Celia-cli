@@ -155,6 +155,59 @@ class CeliaAssistant {
     const theme = THEMES[this.theme];
     console.log(`${theme[style]}${message}${theme.reset}`);
   }
+  
+  /**
+   * ✨ Animated typing effect~
+   */
+  async typeText(message, style = 'text', speed = 50) {
+    const theme = THEMES[this.theme];
+    process.stdout.write(theme[style]);
+    
+    for (const char of message) {
+      process.stdout.write(char);
+      await new Promise(resolve => setTimeout(resolve, speed));
+    }
+    
+    process.stdout.write(theme.reset + '\n');
+  }
+  
+  /**
+   * ✨ Beautiful loading animation~
+   */
+  async showLoading(message, duration = 2000) {
+    const theme = THEMES[this.theme];
+    const frames = ['⠂', '⠆', '⠎', '⠜', '⠸', '⠰', '⠠', '⠀'];
+    const colors = ['primary', 'secondary', 'accent'];
+    
+    process.stdout.write(theme.dim + message + ' ');
+    
+    let i = 0;
+    const interval = setInterval(() => {
+      const frame = frames[i % frames.length];
+      const color = colors[i % colors.length];
+      process.stdout.write(`\r${theme.dim}${message} ${theme[color]}${frame}${theme.reset}`);
+      i++;
+    }, 100);
+    
+    await new Promise(resolve => setTimeout(resolve, duration));
+    clearInterval(interval);
+    process.stdout.write(`\r${theme.success}${message} ✓${theme.reset}\n`);
+  }
+  
+  /**
+   * 🌈 Rainbow gradient effect~
+   */
+  rainbowLog(message) {
+    const colors = ['[31m', '[33m', '[32m', '[36m', '[34m', '[35m'];
+    let output = '';
+    
+    for (let i = 0; i < message.length; i++) {
+      const color = colors[i % colors.length];
+      output += `${color}${message[i]}`;
+    }
+    
+    console.log(output + '[0m');
+  }
 
   /**
    * 🌸 Beautiful gradient text effect~
@@ -170,6 +223,33 @@ class CeliaAssistant {
     });
     
     console.log(output.trim());
+  }
+  
+  /**
+   * ✨ Animated gradient effect~
+   */
+  async animatedGradientLog(message, styles = ['primary', 'secondary', 'accent'], speed = 200) {
+    const theme = THEMES[this.theme];
+    const words = message.split(' ');
+    
+    for (let i = 0; i < words.length; i++) {
+      const style = styles[i % styles.length];
+      process.stdout.write(`${theme[style]}${words[i]}${theme.reset} `);
+      await new Promise(resolve => setTimeout(resolve, speed));
+    }
+    
+    console.log('');
+  }
+  
+  /**
+   * 🌟 Sparkle effect for special moments~
+   */
+  sparkleLog(message, style = 'accent') {
+    const theme = THEMES[this.theme];
+    const sparkles = ['✨', '✨', '✨', '✨', '✨'];
+    const randomSparkles = sparkles.sort(() => Math.random() - 0.5).slice(0, 3).join('');
+    
+    console.log(`${theme[style]}${randomSparkles} ${message} ${randomSparkles}${theme.reset}`);
   }
 
   /**
@@ -223,7 +303,7 @@ class CeliaAssistant {
       aliases: ['themes', 'style'],
       description: '🎨 Cambia mi apariencia visual',
       usage: 'celia theme [celestial|kawaii|dreamy]',
-      action: (args) => this.handleTheme(args[0])
+      action: async (args) => await this.handleTheme(args[0])
     });
     
     this.commands.set('help', {
@@ -251,14 +331,14 @@ class CeliaAssistant {
       aliases: ['consejos', 'ayuda'],
       description: '💡 Consejos útiles de Celia',
       usage: 'celia tips',
-      action: () => this.showTips()
+      action: async () => await this.showTips()
     });
     
     this.commands.set('about', {
       aliases: ['acerca', 'info'],
       description: '💖 Información sobre Celia',
       usage: 'celia about',
-      action: () => this.showAbout()
+      action: async () => await this.showAbout()
     });
   }
 
@@ -1267,9 +1347,9 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
   }
 
   /**
-   * 🎨 Handle theme changes~
+   * 🎨 Animated theme changes~
    */
-  handleTheme(themeName = null) {
+  async handleTheme(themeName = null) {
     if (!themeName) {
       this.showBanner();
       this.log('🎨 Temas disponibles:', 'primary');
@@ -1291,11 +1371,22 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
       return;
     }
     
+    // Beautiful theme transition animation
+    await this.showLoading(`🎨 Cambiando a tema ${themeName}`, 1500);
+    
     this.theme = themeName;
     currentTheme = themeName;
-    this.showBanner();
-    this.log(`✨ Tema cambiado a "${themeName}"! ¡Qué bonito!~`, 'success');
+    
+    // Animated reveal
+    console.clear();
+    await this.typeText(`✨ ¡Tema "${themeName}" activado!`, 'success', 30);
+    this.sparkleLog('¡Qué bonito se ve ahora!~', 'accent');
     console.log('');
+    
+    // Show new banner after small delay
+    setTimeout(() => {
+      this.showBanner();
+    }, 500);
   }
   
   /**
@@ -1420,7 +1511,7 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
         break;
       case 'theme':
       case 'themes':
-        this.handleTheme(params[0]);
+        await this.handleTheme(params[0]);
         break;
       case 'sisters':
       case 'list':
@@ -1440,11 +1531,11 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
         break;
       case 'tips':
       case 'consejos':
-        this.showTips();
+        await this.showTips();
         break;
       case 'about':
       case 'acerca':
-        this.showAbout();
+        await this.showAbout();
         break;
       case 'clear':
       case 'cls':
@@ -1577,11 +1668,11 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
   }
   
   /**
-   * 🌟 Show helpful tips~
+   * 🌟 Show helpful tips with animations~
    */
-  showTips() {
+  async showTips() {
     this.showBanner();
-    this.gradientLog('💡 Consejos de Celia', ['primary', 'secondary']);
+    await this.animatedGradientLog('💡 Consejos de Celia', ['primary', 'secondary'], 150);
     console.log('');
     
     const tips = [
@@ -1594,48 +1685,62 @@ GEMINI_API_KEY=tu_api_key_de_google_gemini_aqui
       '🚀 En móviles, usa quick-install para mejor compatibilidad'
     ];
     
-    tips.forEach((tip, index) => {
-      setTimeout(() => {
-        this.log(tip, index % 2 === 0 ? 'info' : 'accent');
-      }, index * 100);
-    });
+    for (let i = 0; i < tips.length; i++) {
+      await this.typeText(tips[i], i % 2 === 0 ? 'info' : 'accent', 25);
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
     
-    setTimeout(() => {
-      console.log('');
-      this.log('✨ ¡Espero que estos consejos te ayuden!~', 'success');
-      console.log('');
-    }, tips.length * 100 + 200);
+    console.log('');
+    this.sparkleLog('¡Espero que estos consejos te ayuden!~', 'success');
+    console.log('');
   }
   
   /**
-   * 🌟 Show about information~
+   * 🌟 Show about information with animations~
    */
-  showAbout() {
+  async showAbout() {
     this.showBanner();
-    this.gradientLog('💖 Acerca de Celia', ['primary', 'secondary', 'accent']);
+    await this.animatedGradientLog('💖 Acerca de Celia', ['primary', 'secondary', 'accent'], 200);
     console.log('');
     
-    const about = [
-      '¡Holi! Soy Celia, tu asistente celestial tierna~ ✨',
-      '',
-      '💖 Cuido de mis cinco hermanas bot con mucho amor:',
+    // Animated introduction
+    await this.typeText('¡Holi! Soy Celia, tu asistente celestial tierna~ ✨', 'primary', 40);
+    console.log('');
+    
+    await this.typeText('💖 Cuido de mis cinco hermanas bot con mucho amor:', 'info', 30);
+    
+    const sisters = [
       '   🎵 Nebula - Mi hermana musical responsable',
       '   🤖 Archan - Mi hermana súper inteligente', 
       '   🌸 Sakura - Mi hermana kawaii (¡somos parecidas!)',
       '   ⚡ Lumina - Mi hermana organizadora',
-      '   📊 Katu - Mi hermana estadística',
-      '',
-      '🌟 Características especiales:',
+      '   📊 Katu - Mi hermana estadística'
+    ];
+    
+    for (const sister of sisters) {
+      await this.typeText(sister, 'accent', 20);
+      await new Promise(resolve => setTimeout(resolve, 200));
+    }
+    
+    console.log('');
+    await this.typeText('🌟 Características especiales:', 'info', 30);
+    
+    const features = [
       '   • Instalación guiada paso a paso',
       '   • Soporte multi-plataforma (incluso móviles!)',
       '   • Temas visuales personalizables',
       '   • Modo interactivo súper tierno',
       '   • Detección automática de entorno',
-      '',
-      '💫 Creada con amor por OpceanAI'
+      '   • Animaciones y efectos visuales bonitos'
     ];
     
-    this.createBox(about, 'primary', 2);
+    for (const feature of features) {
+      await this.typeText(feature, 'dim', 15);
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    
+    console.log('');
+    this.sparkleLog('Creada con amor por OpceanAI', 'accent');
     console.log('');
   }
   
