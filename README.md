@@ -46,7 +46,7 @@ Esta es una documentación técnica, experimental y educativa sobre el proceso d
 
 ---
 
-🌙 Introducción
+**🌙 Introducción**
 
 Hentaila.tv es un sitio basado en WordPress con plugins personalizados para:
 
@@ -62,7 +62,7 @@ No expone una API pública documentada, pero sí múltiples endpoints internos e
 
 ---
 
-🎯 Objetivo del Proyecto
+**🎯 Objetivo del Proyecto**
 
 📌 Crear una API privada / personal
 
@@ -80,9 +80,9 @@ No expone una API pública documentada, pero sí múltiples endpoints internos e
 
 ---
 
-🗺️ Arquitectura General
+**🗺️ Arquitectura General**
 
-Cliente
+```Cliente
   ↓
 WordPress
 
@@ -93,23 +93,23 @@ WordPress
 ├─ player-logic
 
 │└─ player.php?data=TOKEN
-└─ HLS (.m3u8)
+└─ HLS (.m3u8)```
 
 
 ---
 
-🤖 Robots.txt & Sitemaps
+**🤖 Robots.txt & Sitemaps**
 
 📍 robots.txt
 
-User-agent: *
+```User-agent: *
 Allow: /
 
-Sitemap: https://hentaila.tv/sitemap_index.xml
+Sitemap: https://hentaila.tv/sitemap_index.xml```
 
-🗺️ Sitemap Index
+**🗺️ Sitemap Index**
 
-/page-sitemap.xml
+```/page-sitemap.xml
 
 /wp-manga-sitemap.xml
 
@@ -121,7 +121,7 @@ Sitemap: https://hentaila.tv/sitemap_index.xml
 
 /wp-manga-author-sitemap.xml
 
-/wp-manga-chapters-sitemap*.xml
+/wp-manga-chapters-sitemap*.xml```
 
 
 💡 Los sitemaps son la fuente principal de scraping limpio.
@@ -129,11 +129,11 @@ Sitemap: https://hentaila.tv/sitemap_index.xml
 
 ---
 
-🌐 WordPress REST API
+**🌐 WordPress REST API**
 
 Endpoint Base
 
-https://hentaila.tv/wp-json/
+```https://hentaila.tv/wp-json/
 
 Endpoints útiles
 
@@ -143,7 +143,7 @@ Endpoints útiles
 
 /wp-json/wp/v2/wp-manga-genre
 
-/wp-json/wp/v2/wp-manga-tag
+/wp-json/wp/v2/wp-manga-tag```
 
 
 📌 Devuelven JSON estándar de WordPress
@@ -151,9 +151,9 @@ Endpoints útiles
 
 ---
 
-⚙️ admin-ajax.php
+**⚙️ admin-ajax.php**
 
-POST https://hentaila.tv/wp-admin/admin-ajax.php
+```POST https://hentaila.tv/wp-admin/admin-ajax.php```
 
 Requiere action
 
@@ -167,11 +167,11 @@ Muchas acciones solo funcionan desde frontend
 
 ---
 
-🎮 Player Logic
+**🎮 Player Logic**
 
 Endpoint clave
 
-https://hentaila.tv/wp-content/plugins/player-logic/player.php?data=TOKEN
+```https://hentaila.tv/wp-content/plugins/player-logic/player.php?data=TOKEN```
 
 Devuelve HTML + JS
 
@@ -183,7 +183,7 @@ El token contiene info cifrada (Base64)
 
 ---
 
-🔐 Tokens & Parámetros
+**🔐 Tokens & Parámetros**
 
 Codificados en Base64
 
@@ -194,12 +194,12 @@ No reutilizables indefinidamente
 
 Ejemplo:
 
-echo TOKEN | base64 -d
+```echo TOKEN | base64 -d```
 
 
 ---
 
-🕷️ Estrategia de Scraping
+**🕷️ Estrategia de Scraping**
 
 ✔ Usar sitemaps ✔ Extraer slugs ✔ Resolver player.php ✔ Interceptar .m3u8
 
@@ -208,7 +208,7 @@ echo TOKEN | base64 -d
 
 ---
 
-🚨 Limitaciones
+**🚨 Limitaciones**
 
 Tokens expiran
 
@@ -220,7 +220,7 @@ Cambios frecuentes en plugins
 
 ---
 
-🤖 Casos de Uso
+**🤖 Casos de Uso**
 
 Bot privado de Discord
 
@@ -234,7 +234,7 @@ Aprendizaje de RE web
 
 ---
 
-📓 Notas Importantes
+**📓 Notas Importantes**
 
 > 🌸 No existe una API pública oficial.
 
