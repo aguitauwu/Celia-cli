@@ -85,11 +85,15 @@ No expone una API pública documentada, pero sí múltiples endpoints internos e
 Cliente
   ↓
 WordPress
-  ├─ wp-json (REST)
-  ├─ admin-ajax.php
-  ├─ player-logic
-  │    └─ player.php?data=TOKEN
-  └─ HLS (.m3u8)
+
+├─ wp-json (REST)
+
+├─ admin-ajax.php
+
+├─ player-logic
+
+│└─ player.php?data=TOKEN
+└─ HLS (.m3u8)
 
 
 ---
