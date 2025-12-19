@@ -82,7 +82,7 @@ No expone una API pública documentada, pero sí múltiples endpoints internos e
 
 **🗺️ Arquitectura General**
 
-```Cliente
+``` Cliente
   ↓
 WordPress
 
@@ -93,7 +93,7 @@ WordPress
 ├─ player-logic
 
 │└─ player.php?data=TOKEN
-└─ HLS (.m3u8)```
+└─ HLS (.m3u8) ```
 
 
 ---
